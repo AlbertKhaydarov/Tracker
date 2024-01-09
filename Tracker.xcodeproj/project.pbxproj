@@ -9,19 +9,25 @@
 /* Begin PBXBuildFile section */
 		84CF9EDD2B4DA568006FD446 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EDC2B4DA568006FD446 /* AppDelegate.swift */; };
 		84CF9EDF2B4DA568006FD446 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EDE2B4DA568006FD446 /* SceneDelegate.swift */; };
-		84CF9EE12B4DA568006FD446 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EE02B4DA568006FD446 /* ViewController.swift */; };
+		84CF9EE12B4DA568006FD446 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EE02B4DA568006FD446 /* TabBarController.swift */; };
 		84CF9EE62B4DA56A006FD446 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 84CF9EE52B4DA56A006FD446 /* Assets.xcassets */; };
 		84CF9EE92B4DA56A006FD446 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84CF9EE72B4DA56A006FD446 /* LaunchScreen.storyboard */; };
+		84CF9EF12B4DAD6D006FD446 /* UIColors+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EF02B4DAD6D006FD446 /* UIColors+Extensions.swift */; };
+		84CF9EF82B4DB6C4006FD446 /* TrackersViewControllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EF72B4DB6C4006FD446 /* TrackersViewControllers.swift */; };
+		84CF9EFA2B4DB6EE006FD446 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EF92B4DB6EE006FD446 /* StatisticsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		84CF9ED92B4DA568006FD446 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84CF9EDC2B4DA568006FD446 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		84CF9EDE2B4DA568006FD446 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		84CF9EE02B4DA568006FD446 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		84CF9EE02B4DA568006FD446 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		84CF9EE52B4DA56A006FD446 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		84CF9EE82B4DA56A006FD446 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		84CF9EEA2B4DA56A006FD446 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84CF9EF02B4DAD6D006FD446 /* UIColors+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColors+Extensions.swift"; sourceTree = "<group>"; };
+		84CF9EF72B4DB6C4006FD446 /* TrackersViewControllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewControllers.swift; sourceTree = "<group>"; };
+		84CF9EF92B4DB6EE006FD446 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,12 +62,39 @@
 			children = (
 				84CF9EDC2B4DA568006FD446 /* AppDelegate.swift */,
 				84CF9EDE2B4DA568006FD446 /* SceneDelegate.swift */,
-				84CF9EE02B4DA568006FD446 /* ViewController.swift */,
+				84CF9EE02B4DA568006FD446 /* TabBarController.swift */,
+				84CF9EF32B4DB54E006FD446 /* Trackers View */,
+				84CF9EF42B4DB663006FD446 /* Statistics View */,
 				84CF9EE52B4DA56A006FD446 /* Assets.xcassets */,
 				84CF9EE72B4DA56A006FD446 /* LaunchScreen.storyboard */,
+				84CF9EF22B4DAD72006FD446 /* Helpers */,
 				84CF9EEA2B4DA56A006FD446 /* Info.plist */,
 			);
 			path = Tracker;
+			sourceTree = "<group>";
+		};
+		84CF9EF22B4DAD72006FD446 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				84CF9EF02B4DAD6D006FD446 /* UIColors+Extensions.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		84CF9EF32B4DB54E006FD446 /* Trackers View */ = {
+			isa = PBXGroup;
+			children = (
+				84CF9EF72B4DB6C4006FD446 /* TrackersViewControllers.swift */,
+			);
+			path = "Trackers View";
+			sourceTree = "<group>";
+		};
+		84CF9EF42B4DB663006FD446 /* Statistics View */ = {
+			isa = PBXGroup;
+			children = (
+				84CF9EF92B4DB6EE006FD446 /* StatisticsViewController.swift */,
+			);
+			path = "Statistics View";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,9 +167,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84CF9EE12B4DA568006FD446 /* ViewController.swift in Sources */,
+				84CF9EF82B4DB6C4006FD446 /* TrackersViewControllers.swift in Sources */,
+				84CF9EE12B4DA568006FD446 /* TabBarController.swift in Sources */,
 				84CF9EDD2B4DA568006FD446 /* AppDelegate.swift in Sources */,
+				84CF9EFA2B4DB6EE006FD446 /* StatisticsViewController.swift in Sources */,
 				84CF9EDF2B4DA568006FD446 /* SceneDelegate.swift in Sources */,
+				84CF9EF12B4DAD6D006FD446 /* UIColors+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,7 +319,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tracker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = "";
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -313,7 +349,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tracker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = "";
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
