@@ -38,14 +38,20 @@ class TrackersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .ypWhite
+//        view.backgroundColor = .ypWhite
         title = "Трекеры"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
 
         addNavButton()
         addErrorLogo (isTrackers: isTrackers)
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.searchController = searchController
+//        searchController.searchResultsUpdater = self
     }
+    
     private func addNavButton() {
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
         self.navigationItem.leftBarButtonItem = addButton
@@ -71,3 +77,9 @@ class TrackersViewController: UIViewController {
     }
     
 }
+
+//extension TrackersViewController: UISearchResultsUpdating  {
+//    func updateSearchResults(for searchController: UISearchController) {
+//      }
+//
+//}
