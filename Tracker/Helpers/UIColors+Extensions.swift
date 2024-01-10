@@ -7,7 +7,7 @@
 
 import UIKit
 
-@available(swift, obsoleted: 4.9)
+@available(swift, obsoleted: 5.9)
 extension UIColor {
 //            static var ypBackground: UIColor { UIColor(named: "Figma Background") ?? UIColor.darkGray}
 //            static var ypBlack: UIColor { UIColor(named: "Figma Black") ?? UIColor.black}
