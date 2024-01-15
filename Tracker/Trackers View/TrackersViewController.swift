@@ -33,7 +33,7 @@ class TrackersViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Что будем отслеживать?"
-        label.font = .YPMedium12
+        label.font = .ypMedium12
         return label
     }()
     
@@ -44,14 +44,19 @@ class TrackersViewController: UIViewController {
         vStackView.spacing = 8
         return vStackView
     }()
-    
-    private let datePicker = UIDatePicker()
+
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         return collection
     }()
+  
+    private var datePicker = UIDatePicker()
+    let dateFormatter = DateFormatter()
+  
+    
+    var customDatePickerView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,11 +83,44 @@ class TrackersViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         
-        datePicker.datePickerMode = .date
+        datePicker.locale = Locale(identifier: "ru_RU")
         datePicker.preferredDatePickerStyle = .compact
-        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+        datePicker.datePickerMode = .date
+      
+        
+        let currentDate = Date()
+        
+      
 
+        datePicker.setDate(currentDate, animated: false)
+     
+        dateFormatter.dateFormat = "dd.MM.yy"
+      
+
+        // Создаем UIView для отображения выбранной даты
+                customDatePickerView = UIView(frame: CGRect(x: 0, y: 0, width: 150, height: 44))
+                customDatePickerView.backgroundColor = .clear
+
+                // Создаем UILabel для отображения выбранной даты
+                let dateLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 150, height: 44))
+                dateLabel.text = dateFormatter.string(from: currentDate)
+                dateLabel.isUserInteractionEnabled = true
+
+
+           // Добавляем UITapGestureRecognizer
+           let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateLabelTapped))
+        customDatePickerView.addGestureRecognizer(tapGesture)
+
+           // Добавляем UILabel в UIView
+           customDatePickerView.addSubview(dateLabel)
+        customDatePickerView.addSubview(datePicker)
+        
+//        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: customDatePickerView)
+       
+        
         addNavButton()
         addErrorLogo (isTrackers: isTrackers)
         
@@ -100,7 +138,7 @@ class TrackersViewController: UIViewController {
         
         setup()
     }
-    
+   
     private func setup() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
@@ -109,7 +147,9 @@ class TrackersViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            datePicker.widthAnchor.constraint(equalToConstant: 100)
         ])
     }
     
@@ -119,11 +159,26 @@ class TrackersViewController: UIViewController {
         addButton.tintColor = .ypBlack
     }
     
+    @objc func dateLabelTapped() {
+         datePicker.isHidden = !datePicker.isHidden
+        print("!")
+     }
+    
+//    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+//            updateDateLabel()
+//        }
+//
+       
+    
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+     
         let selectedDate = sender.date
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yy"
         let formattedDate = dateFormatter.string(from: selectedDate)
+        if let dateLabel = customDatePickerView.subviews.first as? UILabel {
+                   dateLabel.text = dateFormatter.string(from: selectedDate)
+               }
         print("Выбранная дата: \(formattedDate)")
     }
     
@@ -181,76 +236,98 @@ extension TrackersViewController: UICollectionViewDataSource {
 }
 
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-//        
-//        let indexPath = IndexPath(row: 0, section: section)
-//        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-//        
-//        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,
-//                                                         height: UIView.layoutFittingExpandedSize.height),
-//                                                  withHorizontalFittingPriority: .required,
-//                                                  verticalFittingPriority: .fittingSizeLevel)
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-//        let indexPath = IndexPath(row: 0, section: section)
-//        let footerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter, at: indexPath)
-//        
-//        return footerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,
-//                                                         height: UIView.layoutFittingExpandedSize.height),
-//                                                  withHorizontalFittingPriority: .required,
-//                                                  verticalFittingPriority: .fittingSizeLevel)
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: collectionView.bounds.width / 2, height: 50)
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-//        return 0
-//    }
-//     
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//            let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
-//            cell?.titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
-//        }
-//    
-//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-//        let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
-//        cell?.titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-//    }
-//// MARK: - iOS 16+
-//    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
-//        guard indexPaths.count > 0 else {
-//                   return nil
-//               }
-//        let indexPath = indexPaths[0]
-//               
-//               return UIContextMenuConfiguration(actionProvider: { actions in    // 4
-//                   return UIMenu(children: [                                     // 5
-//                       UIAction(title: "Bold") { [weak self] _ in                // 6
-//                           self?.makeBold(indexPath: indexPath)
-//                       },
-//                       UIAction(title: "Italic") { [weak self] _ in              // 7
-//                           self?.makeItalic(indexPath: indexPath)
-//                       },
-//                   ])
-//               })
-//    }
-//    
-//    private func makeBold(indexPath: IndexPath) {
-//            let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
-//            cell?.titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
-//        }
-//        
-//    private func makeItalic(indexPath: IndexPath) {
-//        let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
-//        cell?.titleLabel.font = UIFont.italicSystemFont(ofSize: 17)
-//    }
-
+    //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    //
+    //        let indexPath = IndexPath(row: 0, section: section)
+    //        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+    //
+    //        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,
+    //                                                         height: UIView.layoutFittingExpandedSize.height),
+    //                                                  withHorizontalFittingPriority: .required,
+    //                                                  verticalFittingPriority: .fittingSizeLevel)
+    //    }
+    //
+    //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+    //        let indexPath = IndexPath(row: 0, section: section)
+    //        let footerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionFooter, at: indexPath)
+    //
+    //        return footerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,
+    //                                                         height: UIView.layoutFittingExpandedSize.height),
+    //                                                  withHorizontalFittingPriority: .required,
+    //                                                  verticalFittingPriority: .fittingSizeLevel)
+    //    }
+    //
+    //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    //        return CGSize(width: collectionView.bounds.width / 2, height: 50)
+    //    }
+    //
+    //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    //        return 0
+    //    }
+    //
+    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    //            let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
+    //            cell?.titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
+    //        }
+    //
+    //    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+    //        let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
+    //        cell?.titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+    //    }
+    //// MARK: - iOS 16+
+    //if #available(iOS 16.0, *){
+    //    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+    //        guard indexPaths.count > 0 else {
+    //                   return nil
+    //               }
+    //        let indexPath = indexPaths[0]
+    //
+    //               return UIContextMenuConfiguration(actionProvider: { actions in    // 4
+    //                   return UIMenu(children: [                                     // 5
+    //                       UIAction(title: "Bold") { [weak self] _ in                // 6
+    //                           self?.makeBold(indexPath: indexPath)
+    //                       },
+    //                       UIAction(title: "Italic") { [weak self] _ in              // 7
+    //                           self?.makeItalic(indexPath: indexPath)
+    //                       },
+    //                   ])
+    //               })
+    //    }
+    //
+    //    private func makeBold(indexPath: IndexPath) {
+    //            let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
+    //            cell?.titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
+    //        }
+    //
+    //    private func makeItalic(indexPath: IndexPath) {
+    //        let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
+    //        cell?.titleLabel.font = UIFont.italicSystemFont(ofSize: 17)
+    //    }
+//} else {
     // MARK: - iOS <16
-//    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-//        return nil
-//    }
-    
+    //    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    //        return nil
+    //    }
+//}
+}
+
+extension TrackersViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+    // MARK: - UIPickerViewDataSource
+        func numberOfComponents(in pickerView: UIPickerView) -> Int {
+            return 1
+        }
+        
+        func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+            return 1
+        }
+        
+        // MARK: - UIPickerViewDelegate
+
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        let label = UILabel()
+        label.font = .ypRegular17
+        label.textAlignment = .center
+        label.text = dateFormatter.string(from: Date())
+        return label
+    }
 }
