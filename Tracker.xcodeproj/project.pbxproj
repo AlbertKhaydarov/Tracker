@@ -91,9 +91,9 @@
 				84CF9EE02B4DA568006FD446 /* TabBarController.swift */,
 				84CF9EF32B4DB54E006FD446 /* Trackers View */,
 				84CF9EF42B4DB663006FD446 /* Statistics View */,
-				84CF9EE52B4DA56A006FD446 /* Assets.xcassets */,
-				84CF9EE72B4DA56A006FD446 /* LaunchScreen.storyboard */,
 				7C3062A72B4F12A8007516ED /* Models */,
+				84CF9EE72B4DA56A006FD446 /* LaunchScreen.storyboard */,
+				84CF9EE52B4DA56A006FD446 /* Assets.xcassets */,
 				84CF9EF22B4DAD72006FD446 /* Helpers */,
 				84CF9EEA2B4DA56A006FD446 /* Info.plist */,
 			);
@@ -114,9 +114,9 @@
 			isa = PBXGroup;
 			children = (
 				84CF9EF72B4DB6C4006FD446 /* TrackersViewController.swift */,
+				7C3062B12B50308B007516ED /* TrackerCollectionViewCell.swift */,
 				7C3062B62B5038BF007516ED /* TrackerHeaderView.swift */,
 				7C3062B82B503962007516ED /* TrackerFooterView.swift */,
-				7C3062B12B50308B007516ED /* TrackerCollectionViewCell.swift */,
 			);
 			path = "Trackers View";
 			sourceTree = "<group>";

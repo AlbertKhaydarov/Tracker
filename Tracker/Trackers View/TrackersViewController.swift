@@ -11,7 +11,7 @@ class TrackersViewController: UIViewController {
 // MARK: - заглушка, убрать
     var isTrackers: Bool = false
     
-    let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения", color: .colorSelection18, timesheet: [Timesheet(weekday: .monday), Timesheet(weekday: .tuesday)])
+    let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения", color: .colorSelection16, timesheet: [Timesheet(weekday: .monday), Timesheet(weekday: .tuesday)])
     let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне", color: .colorSelection18, timesheet: [])
     let trackerNreg2 = TrackerModel(id: UUID(), name: " Прислали открытку в вотсапе", color: .colorSelection18, timesheet: [])
     
@@ -54,19 +54,16 @@ class TrackersViewController: UIViewController {
   
     private var datePicker = UIDatePicker()
     let dateFormatter = DateFormatter()
-  
-    
-    var customDatePickerView: UIView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
        //MARK: - Mock data
         let caregory1 = TrackerCategory(name: "Домашний уют", trackers: [trackerHabits1])
-        let caregory21 = TrackerCategory(name: "Радостные мелочи", trackers: [trackerNreg1])
-        let caregory22 = TrackerCategory(name: "Радостные мелочи", trackers: [trackerNreg2])
+        let caregory2 = TrackerCategory(name: "Радостные мелочи", trackers: [trackerNreg1, trackerNreg2])
+      
         categories.append(caregory1)
-        categories.append(caregory21)
-        categories.append(caregory22)
+        categories.append(caregory2)
+
         let dateString1 = "2024-01-09T13:09:43Z"
         let dateString2 = "2024-01-08T13:09:43Z"
         let trackRec1 = TrackerRecord(idExecutedTracker: trackerHabits1.id, dateExecuted: dateString1.dateTimeDateFromString ?? Date())
@@ -78,6 +75,9 @@ class TrackersViewController: UIViewController {
         completedTrackers.append(trackRec3)
         completedTrackers.append(trackRec4)
         
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        
         view.backgroundColor = .ypWhite
         title = "Трекеры"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -86,41 +86,11 @@ class TrackersViewController: UIViewController {
         datePicker.locale = Locale(identifier: "ru_RU")
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
-      
-        
         let currentDate = Date()
-        
-      
-
         datePicker.setDate(currentDate, animated: false)
-     
         dateFormatter.dateFormat = "dd.MM.yy"
-      
-
-        // Создаем UIView для отображения выбранной даты
-                customDatePickerView = UIView(frame: CGRect(x: 0, y: 0, width: 150, height: 44))
-                customDatePickerView.backgroundColor = .clear
-
-                // Создаем UILabel для отображения выбранной даты
-                let dateLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 150, height: 44))
-                dateLabel.text = dateFormatter.string(from: currentDate)
-                dateLabel.isUserInteractionEnabled = true
-
-
-           // Добавляем UITapGestureRecognizer
-           let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dateLabelTapped))
-        customDatePickerView.addGestureRecognizer(tapGesture)
-
-           // Добавляем UILabel в UIView
-           customDatePickerView.addSubview(dateLabel)
-        customDatePickerView.addSubview(datePicker)
-        
-//        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
-
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: customDatePickerView)
-       
-        
+   
         addNavButton()
         addErrorLogo (isTrackers: isTrackers)
         
@@ -133,9 +103,9 @@ class TrackersViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        collectionView.register(TrackerHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        collectionView.register(TrackerFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "footer")
-        
+//        collectionView.register(TrackerHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+//        collectionView.register(TrackerFooterView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "footer")
+//        
         setup()
     }
    
@@ -149,36 +119,23 @@ class TrackersViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            datePicker.widthAnchor.constraint(equalToConstant: 100)
+            datePicker.widthAnchor.constraint(equalToConstant: 120)
         ])
     }
     
     private func addNavButton() {
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
-        self.navigationItem.leftBarButtonItem = addButton
-        addButton.tintColor = .ypBlack
+        let leftButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        self.navigationItem.leftBarButtonItem = leftButton
+        leftButton.tintColor = .ypBlack
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
-    
-    @objc func dateLabelTapped() {
-         datePicker.isHidden = !datePicker.isHidden
-        print("!")
-     }
-    
-//    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
-//            updateDateLabel()
-//        }
-//
-       
-    
+ 
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
-     
         let selectedDate = sender.date
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yy"
         let formattedDate = dateFormatter.string(from: selectedDate)
-        if let dateLabel = customDatePickerView.subviews.first as? UILabel {
-                   dateLabel.text = dateFormatter.string(from: selectedDate)
-               }
+      
         print("Выбранная дата: \(formattedDate)")
     }
     
@@ -208,13 +165,24 @@ class TrackersViewController: UIViewController {
 //}
 
 extension TrackersViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         return categories.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return categories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell.trackerCellIdentifier, for: indexPath) as? TrackerCollectionViewCell else {return UICollectionViewCell()}
-        cell.trackerLabel.text = categories[indexPath.row].name
+        
+        let tracker = categories[indexPath.section].trackers[indexPath.row]
+        print( categories[indexPath.section].name)
+        print( categories.count)
+        print(tracker)
+        cell.trackerLabel.text = tracker.name
+        cell.trackerBackgroundView.backgroundColor = tracker.color
         return cell
     }
     
@@ -236,16 +204,16 @@ extension TrackersViewController: UICollectionViewDataSource {
 }
 
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
-    //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-    //
-    //        let indexPath = IndexPath(row: 0, section: section)
-    //        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-    //
-    //        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,
-    //                                                         height: UIView.layoutFittingExpandedSize.height),
-    //                                                  withHorizontalFittingPriority: .required,
-    //                                                  verticalFittingPriority: .fittingSizeLevel)
-    //    }
+//        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+//    
+//            let indexPath = IndexPath(row: 0, section: section)
+//            let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+//    
+//            return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,
+//                                                             height: UIView.layoutFittingExpandedSize.height),
+//                                                      withHorizontalFittingPriority: .required,
+//                                                      verticalFittingPriority: .fittingSizeLevel)
+//        }
     //
     //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
     //        let indexPath = IndexPath(row: 0, section: section)
@@ -257,13 +225,17 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     //                                                  verticalFittingPriority: .fittingSizeLevel)
     //    }
     //
-    //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    //        return CGSize(width: collectionView.bounds.width / 2, height: 50)
-    //    }
-    //
-    //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-    //        return 0
-    //    }
+        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+            return CGSize(width: (collectionView.bounds.width - 32) / 2, height: 24)
+        }
+    
+        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+            return 9
+        }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 16
+    }
     //
     //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     //            let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
@@ -311,23 +283,3 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 //}
 }
 
-extension TrackersViewController: UIPickerViewDataSource, UIPickerViewDelegate {
-    // MARK: - UIPickerViewDataSource
-        func numberOfComponents(in pickerView: UIPickerView) -> Int {
-            return 1
-        }
-        
-        func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-            return 1
-        }
-        
-        // MARK: - UIPickerViewDelegate
-
-    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
-        let label = UILabel()
-        label.font = .ypRegular17
-        label.textAlignment = .center
-        label.text = dateFormatter.string(from: Date())
-        return label
-    }
-}
