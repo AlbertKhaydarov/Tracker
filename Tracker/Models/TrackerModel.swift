@@ -11,7 +11,7 @@ struct TrackerModel {
     let id: UUID
     let name: String
     let color: UIColor
-//    let emojie: String
+    let emoji: String
     let timesheet: [Timesheet]
 }
 
