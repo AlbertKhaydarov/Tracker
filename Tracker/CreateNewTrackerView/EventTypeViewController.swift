@@ -45,13 +45,22 @@ final class EventTypeViewController: UIViewController {
     
     @objc
     private func addNewHabit() {
-//        showTrackers(false, "Новая привычка")
+        creatNewhabit(titleTypeEvent: TypeEvents.habitType.rawValue)
        
     }
     
     @objc
     private func addOneTimeEvent() {
-//        showTrackers(true, "Новое нерегулярное событие")
+        creatNewhabit(titleTypeEvent: TypeEvents.oneTimeType.rawValue)
+
+    }
+    
+    private func creatNewhabit(titleTypeEvent: String) {
+        let newHabitViewController = NewHabitViewController()
+        newHabitViewController.title = titleTypeEvent
+        let navigationController = UINavigationController(rootViewController: newHabitViewController)
+        navigationController.navigationBar.barTintColor = .ypWhite
+        present(navigationController, animated: true)
     }
     
     func setupViews() {
