@@ -11,6 +11,7 @@ final class NewHabitViewController: UIViewController {
     
     private let colorSelection: [UIColor] = UIColor.colorSelection
     private let emojiesCollection: [String] = String.emojiesCollection
+ 
     private let titlesButtons: [String] = ["Категория", "Расписание"]
     
     private let scrollView: UIScrollView = {
@@ -19,6 +20,13 @@ final class NewHabitViewController: UIViewController {
         scrollView.backgroundColor = .ypWhite
         scrollView.isScrollEnabled = true
         return scrollView
+    }()
+    
+    private let contentViewForScrollView: UIView = {
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.backgroundColor = .white
+        return contentView
     }()
     
     private let SymbolsLimitLabel: UILabel = {
@@ -64,18 +72,75 @@ final class NewHabitViewController: UIViewController {
         return tableView
     }()
     
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.register(EmojiCollectionViewCell.self,
+                                forCellWithReuseIdentifier: EmojiCollectionViewCell.emojiCollectionViewCellIdentifier)
+        collectionView.register(ColorsCollectionViewCell.self,
+                                forCellWithReuseIdentifier: ColorsCollectionViewCell.colorsCollectionViewCellIdentifier)
+        collectionView.register(TrackerHeaderView.self,
+                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                withReuseIdentifier: "header")
+        collectionView.backgroundColor = .ypWhite
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.isScrollEnabled = false
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        return collectionView
+    }()
+    
+    private lazy var buttonsStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        stackView.distribution = .fillEqually
+        stackView.addArrangedSubview(cancelButton)
+        stackView.addArrangedSubview(createButton)
+        return stackView
+    }()
+    
+    private lazy var cancelButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Отменить", for: .normal)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.ypRed.cgColor
+        button.setTitleColor(.ypRed, for: .normal)
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+//        button.addTarget(self, action: #selector(cancelButtontapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var createButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Создать", for: .normal)
+        button.tintColor = .white
+        button.backgroundColor = .ypGray
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+//        button.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
+        button.isEnabled = false
+        return button
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
-        
+        scrollView.delegate = self
         setupViews()
         setupLayout()
+        setupCollectionViewHeight()
     }
     func setupViews() {
         view.addSubview(scrollView)
-        scrollView.addSubview(nameInputTextField)
-        scrollView.addSubview(tableView)
+        scrollView.addSubview(contentViewForScrollView)
+      
+        contentViewForScrollView.addSubview(nameInputTextField)
+        contentViewForScrollView.addSubview(tableView)
+        contentViewForScrollView.addSubview(collectionView)
+        contentViewForScrollView.addSubview(buttonsStackView)
     }
     
     func setupLayout() {
@@ -85,16 +150,159 @@ final class NewHabitViewController: UIViewController {
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
+            contentViewForScrollView.widthAnchor.constraint(equalToConstant: view.bounds.width),
+            contentViewForScrollView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentViewForScrollView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentViewForScrollView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentViewForScrollView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            
             nameInputTextField.heightAnchor.constraint(equalToConstant: 75),
-            nameInputTextField.topAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.topAnchor, constant: 24),
-            nameInputTextField.leadingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            nameInputTextField.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            nameInputTextField.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor, constant: 24),
+            nameInputTextField.leadingAnchor.constraint(equalTo: contentViewForScrollView.leadingAnchor, constant: 16),
+            nameInputTextField.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor, constant: -16),
             
             tableView.heightAnchor.constraint(equalToConstant: 150),
             tableView.topAnchor.constraint(equalTo: nameInputTextField.bottomAnchor, constant: 24),
-            tableView.leadingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            tableView.leadingAnchor.constraint(equalTo: contentViewForScrollView.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor, constant: -16),
+            
+            collectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
+            collectionView.leadingAnchor.constraint(equalTo: contentViewForScrollView.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor),
+//            collectionView.bottomAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.heightAnchor.constraint(equalToConstant: 480),
+//            collectionView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor, constant: -16),
+           
+            buttonsStackView.heightAnchor.constraint(equalToConstant: 60),
+            buttonsStackView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 16),
+            buttonsStackView.leadingAnchor.constraint(equalTo: contentViewForScrollView.leadingAnchor, constant: 20),
+            buttonsStackView.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor, constant:  -20),
+            buttonsStackView.bottomAnchor.constraint(equalTo: contentViewForScrollView.bottomAnchor, constant: -15)
         ])
+    }
+    
+    func setupCollectionViewHeight() {
+        collectionView.collectionViewLayout.invalidateLayout()
+        collectionView.layoutIfNeeded()
+//        collectionViewHeightContraint.constant = collectionView.contentSize.height
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+extension NewHabitViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return section == 0 ? emojiesCollection.count : colorSelection.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.section == 0 {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.emojiCollectionViewCellIdentifier, for: indexPath
+            ) as? EmojiCollectionViewCell else { return UICollectionViewCell()}
+            
+            cell.titleLabel.text = emojiesCollection[indexPath.row]
+            cell.backgroundColor = cell.isSelected ? .ypBackground : .clear
+           
+            return cell
+        } else if indexPath.section == 1 {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorsCollectionViewCell.colorsCollectionViewCellIdentifier, for: indexPath
+            ) as? ColorsCollectionViewCell else { return UICollectionViewCell()}
+            
+            cell.sizeToFit()
+            cell.colorItemView.backgroundColor = colorSelection[indexPath.row]
+            
+            return cell
+        }
+        return UICollectionViewCell()
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension NewHabitViewController: UIScrollViewDelegate {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        view.endEditing(true)
+    }
+}
+// MARK: - UICollectionViewDelegate
+extension NewHabitViewController: UICollectionViewDelegate & UICollectionViewDelegateFlowLayout {
+    
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        dismissKeyboard()
+//        if indexPath.section == 0 {
+//            if let selectedCell = isSelectedEmoji, let cell = collectionView.cellForItem(at: selectedCell) {
+//                cell.backgroundColor = .clear
+//                collectionView.deselectItem(at: selectedCell, animated: true)
+//            }
+//            let cell = collectionView.cellForItem(at: indexPath)
+//            cell?.layer.cornerRadius = 16
+//            cell?.backgroundColor = .yp_LightGray
+//            isSelectedEmoji = indexPath
+//            isEnabledDictionary["emoji"] = true
+//            createButtonIsEnabled()
+//        } else if indexPath.section == 1 {
+//            if let selectedCell = isSelectedColor, let cell = collectionView.cellForItem(at: selectedCell) {
+//                cell.layer.borderWidth = 0
+//                collectionView.deselectItem(at: selectedCell, animated: true)
+//            }
+//            let cell = collectionView.cellForItem(at: indexPath)
+//            cell?.layer.cornerRadius = 8
+//            cell?.layer.borderWidth = 3
+//            cell?.layer.borderColor = UIColor.colorSelection[indexPath.row].withAlphaComponent(0.3).cgColor
+//            isSelectedColor = indexPath
+//            isEnabledDictionary["colour"] = true
+//            createButtonIsEnabled()
+//        }
+//    }
+    
+    // MARK: UICollectionViewDelegateFlowLayout
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 52, height: 52)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 24, left: 18, bottom: 24, right: 19)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        var id: String
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            id = "header"
+        default:
+            id = ""
+        }
+        
+        if indexPath.section == 0 {
+            guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else { return UICollectionReusableView()}
+            view.titleLabel.text = "Emoji"
+            return view
+        } else {
+            guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else { return UICollectionReusableView()}
+            view.titleLabel.text = "Цвет"
+            return view
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let indexPath = IndexPath(row: 0, section: section)
+        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath
+        )
+        
+        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,
+                                                         height: UIView.layoutFittingExpandedSize.height),
+                                                  withHorizontalFittingPriority: .required,
+                                                  verticalFittingPriority: .fittingSizeLevel)
     }
 }
 
@@ -115,11 +323,9 @@ extension NewHabitViewController: UITableViewDataSource {
         cell.textLabel?.text = titlesButtons[indexPath.row]
         cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         cell.accessoryType = .disclosureIndicator
-//        var content = cell.defaultContentConfiguration()
-//        content.text = titlesButtons[indexPath.row]
-//        cell.contentConfiguration = content
         return cell
     }
+    
     
     
 }
