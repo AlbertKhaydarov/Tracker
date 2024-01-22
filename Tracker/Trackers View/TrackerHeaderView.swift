@@ -8,18 +8,17 @@
 import UIKit
 
 final class TrackerHeaderView: UICollectionReusableView {
-    let titleLabel = UILabel()
+    let titleLabel : UILabel = {
+        let label = UILabel()
+        label.font = .ypBold19
+        label.textColor = .ypBlack
+        return label
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(titleLabel)
-        setupTitleLabel()
         setupTrackerHeaderView()
-    }
-    
-    func setupTitleLabel() {
-        titleLabel.font = .ypBold19
-        titleLabel.textColor = .ypBlack
     }
     
     func setupTrackerHeaderView() {
@@ -27,7 +26,7 @@ final class TrackerHeaderView: UICollectionReusableView {
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -28),
+//            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -28),
             titleLabel.topAnchor.constraint(equalTo: topAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
