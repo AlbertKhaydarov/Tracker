@@ -12,7 +12,7 @@ struct TrackerModel {
     let name: String
     let color: UIColor
     let emoji: String
-    let timesheet: [Timesheet]
+    let timesheet: [Int]
 }
 
 struct Timesheet {

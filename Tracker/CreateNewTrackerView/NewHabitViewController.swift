@@ -11,6 +11,8 @@ final class NewHabitViewController: UIViewController {
     
     private let colorSelection: [UIColor] = UIColor.colorSelection
     private let emojiesCollection: [String] = String.emojiesCollection
+    
+//    private var collectionViewHeightContraint: NSLayoutConstraint!
  
     private let titlesButtons: [String] = ["Категория", "Расписание"]
     
@@ -81,6 +83,7 @@ final class NewHabitViewController: UIViewController {
         collectionView.register(TrackerHeaderView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: "header")
+
         collectionView.backgroundColor = .ypWhite
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.isScrollEnabled = false
@@ -141,6 +144,8 @@ final class NewHabitViewController: UIViewController {
         contentViewForScrollView.addSubview(tableView)
         contentViewForScrollView.addSubview(collectionView)
         contentViewForScrollView.addSubview(buttonsStackView)
+        
+//        collectionViewHeightContraint = collectionView.heightAnchor.constraint(equalToConstant: 0)
     }
     
     func setupLayout() {
@@ -171,7 +176,7 @@ final class NewHabitViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor),
 //            collectionView.bottomAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.bottomAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 480),
-//            collectionView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor, constant: -16),
+// collectionViewHeightContraint,
            
             buttonsStackView.heightAnchor.constraint(equalToConstant: 60),
             buttonsStackView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 16),
@@ -280,18 +285,24 @@ extension NewHabitViewController: UICollectionViewDelegate & UICollectionViewDel
         case UICollectionView.elementKindSectionHeader:
             id = "header"
         default:
-            id = ""
+            id = "default"
         }
         
-        if indexPath.section == 0 {
-            guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else { return UICollectionReusableView()}
-            view.titleLabel.text = "Emoji"
-            return view
-        } else {
-            guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else { return UICollectionReusableView()}
-            view.titleLabel.text = "Цвет"
-            return view
-        }
+//        if indexPath.section == 0 {
+//            guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else { return UICollectionReusableView()}
+//            view.titleLabel.text = "Emoji"
+//            return view
+//        } else {
+//            guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else { return UICollectionReusableView()}
+//            view.titleLabel.text = "Цвет"
+//            return view
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else {
+               return UICollectionReusableView()
+           }
+
+            view.titleLabel.text = indexPath.section == 0 ? "Emoji" : "Цвет"
+         
+           return view
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

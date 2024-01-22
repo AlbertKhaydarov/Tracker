@@ -31,4 +31,18 @@ extension String {
         "😇", "😡", "🥶", "🤔", "🙌", "🍔",
         "🥦", "🏓", "🥇", "🎸", "🏝", "😪"
     ]
+    
+    func weekdayFromInt(_ weekDay: Int) -> String {
+        switch weekDay {
+        case 1: return "Вс"
+        case 2: return "Пн"
+        case 3: return "Вт"
+        case 4: return "Ср"
+        case 5: return "Чт"
+        case 6: return "Пт"
+        case 7: return "Сб"
+        default: break
+        }
+        return "Weekday"
+    }
 }
