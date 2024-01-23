@@ -101,8 +101,12 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
 //        guard let isTrackerCompleted else {return}
 //        addQuantityButtonSetImage(isTrackerCompleted: isTrackerCompleted)
 
-        guard let trackerId, let indexPath else {return}
-        delegate?.markCompletedTracker(id: trackerId, indexPath: indexPath)
+        guard let trackerId,
+              let indexPath,
+              let isTrackerCompleted
+        else {return}
+        
+        delegate?.markCompletedTracker(id: trackerId, indexPath: indexPath, isCompleted: isTrackerCompleted)
     }
     let vc = TrackersViewController()
     

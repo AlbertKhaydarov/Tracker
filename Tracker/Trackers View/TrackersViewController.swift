@@ -307,7 +307,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
     }
 }
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
-    func markCompletedTracker(id: UUID, indexPath: IndexPath) {
+    func markCompletedTracker(id: UUID, indexPath: IndexPath, isCompleted: Bool) {
 
  
         //        if datePicker.date > Date() {
