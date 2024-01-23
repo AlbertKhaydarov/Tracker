@@ -67,8 +67,8 @@ class TrackersViewController: UIViewController {
         //MARK: - Mock data
         
         
-        let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3])
-        let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3])
+        let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3, 4])
+        let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3, 4])
         let trackerNreg2 = TrackerModel(id: UUID(), name: " Прислали открытку в вотсапе", color: .colorSelection18, emoji: "🎸", timesheet: [1, 3])
         let trackerNreg3 = TrackerModel(id: UUID(), name: " Изучить IOS", color: .colorSelection14, emoji: "🎸", timesheet: [2, 3])
         
@@ -160,15 +160,32 @@ class TrackersViewController: UIViewController {
         filteredChoosedByDatePickerDate(selectedWeekday)
       
     }
-    private func isSameTrackerRecord(_ record: TrackerRecord, id: UUID) -> Bool {
-        let isSameDay = Calendar.current.isDate(record.dateExecuted, inSameDayAs: datePicker.date)
-        return record.idExecutedTracker == id && isSameDay
-    }
     
     private func isTrackerCompletedToday(id: UUID) -> Bool {
-        completedTrackers.contains { trackerRecord in
-            isSameTrackerRecord(trackerRecord, id: id)
+//        let isContains = completedTrackers.contains { trackerRecord in
+//            isSameTrackerRecord(trackerRecord, id: id)
+//        }
+        let iDs = completedTrackers.compactMap { $0.idExecutedTracker }
+        let set = Set(iDs)
+//        var isContains: Bool = false
+//        let completedItems =
+      return completedTrackers.compactMap { completedItem in
+            set.contains(completedItem.idExecutedTracker) && Calendar.current.isDate(completedItem.dateExecuted, inSameDayAs: datePicker.date)
         }
+       
+//        let day = completedTrackers.compactMap { $0.dateExecuted }
+       
+      
+//        let isContains = set.contains(id)
+        
+//        print(isContains)
+//        return isContains
+    }
+    
+    private func isSameTrackerRecord(_ record: TrackerRecord, id: UUID) -> Bool {
+        let isSameDay = Calendar.current.isDate(record.dateExecuted, inSameDayAs: datePicker.date)
+        
+        return record.idExecutedTracker == id && isSameDay
     }
     
 //    func isContaintsCompletedTrackerSameDate( in categories: [TrackerCategory], for id: UUID) -> Bool {
@@ -221,6 +238,13 @@ class TrackersViewController: UIViewController {
             errorLogoStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)]
         )
     }
+    
+    func showAlert(_ message: String) {
+        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(action)
+        self.present(alert, animated: true, completion: nil)
+    }
 }
 
 //extension TrackersViewController: UISearchResultsUpdating  {
@@ -244,16 +268,14 @@ extension TrackersViewController: UICollectionViewDataSource {
         let trackerItem = displayedTrackers[indexPath.section].trackers[indexPath.row]
         
         let completedDays = completedTrackers.filter { $0.idExecutedTracker == trackerItem.id }.count
-//       let isCompleted = isCompleted
+
         isCompleted = isTrackerCompletedToday(id: trackerItem.id)
         cell.configurationCell(trackerItem, completedDays: completedDays, indexPath: indexPath, isTrackerCompleted: isCompleted)
     
         cell.delegate = self
         return cell
     }
-    
-    
-    
+  
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         var id: String
         switch kind {
@@ -309,33 +331,18 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func markCompletedTracker(id: UUID, indexPath: IndexPath, isCompleted: Bool) {
 
- 
-        //        if datePicker.date > Date() {
-        ////            self.showAlert("Нельзя отмечать трекеры для будущих дат")
-        //        }
-        let idSet = Set(completedTrackers.map{ $0.idExecutedTracker})
-//        idSet.contains(id),
-        print(isCompleted)
-        if isCompleted {
-            print("1")
-//            let filteredTrackerRecord = completedTrackers.filter { trackerRecord in
-//                isSameTrackerRecord(trackerRecord, id: id)
-//            }
-            
+        if datePicker.date > Date() {
+            self.showAlert("Нельзя отмечать трекеры для будущих дат")
+        } else if isCompleted {
             completedTrackers.removeAll { trackerRecord in
                 isSameTrackerRecord(trackerRecord, id: id)
             }
-//            isCompleted = isTrackerCompletedToday(id: id)
         } else {
             print("2")
             let trackerRecord = TrackerRecord(idExecutedTracker: id, dateExecuted: datePicker.date)
             completedTrackers.append(trackerRecord)
-
-//            isCompleted = isTrackerCompletedToday(id: id)
         }
-
         collectionView.reloadItems(at: [indexPath])
-        //        (at: [indexPath])
     }
 }
     //
