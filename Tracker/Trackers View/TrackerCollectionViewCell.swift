@@ -7,8 +7,10 @@
 
 import UIKit
 
+
 final class TrackerCollectionViewCell: UICollectionViewCell {
     static let trackerCellIdentifier = String(describing: TrackerCollectionViewCell.self)
+    weak var delegate: TrackerCollectionViewCellDelegate?
     
     lazy var trackerBackgroundView: UIView = {
         let view = UIView()
@@ -51,22 +53,23 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .ypMedium12
         label.textColor = .ypBlack
-        label.text = "\(quantityCompletedTrackers) дней"
         return label
     }()
     
-    lazy var addQuantityButton: UIButton = {
+    lazy var setQuantityButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .ypWhite
 //        button.backgroundColor = .ypBackground
         button.layer.cornerRadius = 17
         button.clipsToBounds = true
-        button.addTarget(self, action: #selector(addQuantityButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(quantityButtonTapped), for: .touchUpInside)
         return button
     }()
     
-
+    private var trackerId: UUID?
+    private var indexPath: IndexPath?
+    private var isTrackerCompleted: Bool?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -78,24 +81,35 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc
-    private func addQuantityButtonTapped() {
-        print("addQuantityButtonTapped")
-        addQuantityButtonSetImage(isTrackerCompleted: true)
-        quantityCompletedTrackers += 1
-        quantityLabel.text = "\(quantityCompletedTrackers) дней"
-//        guard let trackerId = trackerId, let indexPath = indexPath else { return }
-//        if isCompletedToday {
-//            delegate?.uncompletedTracker(id: trackerId, at: indexPath)
-//        } else {
-//            delegate?.completedTracker(id: trackerId, at: indexPath)
-//        }
+    func configurationCell(_ trackerItem: TrackerModel, completedDays: Int, indexPath: IndexPath, isTrackerCompleted: Bool?) {
+        trackerLabel.text = trackerItem.name
+        emojiLabel.text = trackerItem.emoji
+        setQuantityButton.backgroundColor = trackerItem.color
+        trackerBackgroundView.backgroundColor = trackerItem.color
+        quantityLabel.text = "\(completedDays)"
+        self.isTrackerCompleted = isTrackerCompleted
+        self.trackerId = trackerItem.id
+        self.indexPath = indexPath
+//        self.isTrackerCompleted = isTrackerCompleted
+      
+        guard let isTrackerCompleted else {return}
+        quantityButtonSetImage(isTrackerCompleted: isTrackerCompleted)
     }
     
-    func addQuantityButtonSetImage(isTrackerCompleted: Bool) {
+    @objc
+    private func quantityButtonTapped() {
+//        guard let isTrackerCompleted else {return}
+//        addQuantityButtonSetImage(isTrackerCompleted: isTrackerCompleted)
+
+        guard let trackerId, let indexPath else {return}
+        delegate?.markCompletedTracker(id: trackerId, indexPath: indexPath)
+    }
+    let vc = TrackersViewController()
+    
+    func quantityButtonSetImage(isTrackerCompleted: Bool) {
         guard let image: UIImage = (isTrackerCompleted ? UIImage(named: "trackerCompleted") : UIImage(systemName: "plus")) else {return}
-        addQuantityButton.setImage(image, for: .normal)
-        addQuantityButton.layer.opacity = isTrackerCompleted ? 0.3 : 1
+        setQuantityButton.setImage(image, for: .normal)
+        setQuantityButton.layer.opacity = isTrackerCompleted ? 0.3 : 1
     }
     
     private func setupCell() {
@@ -105,7 +119,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         trackerBackgroundView.addSubview(trackerLabel)
         emojiBackgroundView.addSubview(emojiLabel)
         contentView.addSubview(quantityLabel)
-        contentView.addSubview(addQuantityButton)
+        contentView.addSubview(setQuantityButton)
     }
     
     private func setupCellLayout() {
@@ -132,10 +146,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             quantityLabel.topAnchor.constraint(equalTo: trackerBackgroundView.bottomAnchor, constant: 16),
             quantityLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             
-            addQuantityButton.topAnchor.constraint(equalTo: trackerBackgroundView.bottomAnchor, constant: 8),
-            addQuantityButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant:  -12),
-            addQuantityButton.heightAnchor.constraint(equalToConstant: 34),
-            addQuantityButton.widthAnchor.constraint(equalToConstant: 34)
+            setQuantityButton.topAnchor.constraint(equalTo: trackerBackgroundView.bottomAnchor, constant: 8),
+            setQuantityButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant:  -12),
+            setQuantityButton.heightAnchor.constraint(equalToConstant: 34),
+            setQuantityButton.widthAnchor.constraint(equalToConstant: 34)
         ])
     }
     

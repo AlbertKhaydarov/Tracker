@@ -17,11 +17,11 @@ final class TrackerHeaderView: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(titleLabel)
         setupTrackerHeaderView()
     }
     
     func setupTrackerHeaderView() {
+        addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
