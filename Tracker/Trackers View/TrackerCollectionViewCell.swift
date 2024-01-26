@@ -96,8 +96,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         quantityButtonSetImage(isTrackerCompleted: isTrackerCompleted)
     }
     
-    @objc
-    private func quantityButtonTapped() {
+    @objc private func quantityButtonTapped() {
 //        guard let isTrackerCompleted else {return}
 //        addQuantityButtonSetImage(isTrackerCompleted: isTrackerCompleted)
 

@@ -50,27 +50,37 @@ class TrackersViewController: UIViewController {
         return collection
     }()
     
-    private var datePicker = UIDatePicker()
+    private lazy var datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.datePickerMode = .date
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        return datePicker
+    }()
+    
     let dateFormatter = DateFormatter()
     
-    private var currentDate: Date {
-        return datePicker.date
-    }
-    private lazy var weekday = {
-        self.datePicker.calendar.component(.weekday, from: self.currentDate)
-    }
+    private var searchController: UISearchController?
+
+    private var currentDate = Date()
+//    private var currentDate: Date {
+//        return datePicker.date
+//    }
+//    private lazy var weekday = {
+//        self.datePicker.calendar.component(.weekday, from: self.currentDate)
+//    }
     
     var isCompleted: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
+       
         //MARK: - Mock data
-        
-        
-        let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3, 4])
-        let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3, 4])
+        let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3, 4, 5, 6])
+        let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3, 4, 5, 6])
         let trackerNreg2 = TrackerModel(id: UUID(), name: " Прислали открытку в вотсапе", color: .colorSelection18, emoji: "🎸", timesheet: [1, 3])
-        let trackerNreg3 = TrackerModel(id: UUID(), name: " Изучить IOS", color: .colorSelection14, emoji: "🎸", timesheet: [2, 3])
+        let trackerNreg3 = TrackerModel(id: UUID(), name: " Изучить IOS", color: .colorSelection14, emoji: "🎸", timesheet: [2, 3, 6])
         
         let caregory1 = TrackerCategory(name: "Домашний уют", trackers: [trackerHabits1])
         let caregory2 = TrackerCategory(name: "Радостные мелочи", trackers: [trackerNreg1, trackerNreg2])
@@ -78,17 +88,7 @@ class TrackersViewController: UIViewController {
         categories.append(caregory1)
         categories.append(caregory2)
         categories.append(caregory3)
-        
-//        let dateString1 = "2024-01-09T13:09:43Z"
-//        let dateString2 = "2024-01-08T13:09:43Z"
-//        let trackRec1 = TrackerRecord(idExecutedTracker: trackerHabits1.id, dateExecuted: dateString1.dateTimeDateFromString ?? Date())
-//        let trackRec2 = TrackerRecord(idExecutedTracker: trackerHabits1.id, dateExecuted: dateString2.dateTimeDateFromString ?? Date())
-//        let trackRec3 = TrackerRecord(idExecutedTracker: trackerNreg1.id, dateExecuted: dateString1.dateTimeDateFromString ?? Date())
-//        let trackRec4 = TrackerRecord(idExecutedTracker: trackerNreg2.id, dateExecuted: dateString1.dateTimeDateFromString ?? Date())
-//        completedTrackers.append(trackRec1)
-//        completedTrackers.append(trackRec2)
-//        completedTrackers.append(trackRec3)
-//        completedTrackers.append(trackRec4)
+        //MARK: - end Mock data
         
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -98,23 +98,30 @@ class TrackersViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         
-        datePicker.locale = Locale(identifier: "ru_RU")
-        datePicker.preferredDatePickerStyle = .compact
-        datePicker.datePickerMode = .date
-        
         datePicker.setDate(currentDate, animated: false)
         dateFormatter.dateFormat = "dd.MM.yy"
-        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
-        
+
         addNavButton()
-        
-        
-        let searchController = UISearchController(searchResultsController: nil)
+        setup()
+        setupSearchController()
+    }
+    
+    private func setupSearchController() {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController?.obscuresBackgroundDuringPresentation = false
+        definesPresentationContext = true
+        searchController?.searchBar.placeholder = "Поиск"
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.searchController = searchController
-        //        searchController.searchResultsUpdater = self
-
-        setup()
+        
+        searchController?.searchResultsUpdater = self
+        searchController?.searchBar.delegate = self
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.ypBlack,
+        ]
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "Отмена"
     }
     
     private func showErrorStub() {
@@ -125,8 +132,7 @@ class TrackersViewController: UIViewController {
     
     private func setup() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        let selectedWeekday = Calendar.current.component(.weekday, from: currentDate)
-        filteredChoosedByDatePickerDate(selectedWeekday)
+        filteredChoosedByDatePickerDate(getSelectedWeekday())
         
         NSLayoutConstraint.activate([
             datePicker.widthAnchor.constraint(equalToConstant: 120)
@@ -149,15 +155,14 @@ class TrackersViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
-        let selectedDate = sender.date
-        let selectedWeekday = Calendar.current.component(.weekday, from: selectedDate)
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yy"
-        let formattedDate = dateFormatter.string(from: selectedDate)
-        
-//        print("Выбранная дата: \(formattedDate)")
-        filteredChoosedByDatePickerDate(selectedWeekday)      
+    private func getSelectedWeekday() -> Int {
+        let selectedDate = datePicker.date
+        return Calendar.current.component(.weekday, from: selectedDate)
+    }
+    
+    @objc func datePickerValueChanged() {
+        filteredChoosedByDatePickerDate(getSelectedWeekday())
+        dismiss(animated: true)
     }
     
     private func isTrackerCompletedToday(id: UUID) -> Bool {
@@ -193,6 +198,21 @@ class TrackersViewController: UIViewController {
         }
         collectionView.reloadData()
     }
+    
+    private func filteredByText(_ filteredText: String?) {
+        guard let filteredText = filteredText?.lowercased() else {return}
+       
+        displayedTrackers = categories.compactMap { category in
+            let trackers = category.trackers.filter { tracker in
+                let isFilteredText = filteredText.isEmpty ||  tracker.name.lowercased().contains(filteredText)
+                return isFilteredText
+            }
+            if trackers.isEmpty {
+                return nil
+            }
+            return TrackerCategory(name: category.name, trackers: trackers)
+        }
+    }
 
     @objc func addButtonTapped() {
       let eventTypeViewController = EventTypeViewController()
@@ -221,11 +241,29 @@ class TrackersViewController: UIViewController {
     }
 }
 
-//extension TrackersViewController: UISearchResultsUpdating  {
-//    func updateSearchResults(for searchController: UISearchController) {
-//      }
-//
-//}
+extension TrackersViewController: UISearchResultsUpdating  {
+    func updateSearchResults(for searchController: UISearchController) {
+        collectionView.reloadData()
+      }
+
+}
+
+extension TrackersViewController: UISearchBarDelegate  {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+        filteredChoosedByDatePickerDate(getSelectedWeekday())
+        collectionView.reloadData()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    filteredByText(searchText)
+        if searchText.isEmpty {
+            filteredChoosedByDatePickerDate(getSelectedWeekday())
+            collectionView.reloadData()
+        }
+    }
+    
+}
 
 extension TrackersViewController: UICollectionViewDataSource {
     
@@ -318,7 +356,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
         collectionView.reloadItems(at: [indexPath])
     }
 }
-    //
+    //MARK: - TBD
     //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     //            let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
     //            cell?.titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
