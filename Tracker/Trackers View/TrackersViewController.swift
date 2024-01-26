@@ -157,45 +157,19 @@ class TrackersViewController: UIViewController {
         let formattedDate = dateFormatter.string(from: selectedDate)
         
 //        print("Выбранная дата: \(formattedDate)")
-        filteredChoosedByDatePickerDate(selectedWeekday)
-      
+        filteredChoosedByDatePickerDate(selectedWeekday)      
     }
     
     private func isTrackerCompletedToday(id: UUID) -> Bool {
-//        let isContains = completedTrackers.contains { trackerRecord in
-//            isSameTrackerRecord(trackerRecord, id: id)
-//        }
-        let iDs = completedTrackers.compactMap { $0.idExecutedTracker }
-        let set = Set(iDs)
-//        var isContains: Bool = false
-//        let completedItems =
-      return completedTrackers.compactMap { completedItem in
-            set.contains(completedItem.idExecutedTracker) && Calendar.current.isDate(completedItem.dateExecuted, inSameDayAs: datePicker.date)
+        let isSomeCompletedItem = completedTrackers.contains { completedItem in
+            return isSameTrackerInTrackerCompleted(completedItem, id: id)
         }
-       
-//        let day = completedTrackers.compactMap { $0.dateExecuted }
-       
-      
-//        let isContains = set.contains(id)
-        
-//        print(isContains)
-//        return isContains
+        return isSomeCompletedItem
     }
-    
-    private func isSameTrackerRecord(_ record: TrackerRecord, id: UUID) -> Bool {
-        let isSameDay = Calendar.current.isDate(record.dateExecuted, inSameDayAs: datePicker.date)
-        
-        return record.idExecutedTracker == id && isSameDay
+  
+    private func isSameTrackerInTrackerCompleted(_ completedItem: TrackerRecord, id: UUID) -> Bool {
+        return completedItem.idExecutedTracker == id && Calendar.current.isDate(completedItem.dateExecuted, inSameDayAs: datePicker.date)
     }
-    
-//    func isContaintsCompletedTrackerSameDate( in categories: [TrackerCategory], for id: UUID) -> Bool {
-//        let iDs = categories.flatMap { $0.trackers.map { $0.id } }
-//           let set = Set(iDs)
-//
-//        print(set)
-//        return set.contains(id)
-//
-//    }
     
     private func filteredChoosedByDatePickerDate(_ selectedWeekday: Int) {
         displayedTrackers = categories.compactMap { category in
@@ -266,9 +240,7 @@ extension TrackersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell.trackerCellIdentifier, for: indexPath) as? TrackerCollectionViewCell else {return UICollectionViewCell()}
         let trackerItem = displayedTrackers[indexPath.section].trackers[indexPath.row]
-        
         let completedDays = completedTrackers.filter { $0.idExecutedTracker == trackerItem.id }.count
-
         isCompleted = isTrackerCompletedToday(id: trackerItem.id)
         cell.configurationCell(trackerItem, completedDays: completedDays, indexPath: indexPath, isTrackerCompleted: isCompleted)
     
@@ -335,7 +307,8 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
             self.showAlert("Нельзя отмечать трекеры для будущих дат")
         } else if isCompleted {
             completedTrackers.removeAll { trackerRecord in
-                isSameTrackerRecord(trackerRecord, id: id)
+                isSameTrackerInTrackerCompleted(trackerRecord, id: id)
+
             }
         } else {
             print("2")
