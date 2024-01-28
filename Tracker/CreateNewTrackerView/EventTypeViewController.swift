@@ -9,6 +9,8 @@ import UIKit
 
 final class EventTypeViewController: UIViewController {
     
+    weak var delegate: TrackerViewControllerDelegate?
+    
     private lazy var habitTypeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false

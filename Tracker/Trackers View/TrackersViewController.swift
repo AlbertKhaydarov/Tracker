@@ -13,6 +13,7 @@ class TrackersViewController: UIViewController {
     var completedTrackers: [TrackerRecord] = []
     private var displayedTrackers: [TrackerCategory] = []
     
+  
     //MARK: - add Stub Scene Logo
     lazy var errorTrackersLogo: UIImageView = {
         let imageView = UIImageView()

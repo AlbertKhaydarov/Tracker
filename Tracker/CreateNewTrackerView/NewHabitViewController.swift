@@ -58,6 +58,27 @@ final class NewHabitViewController: UIViewController {
         return textField
     }()
     
+    private let lengthLimitationLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Ограничение 38 символов"
+        label.font = UIFont.systemFont(ofSize: 17)
+        label.textColor = .ypRed
+        label.numberOfLines = 1
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
+    
+    private lazy var textFieldStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.distribution = .fill
+        stackView.addArrangedSubview(nameInputTextField)
+        stackView.addArrangedSubview(lengthLimitationLabel)
+        return stackView
+    }()
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
 //            frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 150),
@@ -136,11 +157,16 @@ final class NewHabitViewController: UIViewController {
         setupLayout()
         setupCollectionViewHeight()
     }
+    
+    private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
     func setupViews() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentViewForScrollView)
       
-        contentViewForScrollView.addSubview(nameInputTextField)
+        contentViewForScrollView.addSubview(textFieldStackView)
         contentViewForScrollView.addSubview(tableView)
         contentViewForScrollView.addSubview(collectionView)
         contentViewForScrollView.addSubview(buttonsStackView)
@@ -165,6 +191,10 @@ final class NewHabitViewController: UIViewController {
             nameInputTextField.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor, constant: 24),
             nameInputTextField.leadingAnchor.constraint(equalTo: contentViewForScrollView.leadingAnchor, constant: 16),
             nameInputTextField.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor, constant: -16),
+            
+            textFieldStackView.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor),
+            textFieldStackView.leadingAnchor.constraint(equalTo: contentViewForScrollView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            textFieldStackView.trailingAnchor.constraint(equalTo: contentViewForScrollView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
             tableView.heightAnchor.constraint(equalToConstant: 150),
             tableView.topAnchor.constraint(equalTo: nameInputTextField.bottomAnchor, constant: 24),
@@ -334,8 +364,31 @@ extension NewHabitViewController: UITableViewDataSource {
         cell.textLabel?.text = titlesButtons[indexPath.row]
         cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         cell.accessoryType = .disclosureIndicator
+        
+        
+        
         return cell
     }
+   
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        dismissKeyboard()
+        switch indexPath.row {
+            //MARK: - TBD
+        case 0: let viewController = UIViewController()
+            
+        case 1: let viewController = TimeSheetViewController()
+            show(viewController, "Расписание")
+
+        default: break
+        }
+    }
+        private func show(_ viewController: UIViewController, _ title: String) {
+            let viewController = viewController
+            viewController.title = title
+            let navigationController = UINavigationController(rootViewController: viewController)
+            present(navigationController, animated: true)
+        }
     
     
     
@@ -344,4 +397,6 @@ extension NewHabitViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75.0
     }
+    
+    
 }
