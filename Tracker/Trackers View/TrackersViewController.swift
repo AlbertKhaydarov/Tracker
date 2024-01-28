@@ -64,12 +64,6 @@ class TrackersViewController: UIViewController {
     private var searchController: UISearchController?
 
     private var currentDate = Date()
-//    private var currentDate: Date {
-//        return datePicker.date
-//    }
-//    private lazy var weekday = {
-//        self.datePicker.calendar.component(.weekday, from: self.currentDate)
-//    }
     
     var isCompleted: Bool = false
     
@@ -245,7 +239,6 @@ extension TrackersViewController: UISearchResultsUpdating  {
     func updateSearchResults(for searchController: UISearchController) {
         collectionView.reloadData()
       }
-
 }
 
 extension TrackersViewController: UISearchBarDelegate  {
@@ -262,7 +255,6 @@ extension TrackersViewController: UISearchBarDelegate  {
             collectionView.reloadData()
         }
     }
-    
 }
 
 extension TrackersViewController: UICollectionViewDataSource {
@@ -324,9 +316,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return params.lineSpacingForSectionAt
     }
-    
-    
-    
+     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
         let indexPath = IndexPath(row: 0, section: section)
@@ -338,6 +328,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
                                                   verticalFittingPriority: .fittingSizeLevel)
     }
 }
+
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func markCompletedTracker(id: UUID, indexPath: IndexPath, isCompleted: Bool) {
 
