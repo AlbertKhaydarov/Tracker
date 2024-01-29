@@ -21,6 +21,7 @@
 		7CA997422B5AC7F2003849F8 /* ColorsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA997412B5AC7F2003849F8 /* ColorsCollectionViewCell.swift */; };
 		7CA997442B5F9E67003849F8 /* GeometricParamsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA997432B5F9E67003849F8 /* GeometricParamsCollectionView.swift */; };
 		7CA997662B5FE9F2003849F8 /* TrackerCollectionViewCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA997652B5FE9F2003849F8 /* TrackerCollectionViewCellDelegate.swift */; };
+		7CF780942B67D6B3006F68A1 /* UIDatePicker+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF780932B67D6B3006F68A1 /* UIDatePicker+Extension.swift */; };
 		846CD2FE2B66827F005B9724 /* WeekDays.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846CD2FD2B66827F005B9724 /* WeekDays.swift */; };
 		846CD3002B6682B6005B9724 /* TimeSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846CD2FF2B6682B6005B9724 /* TimeSheetViewController.swift */; };
 		846CD3032B66835F005B9724 /* TimeSheetTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846CD3022B66835F005B9724 /* TimeSheetTableViewCell.swift */; };
@@ -51,6 +52,7 @@
 		7CA997412B5AC7F2003849F8 /* ColorsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsCollectionViewCell.swift; sourceTree = "<group>"; };
 		7CA997432B5F9E67003849F8 /* GeometricParamsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParamsCollectionView.swift; sourceTree = "<group>"; };
 		7CA997652B5FE9F2003849F8 /* TrackerCollectionViewCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCellDelegate.swift; sourceTree = "<group>"; };
+		7CF780932B67D6B3006F68A1 /* UIDatePicker+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDatePicker+Extension.swift"; sourceTree = "<group>"; };
 		846CD2FD2B66827F005B9724 /* WeekDays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDays.swift; sourceTree = "<group>"; };
 		846CD2FF2B6682B6005B9724 /* TimeSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSheetViewController.swift; sourceTree = "<group>"; };
 		846CD3022B66835F005B9724 /* TimeSheetTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSheetTableViewCell.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				84CF9EF02B4DAD6D006FD446 /* UIColors+Extensions.swift */,
+				7CF780932B67D6B3006F68A1 /* UIDatePicker+Extension.swift */,
 				846CD2FD2B66827F005B9724 /* WeekDays.swift */,
 				7CA997432B5F9E67003849F8 /* GeometricParamsCollectionView.swift */,
 				7C3062BA2B503C2A007516ED /* String+Extensions.swift */,
@@ -269,6 +272,7 @@
 				7C3062A92B4F12C0007516ED /* TrackerModel.swift in Sources */,
 				7C3062BB2B503C2A007516ED /* String+Extensions.swift in Sources */,
 				7C3062B72B5038BF007516ED /* TrackerHeaderView.swift in Sources */,
+				7CF780942B67D6B3006F68A1 /* UIDatePicker+Extension.swift in Sources */,
 				84CF9EFA2B4DB6EE006FD446 /* StatisticsViewController.swift in Sources */,
 				84CF9EDF2B4DA568006FD446 /* SceneDelegate.swift in Sources */,
 				846CD3072B668BBC005B9724 /* TrackerViewControllerDelegate.swift in Sources */,

@@ -56,7 +56,7 @@ class TrackersViewController: UIViewController {
         datePicker.locale = Locale(identifier: "ru_RU")
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
-        datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         return datePicker
     }()
     
@@ -64,7 +64,7 @@ class TrackersViewController: UIViewController {
     
     private var searchController: UISearchController?
 
-    private var currentDate = Date()
+    private var currentDate: String = ""
     
     var isCompleted: Bool = false
     
@@ -93,9 +93,10 @@ class TrackersViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         
-        datePicker.setDate(currentDate, animated: false)
-        dateFormatter.dateFormat = "dd.MM.yy"
+//        datePicker.setDate(currentDate, animated: false)
+//        dateFormatter.dateFormat = "dd.MM.yy"
 
+        setupCustomDatePickerView(with: Date())
         addNavButton()
         setup()
         setupSearchController()
@@ -129,9 +130,9 @@ class TrackersViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         filteredChoosedByDatePickerDate(getSelectedWeekday())
         
-        NSLayoutConstraint.activate([
-            datePicker.widthAnchor.constraint(equalToConstant: 120)
-        ])
+//        NSLayoutConstraint.activate([
+//            datePicker.widthAnchor.constraint(equalToConstant: 120)
+//        ])
        
         view.addSubview(collectionView)
         NSLayoutConstraint.activate([
@@ -155,9 +156,11 @@ class TrackersViewController: UIViewController {
         return Calendar.current.component(.weekday, from: selectedDate)
     }
     
-    @objc func datePickerValueChanged() {
+    @objc func datePickerValueChanged(_ datePicker: UIDatePicker) {
+        let selectedDate = datePicker.date
+        setupCustomDatePickerView(with: selectedDate)
         filteredChoosedByDatePickerDate(getSelectedWeekday())
-        dismiss(animated: true)
+        dismiss(animated: false)
     }
     
     private func isTrackerCompletedToday(id: UUID) -> Bool {
@@ -233,6 +236,35 @@ class TrackersViewController: UIViewController {
         let action = UIAlertAction(title: "OK", style: .default)
         alert.addAction(action)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    func setupCustomDatePickerView(with date: Date) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yy"
+        currentDate = dateFormatter.string(from: date)
+       
+        if let dateLabel = datePicker.viewWithTag(100) as? UILabel {
+                dateLabel.text = currentDate
+            } else {
+                datePicker.addCustomLabel(text: currentDate, width: 100, height: 44)
+            }
+
+        if var dateLabel = findAndModifyDatePickerLabel(in: datePicker.subviews) {
+            dateLabel.isHidden = true
+        }
+    }
+    
+    func findAndModifyDatePickerLabel(in views: [UIView]) -> UILabel? {
+        for view in views {
+            if view is UILabel {
+                let dateLabel = view as! UILabel
+                return dateLabel
+//                break
+            } else if let foundLabel = findAndModifyDatePickerLabel(in: view.subviews) {
+                return foundLabel
+            }
+        }
+        return nil
     }
 }
 
