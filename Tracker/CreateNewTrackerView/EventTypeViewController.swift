@@ -47,19 +47,25 @@ final class EventTypeViewController: UIViewController {
     
     @objc
     private func addNewHabit() {
-        creatNewhabit(titleTypeEvent: TypeEvents.habitType.rawValue)
+        creatNewHabit(titleTypeEvent: TypeEvents.habitType.rawValue, isHabbit: true)
+        
        
     }
     
     @objc
     private func addOneTimeEvent() {
-        creatNewhabit(titleTypeEvent: TypeEvents.oneTimeType.rawValue)
+        creatNewHabit(titleTypeEvent: TypeEvents.oneTimeType.rawValue, isHabbit: false)
 
     }
     
-    private func creatNewhabit(titleTypeEvent: String) {
-        let newHabitViewController = NewHabitViewController()
+    private func creatNewHabit(titleTypeEvent: String, isHabbit: Bool) {
+        let newHabitViewController = NewTrackerViewController()
         newHabitViewController.title = titleTypeEvent
+        newHabitViewController.onTrackerCreated = { [weak self] tracker, titleCategory in
+            guard let self = self else {return}
+            self.delegate?.getNewTracker(tracker, categoryName: titleCategory)
+        }
+        
         let navigationController = UINavigationController(rootViewController: newHabitViewController)
         navigationController.navigationBar.barTintColor = .ypWhite
         present(navigationController, animated: true)

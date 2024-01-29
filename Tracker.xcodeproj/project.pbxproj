@@ -15,7 +15,7 @@
 		7C3062BB2B503C2A007516ED /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C3062BA2B503C2A007516ED /* String+Extensions.swift */; };
 		7C6E60212B4E96C1008A6011 /* UIFonts+Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6E60202B4E96C1008A6011 /* UIFonts+Extentions.swift */; };
 		7CA9971A2B5973EA003849F8 /* EventTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA997192B5973EA003849F8 /* EventTypeViewController.swift */; };
-		7CA9971C2B5A571C003849F8 /* NewHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA9971B2B5A571C003849F8 /* NewHabitViewController.swift */; };
+		7CA9971C2B5A571C003849F8 /* NewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA9971B2B5A571C003849F8 /* NewTrackerViewController.swift */; };
 		7CA9971E2B5A59ED003849F8 /* TypeEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA9971D2B5A59ED003849F8 /* TypeEvents.swift */; };
 		7CA997402B5ABB27003849F8 /* EmojiCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA9973F2B5ABB27003849F8 /* EmojiCollectionViewCell.swift */; };
 		7CA997422B5AC7F2003849F8 /* ColorsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA997412B5AC7F2003849F8 /* ColorsCollectionViewCell.swift */; };
@@ -46,7 +46,7 @@
 		7C3062BA2B503C2A007516ED /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		7C6E60202B4E96C1008A6011 /* UIFonts+Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFonts+Extentions.swift"; sourceTree = "<group>"; };
 		7CA997192B5973EA003849F8 /* EventTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTypeViewController.swift; sourceTree = "<group>"; };
-		7CA9971B2B5A571C003849F8 /* NewHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHabitViewController.swift; sourceTree = "<group>"; };
+		7CA9971B2B5A571C003849F8 /* NewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewController.swift; sourceTree = "<group>"; };
 		7CA9971D2B5A59ED003849F8 /* TypeEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeEvents.swift; sourceTree = "<group>"; };
 		7CA9973F2B5ABB27003849F8 /* EmojiCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCollectionViewCell.swift; sourceTree = "<group>"; };
 		7CA997412B5AC7F2003849F8 /* ColorsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -95,7 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				7CA997192B5973EA003849F8 /* EventTypeViewController.swift */,
-				7CA9971B2B5A571C003849F8 /* NewHabitViewController.swift */,
+				7CA9971B2B5A571C003849F8 /* NewTrackerViewController.swift */,
 				7CA9973F2B5ABB27003849F8 /* EmojiCollectionViewCell.swift */,
 				7CA997412B5AC7F2003849F8 /* ColorsCollectionViewCell.swift */,
 				846CD3012B668321005B9724 /* TimeSheet */,
@@ -267,7 +267,7 @@
 				846CD3002B6682B6005B9724 /* TimeSheetViewController.swift in Sources */,
 				7CA997402B5ABB27003849F8 /* EmojiCollectionViewCell.swift in Sources */,
 				7C3062B22B50308B007516ED /* TrackerCollectionViewCell.swift in Sources */,
-				7CA9971C2B5A571C003849F8 /* NewHabitViewController.swift in Sources */,
+				7CA9971C2B5A571C003849F8 /* NewTrackerViewController.swift in Sources */,
 				7C3062B02B4F162D007516ED /* TrackerRecord.swift in Sources */,
 				7C3062A92B4F12C0007516ED /* TrackerModel.swift in Sources */,
 				7C3062BB2B503C2A007516ED /* String+Extensions.swift in Sources */,

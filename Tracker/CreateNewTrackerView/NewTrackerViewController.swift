@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class NewHabitViewController: UIViewController {
+final class NewTrackerViewController: UIViewController {
     
     private let colorSelection: [UIColor] = UIColor.colorSelection
     private let emojiesCollection: [String] = String.emojiesCollection
@@ -31,18 +31,6 @@ final class NewHabitViewController: UIViewController {
         return contentView
     }()
     
-    private let SymbolsLimitLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Ограничение 38 символов"
-        label.font = .ypRegular17
-        label.textColor = .ypRed
-        label.numberOfLines = 1
-        label.textAlignment = .center
-        label.isHidden = true
-        return label
-    }()
-    
     private lazy var nameInputTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -60,6 +48,7 @@ final class NewHabitViewController: UIViewController {
     
     private let lengthLimitationLabel: UILabel = {
         let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Ограничение 38 символов"
         label.font = UIFont.systemFont(ofSize: 17)
         label.textColor = .ypRed
@@ -71,6 +60,7 @@ final class NewHabitViewController: UIViewController {
     
     private lazy var textFieldStackView: UIStackView = {
         let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.spacing = 8
         stackView.distribution = .fill
@@ -104,7 +94,7 @@ final class NewHabitViewController: UIViewController {
         collectionView.register(TrackerHeaderView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                                 withReuseIdentifier: "header")
-
+        collectionView.allowsMultipleSelection = true
         collectionView.backgroundColor = .ypWhite
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.isScrollEnabled = false
@@ -144,10 +134,12 @@ final class NewHabitViewController: UIViewController {
         button.backgroundColor = .ypGray
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-//        button.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         button.isEnabled = false
         return button
     }()
+    
+    var onTrackerCreated: ((_ tracker: TrackerModel, _ titleCategory: String?) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -158,6 +150,43 @@ final class NewHabitViewController: UIViewController {
         setupCollectionViewHeight()
     }
     
+//    func createdNewTrackerWithEvent( _ tracker: TrackerModel, _ titleCategory: String?) -> Void? {
+//        let newTracker = TrackerModel(id: UUID(), name: tracker.name, color: tracker.color, emoji: tracker.emoji, timesheet: tracker.timesheet)
+//        
+//        return
+//    }
+//    
+    @objc private func createButtonTapped() {
+        let category = "1"
+        guard let text = nameInputTextField.text else { return }
+            let type = TypeEvents.habitType.rawValue
+        switch type {
+        case TypeEvents.habitType.rawValue :
+            let newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "🙂", timesheet: [1])
+            onTrackerCreated?(newTracker, category)
+        case TypeEvents.oneTimeType.rawValue:
+//            let newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "😻", timesheet: [1])
+            createButton.isEnabled = false
+        default:
+            break
+        }
+       
+//        guard let text = nameInputTextField.text, /*let category = detailTextCategory*/ else { return }
+//        guard let selectedEmojieIndexPath = isSelectedEmoji, let selectedColorIndexPath = isSelectedColor else { return }
+//        let emojie = emojies[selectedEmojieIndexPath.row]
+//        let color = colors[selectedColorIndexPath.row]
+//        
+//        if UserDefaultsManager.showIrregularEvent ?? true {
+//            let newTracker = Tracker(id: UUID(), name: text, color: color, emojie: emojie, timetable: nil)
+//            onTrackerCreated?(newTracker, category)
+//        } else {
+//            guard let timetabel = detailTextDays else { return }
+//            let newTracker = Tracker(id: UUID(), name: text, color: color, emojie: emojie, timetable: timetabel)
+//            onTrackerCreated?(newTracker, category)
+//        }
+        self.view.window?.rootViewController?.dismiss(animated: true)
+    }
+    
     private func dismissKeyboard() {
         view.endEditing(true)
     }
@@ -165,13 +194,11 @@ final class NewHabitViewController: UIViewController {
     func setupViews() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentViewForScrollView)
-      
         contentViewForScrollView.addSubview(textFieldStackView)
         contentViewForScrollView.addSubview(tableView)
         contentViewForScrollView.addSubview(collectionView)
         contentViewForScrollView.addSubview(buttonsStackView)
         
-//        collectionViewHeightContraint = collectionView.heightAnchor.constraint(equalToConstant: 0)
     }
     
     func setupLayout() {
@@ -187,17 +214,24 @@ final class NewHabitViewController: UIViewController {
             contentViewForScrollView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentViewForScrollView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             
-            nameInputTextField.heightAnchor.constraint(equalToConstant: 75),
-            nameInputTextField.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor, constant: 24),
-            nameInputTextField.leadingAnchor.constraint(equalTo: contentViewForScrollView.leadingAnchor, constant: 16),
-            nameInputTextField.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor, constant: -16),
+//            textFieldStackView.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor),
+            textFieldStackView.leadingAnchor.constraint(equalTo: contentViewForScrollView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            textFieldStackView.trailingAnchor.constraint(equalTo: contentViewForScrollView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
-            textFieldStackView.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor),
-            textFieldStackView.leadingAnchor.constraint(equalTo: contentViewForScrollView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            textFieldStackView.trailingAnchor.constraint(equalTo: contentViewForScrollView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            textFieldStackView.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor, constant: 24),
+            
+            nameInputTextField.heightAnchor.constraint(equalToConstant: 75),
+//            nameInputTextField.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor, constant: 24),
+//            nameInputTextField.leadingAnchor.constraint(equalTo: contentViewForScrollView.leadingAnchor, constant: 16),
+//            nameInputTextField.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor, constant: -16),
+           
+            nameInputTextField.leadingAnchor.constraint(equalTo: textFieldStackView.leadingAnchor, constant: 0),
+            nameInputTextField.trailingAnchor.constraint(equalTo: textFieldStackView.trailingAnchor, constant: -16),
+            
             
             tableView.heightAnchor.constraint(equalToConstant: 150),
             tableView.topAnchor.constraint(equalTo: nameInputTextField.bottomAnchor, constant: 24),
+            tableView.topAnchor.constraint(equalTo: textFieldStackView.bottomAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: contentViewForScrollView.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor, constant: -16),
             
@@ -206,13 +240,22 @@ final class NewHabitViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor),
 //            collectionView.bottomAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.bottomAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 480),
-// collectionViewHeightContraint,
            
             buttonsStackView.heightAnchor.constraint(equalToConstant: 60),
             buttonsStackView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 16),
             buttonsStackView.leadingAnchor.constraint(equalTo: contentViewForScrollView.leadingAnchor, constant: 20),
             buttonsStackView.trailingAnchor.constraint(equalTo: contentViewForScrollView.trailingAnchor, constant:  -20),
             buttonsStackView.bottomAnchor.constraint(equalTo: contentViewForScrollView.bottomAnchor, constant: -15)
+        ])
+    }
+    
+    func setupLengthLimitationLabelConstraints() {
+        NSLayoutConstraint.activate([
+            lengthLimitationLabel.topAnchor.constraint(equalTo: nameInputTextField.bottomAnchor, constant: 8),
+//            lengthLimitationLabel.centerXAnchor.constraint(equalTo: contentViewForScrollView.centerXAnchor)
+            
+            lengthLimitationLabel.centerXAnchor.constraint(equalTo: textFieldStackView.centerXAnchor)
+            
         ])
     }
     
@@ -224,7 +267,7 @@ final class NewHabitViewController: UIViewController {
 }
 
 // MARK: - UICollectionViewDataSource
-extension NewHabitViewController: UICollectionViewDataSource {
+extension NewTrackerViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 2
     }
@@ -256,13 +299,13 @@ extension NewHabitViewController: UICollectionViewDataSource {
 }
 
 // MARK: - UIScrollViewDelegate
-extension NewHabitViewController: UIScrollViewDelegate {
+extension NewTrackerViewController: UIScrollViewDelegate {
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         view.endEditing(true)
     }
 }
 // MARK: - UICollectionViewDelegate
-extension NewHabitViewController: UICollectionViewDelegate & UICollectionViewDelegateFlowLayout {
+extension NewTrackerViewController: UICollectionViewDelegate & UICollectionViewDelegateFlowLayout {
     
 //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 //        dismissKeyboard()
@@ -347,26 +390,71 @@ extension NewHabitViewController: UICollectionViewDelegate & UICollectionViewDel
     }
 }
 
-extension NewHabitViewController: UITextFieldDelegate {
+// MARK: - UITextFieldDelegate
+extension NewTrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        createButton.isEnabled = true
+        createButton.backgroundColor = .ypBlack
         return true
     }
+//
+        func textFieldShouldClear(_ textField: UITextField) -> Bool {
+//            lengthLimitationLabel.isHidden = true
+            setupLengthLimitationLabelConstraints()
+            createButton.isEnabled = true
+            createButton.backgroundColor = .ypBlack
+            return true
+        }
+//        
+//        func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+//            let currentText = textField.text ?? ""
+//            guard let stringRange = Range(range, in: currentText) else {
+//                return false }
+//            let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+//            if updatedText.count >= 38 {
+//                limitLabel.isHidden = false
+//                setupLengthLimitationLabelConstraints()
+//            } else {
+//                limitLabel.isHidden = true
+//                setupConstraints()
+//            }
+//            updatedText.count == 0 ? (isEnabledDictionary["text"] = false) : (isEnabledDictionary["text"] = true)
+//            createButtonIsEnabled()
+//            return updatedText.count <= 38
+//        }
+//    }
 }
 
-extension NewHabitViewController: UITableViewDataSource {
+extension NewTrackerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return titlesButtons.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = titlesButtons[indexPath.row]
+        
+        var content = cell.defaultContentConfiguration()
+        content.text = titlesButtons[indexPath.row]
+        content.textProperties.color = .ypBlack
+        content.textProperties.font = .ypRegular17
+        
+        //MARK: - TBD
+        switch indexPath.row {
+        case  0:
+            content.secondaryText = "здесь будут выбранные категории"
+        case  1:
+            content.secondaryText = "здесь будут дни расписания"
+        default:
+            break
+        }
+        
+        content.secondaryTextProperties.color = .ypGray
+        content.secondaryTextProperties.font  = .ypRegular17
+        cell.contentConfiguration = content
         cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         cell.accessoryType = .disclosureIndicator
-        
-        
-        
+       
         return cell
     }
    
@@ -393,10 +481,11 @@ extension NewHabitViewController: UITableViewDataSource {
     
     
 }
-extension NewHabitViewController: UITableViewDelegate {
+extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75.0
     }
     
     
 }
+
