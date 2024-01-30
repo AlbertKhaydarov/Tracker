@@ -158,9 +158,25 @@ final class NewTrackerViewController: UIViewController {
 //    
     @objc private func createButtonTapped() {
         let category = "1"
+        
         guard let text = nameInputTextField.text else { return }
-        let newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "🙂", timesheet: [1])
-        onTrackerCreated?(newTracker, category)
+        let newTracker: TrackerModel
+        if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
+            switch typeEvent {
+            case .habitType:
+                newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "🙂", timesheet: [1,2,3])
+                onTrackerCreated?(newTracker, category)
+            case .oneTimeType:
+                newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "🙂", timesheet: [8])
+                onTrackerCreated?(newTracker, category)
+            }
+        } else {
+           print("Ошибка создания трекера")
+            return
+        }
+
+//        let newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "🙂", timesheet: [1])
+//        onTrackerCreated?(newTracker, category)
 //        let type = TypeEvents.habitType
 //        switch type {
 //        case TypeEvents(rawValue: TypeEvents.habitType.rawValue) ?? TypeEvents.habitType :

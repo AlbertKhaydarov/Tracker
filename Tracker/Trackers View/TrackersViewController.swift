@@ -75,7 +75,7 @@ class TrackersViewController: UIViewController {
         let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3, 4, 5, 6])
         let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3, 4, 5, 6])
         let trackerNreg2 = TrackerModel(id: UUID(), name: " Прислали открытку в вотсапе", color: .colorSelection18, emoji: "🎸", timesheet: [1, 3])
-        let trackerNreg3 = TrackerModel(id: UUID(), name: " Изучить IOS", color: .colorSelection14, emoji: "🎸", timesheet: [2, 3, 6])
+        let trackerNreg3 = TrackerModel(id: UUID(), name: " Изучить IOS", color: .colorSelection14, emoji: "🎸", timesheet: [])
         
         let caregory1 = TrackerCategory(name: "Домашний уют", trackers: [trackerHabits1])
         let caregory2 = TrackerCategory(name: "Радостные мелочи", trackers: [trackerNreg1, trackerNreg2])
@@ -177,11 +177,17 @@ class TrackersViewController: UIViewController {
     private func filteredChoosedByDatePickerDate(_ selectedWeekday: Int) {
         displayedTrackers = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
-                guard let timesheet = tracker.timesheet, !timesheet.isEmpty else {return false}
+                guard let timesheet = tracker.timesheet/*, !timesheet.isEmpty*/ else {return false}
                 let isDisplayed = timesheet.contains { selectedDayNumber in
-                    selectedDayNumber == selectedWeekday
+                    selectedDayNumber == selectedWeekday || timesheet.isEmpty
                 }
-                return isDisplayed
+                let iDs: Set<UUID> = Set(completedTrackers.map { record in
+                    return record.idExecutedTracker
+                })
+               
+                let idCopletedNonRegular: Bool = timesheet.isEmpty && !iDs.contains(tracker.id)
+
+                return isDisplayed || idCopletedNonRegular
             }
             if trackers.isEmpty {
                 return nil
@@ -209,6 +215,12 @@ class TrackersViewController: UIViewController {
                 return nil
             }
             return TrackerCategory(name: category.name, trackers: trackers)
+        }
+        if (displayedTrackers.isEmpty && !filteredText.isEmpty){
+            errorLogoStackView.isHidden = false
+            showErrorStub()
+        } else {
+            errorLogoStackView.isHidden = true
         }
     }
 
@@ -376,6 +388,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
         } else {
             let trackerRecord = TrackerRecord(idExecutedTracker: id, dateExecuted: datePicker.date)
             completedTrackers.append(trackerRecord)
+            filteredChoosedByDatePickerDate(getSelectedWeekday())
         }
         collectionView.reloadItems(at: [indexPath])
     }

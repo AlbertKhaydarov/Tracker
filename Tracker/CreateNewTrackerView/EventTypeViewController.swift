@@ -14,13 +14,15 @@ final class EventTypeViewController: UIViewController {
     private lazy var habitTypeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Привычка", for: .normal)
-        button.addTarget(self, action: #selector(addNewHabit), for: .touchUpInside)
+        button.setTitle("Привычка", for: .normal)   
         button.titleLabel?.font = .ypMedium16
         button.backgroundColor = .ypBlack
         button.tintColor = .ypWhite
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
+        button.addAction(UIAction(handler: { _ in
+            self.creatNewHabit(titleTypeEvent: TypeEvents.habitType.rawValue)
+        }), for: .touchUpInside)
         return button
     }()
     
@@ -28,12 +30,14 @@ final class EventTypeViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Нерегулярное событие", for: .normal)
-        button.addTarget(self, action: #selector(addOneTimeEvent), for: .touchUpInside)
         button.backgroundColor = .ypBlack
         button.titleLabel?.font = .ypMedium16
         button.tintColor = .ypWhite
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
+        button.addAction(UIAction(handler: { _ in
+            self.creatNewHabit(titleTypeEvent: TypeEvents.oneTimeType.rawValue)
+        }), for: .touchUpInside)
         return button
     }()
     
@@ -45,25 +49,12 @@ final class EventTypeViewController: UIViewController {
         setupLayout()
     }
     
-    @objc
-    private func addNewHabit() {
-        creatNewHabit(titleTypeEvent: TypeEvents.habitType.rawValue, isHabbit: true)
-        
-       
-    }
-    
-    @objc
-    private func addOneTimeEvent() {
-        creatNewHabit(titleTypeEvent: TypeEvents.oneTimeType.rawValue, isHabbit: false)
-
-    }
-    
-    private func creatNewHabit(titleTypeEvent: String, isHabbit: Bool) {
+    private func creatNewHabit(titleTypeEvent: String) {
         let newHabitViewController = NewTrackerViewController()
         newHabitViewController.title = titleTypeEvent
-        newHabitViewController.onTrackerCreated = { [weak self] tracker, titleCategory in
+        newHabitViewController.onTrackerCreated = { [weak self] tracker, category in
             guard let self = self else {return}
-            self.delegate?.getNewTracker(tracker, categoryName: titleCategory)
+            self.delegate?.getNewTracker(tracker, categoryName: category)
         }
         
         let navigationController = UINavigationController(rootViewController: newHabitViewController)
