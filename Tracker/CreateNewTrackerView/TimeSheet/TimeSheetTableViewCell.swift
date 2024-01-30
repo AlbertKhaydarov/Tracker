@@ -9,7 +9,7 @@ import UIKit
 
 class TimeSheetTableViewCell: UITableViewCell {
         
-        weak var delegateCell: TimetableCellDelegate?
+        weak var delegateCell: TimeSheetCellDelegate?
         
         lazy var weekDay: UISwitch = {
             let weekDay = UISwitch()

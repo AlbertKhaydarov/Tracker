@@ -159,17 +159,21 @@ final class NewTrackerViewController: UIViewController {
     @objc private func createButtonTapped() {
         let category = "1"
         guard let text = nameInputTextField.text else { return }
-            let type = TypeEvents.habitType.rawValue
-        switch type {
-        case TypeEvents.habitType.rawValue :
-            let newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "🙂", timesheet: [1])
-            onTrackerCreated?(newTracker, category)
-        case TypeEvents.oneTimeType.rawValue:
-//            let newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "😻", timesheet: [1])
-            createButton.isEnabled = false
-        default:
-            break
-        }
+        let newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "🙂", timesheet: [1])
+        onTrackerCreated?(newTracker, category)
+//        let type = TypeEvents.habitType
+//        switch type {
+//        case TypeEvents(rawValue: TypeEvents.habitType.rawValue) ?? TypeEvents.habitType :
+//            let newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "🙂", timesheet: [1])
+//            onTrackerCreated?(newTracker, category)
+//            print(TypeEvents.habitType.rawValue)
+//        case TypeEvents(rawValue: TypeEvents.oneTimeType.rawValue) ?? TypeEvents.oneTimeType:
+////            let newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "😻", timesheet: [1])
+//            createButton.isEnabled = false
+//            print(TypeEvents.oneTimeType.rawValue)
+//        default:
+//            break
+//        }
        
 //        guard let text = nameInputTextField.text, /*let category = detailTextCategory*/ else { return }
 //        guard let selectedEmojieIndexPath = isSelectedEmoji, let selectedColorIndexPath = isSelectedColor else { return }

@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 final class TrackerCollectionViewCell: UICollectionViewCell {
     static let trackerCellIdentifier = String(describing: TrackerCollectionViewCell.self)
     weak var delegate: TrackerCollectionViewCellDelegate?

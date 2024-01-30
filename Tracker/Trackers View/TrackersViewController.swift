@@ -214,6 +214,7 @@ class TrackersViewController: UIViewController {
 
     @objc func addButtonTapped() {
       let eventTypeViewController = EventTypeViewController()
+        eventTypeViewController.delegate = self
         eventTypeViewController.title = "Создание трекера"
         let navigationController = UINavigationController(rootViewController: eventTypeViewController)
         present(navigationController, animated: true)
@@ -373,12 +374,25 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
 
             }
         } else {
-            print("2")
             let trackerRecord = TrackerRecord(idExecutedTracker: id, dateExecuted: datePicker.date)
             completedTrackers.append(trackerRecord)
         }
         collectionView.reloadItems(at: [indexPath])
     }
+}
+
+// MARK: - TrackerViewControllerDelegate
+extension TrackersViewController: TrackersViewControllerDelegate {
+    func getNewTracker(_ newTracker: TrackerModel?, categoryName: String?) {
+        guard let newTracker = newTracker, let categoryName = categoryName else { return }
+        let newCategory = TrackerCategory(name: categoryName, trackers: [newTracker])
+        categories.append(newCategory)
+        filteredChoosedByDatePickerDate(getSelectedWeekday())
+    }
+    
+   
+      
+    
 }
     //MARK: - TBD
     //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

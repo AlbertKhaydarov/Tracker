@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 protocol TrackerCollectionViewCellDelegate: AnyObject {
     func markCompletedTracker(id: UUID, indexPath: IndexPath, isCompleted: Bool)
 }

@@ -7,13 +7,11 @@
 
 import UIKit
 
-class TimeSheetViewController: UIViewController, TimetableCellDelegate {
- 
+class TimeSheetViewController: UIViewController, TimeSheetCellDelegate {
     
-
     private var timeSheet: [String] = []
     private var dataSource: UITableViewDiffableDataSource<Int, WeekDays>!
-  
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 200), style: .insetGrouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -83,7 +81,7 @@ class TimeSheetViewController: UIViewController, TimetableCellDelegate {
         print(#function)
     }
 }
-
+//MARK: - TBD
 extension TimeSheetViewController {
     func getSwitchDay (for day: String) {
         

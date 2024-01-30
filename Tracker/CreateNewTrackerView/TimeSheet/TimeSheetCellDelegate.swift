@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol TimetableCellDelegate: AnyObject {
+protocol TimeSheetCellDelegate: AnyObject {
     func getSwitchDay (for day: String)
 }

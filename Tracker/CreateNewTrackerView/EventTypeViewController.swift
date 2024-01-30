@@ -9,7 +9,7 @@ import UIKit
 
 final class EventTypeViewController: UIViewController {
     
-    weak var delegate: TrackerViewControllerDelegate?
+    weak var delegate: TrackersViewControllerDelegate?
     
     private lazy var habitTypeButton: UIButton = {
         let button = UIButton()
