@@ -7,10 +7,10 @@
 
 import UIKit
 
-class EmojiCollectionViewCell: UICollectionViewCell {
+final class EmojiCollectionViewCell: UICollectionViewCell {
     static let emojiCollectionViewCellIdentifier = String(describing: EmojiCollectionViewCell.self)
     
-    let titleLabel: UILabel = {
+    lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .ypBold32
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -26,7 +26,7 @@ class EmojiCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupViews() {
+    private func setupViews() {
         contentView.addSubview(titleLabel)
         
         NSLayoutConstraint.activate([

@@ -7,10 +7,10 @@
 
 import UIKit
 
-class ColorsCollectionViewCell: UICollectionViewCell {
+final class ColorsCollectionViewCell: UICollectionViewCell {
     static let colorsCollectionViewCellIdentifier = String(describing: ColorsCollectionViewCell.self)
     
-    let colorItemView: UIView = {
+    lazy var colorItemView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
         view.layer.masksToBounds = true
@@ -27,7 +27,7 @@ class ColorsCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupViews() {
+    private func setupViews() {
         contentView.addSubview(colorItemView)
         
         NSLayoutConstraint.activate([

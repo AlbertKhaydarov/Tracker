@@ -20,13 +20,13 @@ final class TrackerHeaderView: UICollectionReusableView {
         setupTrackerHeaderView()
     }
     
-    func setupTrackerHeaderView() {
+    private func setupTrackerHeaderView() {
         addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
-//            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -28),
+            //            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -28),
             titleLabel.topAnchor.constraint(equalTo: topAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])

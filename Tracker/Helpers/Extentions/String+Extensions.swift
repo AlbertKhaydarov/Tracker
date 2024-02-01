@@ -45,4 +45,17 @@ extension String {
         }
         return "Weekday"
     }
+    
+    func shortDays(for weekDay: String) -> Int {
+        switch weekDay {
+        case "Понедельник": return 2
+        case "Вторник": return 3
+        case "Среда": return 4
+        case "Четверг": return 5
+        case "Пятница": return 6
+        case "Суббота": return 7
+        case "Воскресенье": return 1
+        default: return 100
+        }
+    }
 }

@@ -11,7 +11,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     static let trackerCellIdentifier = String(describing: TrackerCollectionViewCell.self)
     weak var delegate: TrackerCollectionViewCellDelegate?
     
-    lazy var trackerBackgroundView: UIView = {
+    private lazy var trackerBackgroundView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 16
@@ -19,7 +19,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    lazy var trackerLabel: UILabel = {
+    private lazy var trackerLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 2
@@ -28,7 +28,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    lazy var emojiBackgroundView: UIView = {
+    private lazy var emojiBackgroundView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 12
@@ -37,7 +37,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    lazy var emojiLabel: UILabel = {
+    private lazy var emojiLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
@@ -47,7 +47,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     private var quantityCompletedTrackers = 0
     
-    lazy var quantityLabel: UILabel = {
+    private lazy var quantityLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .ypMedium12
@@ -55,11 +55,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    lazy var setQuantityButton: UIButton = {
+    private lazy var setQuantityButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .ypWhite
-//        button.backgroundColor = .ypBackground
         button.layer.cornerRadius = 17
         button.clipsToBounds = true
         button.addTarget(self, action: #selector(quantityButtonTapped), for: .touchUpInside)
@@ -89,26 +88,21 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         self.isTrackerCompleted = isTrackerCompleted
         self.trackerId = trackerItem.id
         self.indexPath = indexPath
-//        self.isTrackerCompleted = isTrackerCompleted
-      
+        //        self.isTrackerCompleted = isTrackerCompleted
+        
         guard let isTrackerCompleted else {return}
         quantityButtonSetImage(isTrackerCompleted: isTrackerCompleted)
     }
     
     @objc private func quantityButtonTapped() {
-//        guard let isTrackerCompleted else {return}
-//        addQuantityButtonSetImage(isTrackerCompleted: isTrackerCompleted)
-
         guard let trackerId,
               let indexPath,
               let isTrackerCompleted
         else {return}
-        
         delegate?.markCompletedTracker(id: trackerId, indexPath: indexPath, isCompleted: isTrackerCompleted)
     }
-    let vc = TrackersViewController()
-    
-    func quantityButtonSetImage(isTrackerCompleted: Bool) {
+  
+    private func quantityButtonSetImage(isTrackerCompleted: Bool) {
         guard let image: UIImage = (isTrackerCompleted ? UIImage(named: "trackerCompleted") : UIImage(systemName: "plus")) else {return}
         setQuantityButton.setImage(image, for: .normal)
         setQuantityButton.layer.opacity = isTrackerCompleted ? 0.3 : 1
@@ -135,11 +129,9 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             emojiBackgroundView.topAnchor.constraint(equalTo: trackerBackgroundView.topAnchor, constant: 12),
             emojiBackgroundView.heightAnchor.constraint(equalToConstant: 24),
             emojiBackgroundView.widthAnchor.constraint(equalToConstant: 24),
-          
+            
             emojiLabel.centerXAnchor.constraint(equalTo: emojiBackgroundView.centerXAnchor),
             emojiLabel.centerYAnchor.constraint(equalTo: emojiBackgroundView.centerYAnchor),
-//            emojiLabel.widthAnchor.constraint(equalToConstant: 16),
-//            emojiLabel.heightAnchor.constraint(equalToConstant: 16),
             
             trackerLabel.leadingAnchor.constraint(equalTo: trackerBackgroundView.leadingAnchor, constant: 12),
             trackerLabel.trailingAnchor.constraint(equalTo: trackerBackgroundView.trailingAnchor, constant: -12),
@@ -154,5 +146,4 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             setQuantityButton.widthAnchor.constraint(equalToConstant: 34)
         ])
     }
-    
 }

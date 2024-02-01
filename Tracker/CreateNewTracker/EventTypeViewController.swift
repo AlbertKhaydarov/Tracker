@@ -14,7 +14,7 @@ final class EventTypeViewController: UIViewController {
     private lazy var habitTypeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Привычка", for: .normal)   
+        button.setTitle("Привычка", for: .normal)
         button.titleLabel?.font = .ypMedium16
         button.backgroundColor = .ypBlack
         button.tintColor = .ypWhite
@@ -41,33 +41,38 @@ final class EventTypeViewController: UIViewController {
         return button
     }()
     
+    private var viewRouter: RouterProtocol?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
-        
+        self.viewRouter = ViewRouter()
         setupViews()
         setupLayout()
+    }
+    private func createdNewTrackerWithEvent(newTracker: TrackerModel, category: String?, completion: (TrackerModel, String?) -> Void) {
+        completion(newTracker, category)
     }
     
     private func creatNewHabit(titleTypeEvent: String) {
         let newHabitViewController = NewTrackerViewController()
-        newHabitViewController.title = titleTypeEvent
-        newHabitViewController.onTrackerCreated = { [weak self] tracker, category in
+        
+        newHabitViewController.completionHandlerOnCreateButtonTapped = { [weak self] tracker, category in
             guard let self = self else {return}
             self.delegate?.getNewTracker(tracker, categoryName: category)
         }
         
-        let navigationController = UINavigationController(rootViewController: newHabitViewController)
-        navigationController.navigationBar.barTintColor = .ypWhite
-        present(navigationController, animated: true)
+        if let viewRouter = viewRouter {
+            viewRouter.switchToViewController(from: self, to: newHabitViewController, title: titleTypeEvent)
+        }
     }
     
-    func setupViews() {
+    private func setupViews() {
         view.addSubview(habitTypeButton)
         view.addSubview(oneTimeTypeButton)
     }
     
-    func setupLayout() {
+    private func setupLayout() {
         NSLayoutConstraint.activate([
             habitTypeButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             habitTypeButton.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),

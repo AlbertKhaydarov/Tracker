@@ -7,15 +7,14 @@
 
 import UIKit
 
-class TrackersViewController: UIViewController {
+final class TrackersViewController: UIViewController {
     
-    var categories: [TrackerCategory] = []
-    var completedTrackers: [TrackerRecord] = []
+    private var categories: [TrackerCategory] = []
+    private var completedTrackers: [TrackerRecord] = []
     private var displayedTrackers: [TrackerCategory] = []
     
-  
     //MARK: - add Stub Scene Logo
-    lazy var errorTrackersLogo: UIImageView = {
+    private lazy var errorTrackersLogo: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: "errorTrackersLogo")
@@ -23,7 +22,7 @@ class TrackersViewController: UIViewController {
         return imageView
     }()
     
-    lazy var errorTrackersLabel: UILabel = {
+    private lazy var errorTrackersLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Что будем отслеживать?"
@@ -31,7 +30,7 @@ class TrackersViewController: UIViewController {
         return label
     }()
     
-    lazy var errorLogoStackView: UIStackView = {
+    private lazy var errorLogoStackView: UIStackView = {
         let vStackView = UIStackView(arrangedSubviews: [errorTrackersLogo, errorTrackersLabel])
         vStackView.translatesAutoresizingMaskIntoConstraints = false
         vStackView.axis = .vertical
@@ -45,7 +44,6 @@ class TrackersViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.trackerCellIdentifier)
-//        collection.register(TrackerHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
         collection.dataSource = self
         collection.delegate = self
         return collection
@@ -60,17 +58,13 @@ class TrackersViewController: UIViewController {
         return datePicker
     }()
     
-    let dateFormatter = DateFormatter()
-    
     private var searchController: UISearchController?
-
     private var currentDate: String = ""
-    
-    var isCompleted: Bool = false
+    private var isCompleted: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
         //MARK: - Mock data
         let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3, 4, 5, 6])
         let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3, 4, 5, 6])
@@ -93,9 +87,6 @@ class TrackersViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         
-//        datePicker.setDate(currentDate, animated: false)
-//        dateFormatter.dateFormat = "dd.MM.yy"
-
         setupCustomDatePickerView(with: Date())
         addNavButton()
         setup()
@@ -130,10 +121,6 @@ class TrackersViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         filteredChoosedByDatePickerDate(getSelectedWeekday())
         
-//        NSLayoutConstraint.activate([
-//            datePicker.widthAnchor.constraint(equalToConstant: 120)
-//        ])
-       
         view.addSubview(collectionView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -156,20 +143,21 @@ class TrackersViewController: UIViewController {
         return Calendar.current.component(.weekday, from: selectedDate)
     }
     
-    @objc func datePickerValueChanged(_ datePicker: UIDatePicker) {
+    @objc private func datePickerValueChanged(_ datePicker: UIDatePicker) {
         let selectedDate = datePicker.date
         setupCustomDatePickerView(with: selectedDate)
         filteredChoosedByDatePickerDate(getSelectedWeekday())
         dismiss(animated: false)
     }
     
+    //MARK: - Filtered functions
     private func isTrackerCompletedToday(id: UUID) -> Bool {
         let isSomeCompletedItem = completedTrackers.contains { completedItem in
             return isSameTrackerInTrackerCompleted(completedItem, id: id)
         }
         return isSomeCompletedItem
     }
-  
+    
     private func isSameTrackerInTrackerCompleted(_ completedItem: TrackerRecord, id: UUID) -> Bool {
         return completedItem.idExecutedTracker == id && Calendar.current.isDate(completedItem.dateExecuted, inSameDayAs: datePicker.date)
     }
@@ -184,9 +172,9 @@ class TrackersViewController: UIViewController {
                 let iDs: Set<UUID> = Set(completedTrackers.map { record in
                     return record.idExecutedTracker
                 })
-               
+                
                 let idCopletedNonRegular: Bool = timesheet.isEmpty && !iDs.contains(tracker.id)
-
+                
                 return isDisplayed || idCopletedNonRegular
             }
             if trackers.isEmpty {
@@ -205,7 +193,7 @@ class TrackersViewController: UIViewController {
     
     private func filteredByText(_ filteredText: String?) {
         guard let filteredText = filteredText?.lowercased() else {return}
-       
+        
         displayedTrackers = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
                 let isFilteredText = filteredText.isEmpty ||  tracker.name.lowercased().contains(filteredText)
@@ -223,56 +211,59 @@ class TrackersViewController: UIViewController {
             errorLogoStackView.isHidden = true
         }
     }
-
-    @objc func addButtonTapped() {
-      let eventTypeViewController = EventTypeViewController()
+    
+    @objc private func addButtonTapped() {
+        let eventTypeViewController = EventTypeViewController()
         eventTypeViewController.delegate = self
         eventTypeViewController.title = "Создание трекера"
         let navigationController = UINavigationController(rootViewController: eventTypeViewController)
         present(navigationController, animated: true)
     }
-
-    func addErrorLogo() {
-            view.addSubview(errorLogoStackView)
-            setupErrorLogoLayout()
+    
+    //MARK: - setup Stub image
+    private func addErrorLogo() {
+        view.addSubview(errorLogoStackView)
+        setupErrorLogoLayout()
     }
     
-    func setupErrorLogoLayout() {
+    private func setupErrorLogoLayout() {
         NSLayoutConstraint.activate([
             errorLogoStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             errorLogoStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)]
         )
     }
     
-    func showAlert(_ message: String) {
+    //MARK: - future date error alert
+    private func showAlert(_ message: String) {
         let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .default)
         alert.addAction(action)
         self.present(alert, animated: true, completion: nil)
     }
     
-    func setupCustomDatePickerView(with date: Date) {
+    //MARK: - custom format datePicker label like Figma design
+    private func setupCustomDatePickerView(with date: Date) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yy"
         currentDate = dateFormatter.string(from: date)
-       
+        
         if let dateLabel = datePicker.viewWithTag(100) as? UILabel {
-                dateLabel.text = currentDate
-            } else {
-                datePicker.addCustomLabel(text: currentDate, width: 100, height: 44)
-            }
-
-        if var dateLabel = findAndModifyDatePickerLabel(in: datePicker.subviews) {
+            dateLabel.text = currentDate
+        } else {
+            datePicker.addCustomLabel(text: currentDate, width: 100, height: 44)
+        }
+        
+        if let dateLabel = findAndModifyDatePickerLabel(in: datePicker.subviews) {
             dateLabel.isHidden = true
         }
     }
     
-    func findAndModifyDatePickerLabel(in views: [UIView]) -> UILabel? {
+    private func findAndModifyDatePickerLabel(in views: [UIView]) -> UILabel? {
         for view in views {
             if view is UILabel {
                 let dateLabel = view as! UILabel
                 return dateLabel
-//                break
+                break
             } else if let foundLabel = findAndModifyDatePickerLabel(in: view.subviews) {
                 return foundLabel
             }
@@ -281,12 +272,14 @@ class TrackersViewController: UIViewController {
     }
 }
 
+//MARK: - UISearchResultsUpdating
 extension TrackersViewController: UISearchResultsUpdating  {
     func updateSearchResults(for searchController: UISearchController) {
         collectionView.reloadData()
-      }
+    }
 }
 
+//MARK: - UISearchBarDelegate
 extension TrackersViewController: UISearchBarDelegate  {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
@@ -295,20 +288,20 @@ extension TrackersViewController: UISearchBarDelegate  {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-    filteredByText(searchText)
+        filteredByText(searchText)
         if searchText.isEmpty {
             filteredChoosedByDatePickerDate(getSelectedWeekday())
             collectionView.reloadData()
         }
     }
 }
-
+//MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return displayedTrackers.count
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return displayedTrackers[section].trackers.count
     }
@@ -319,11 +312,11 @@ extension TrackersViewController: UICollectionViewDataSource {
         let completedDays = completedTrackers.filter { $0.idExecutedTracker == trackerItem.id }.count
         isCompleted = isTrackerCompletedToday(id: trackerItem.id)
         cell.configurationCell(trackerItem, completedDays: completedDays, indexPath: indexPath, isTrackerCompleted: isCompleted)
-    
+        
         cell.delegate = self
         return cell
     }
-  
+    
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         var id: String
         switch kind {
@@ -333,7 +326,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         default:
             id = ""
         }
-    
+        
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! TrackerHeaderView
         view.titleLabel.text = displayedTrackers[indexPath.section].name
         return view
@@ -362,7 +355,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return params.lineSpacingForSectionAt
     }
-     
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         
         let indexPath = IndexPath(row: 0, section: section)
@@ -375,15 +368,16 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
     }
 }
 
+//MARK: - TrackerCollectionViewCellDelegate
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func markCompletedTracker(id: UUID, indexPath: IndexPath, isCompleted: Bool) {
-
+        
         if datePicker.date > Date() {
             self.showAlert("Нельзя отмечать трекеры для будущих дат")
         } else if isCompleted {
             completedTrackers.removeAll { trackerRecord in
                 isSameTrackerInTrackerCompleted(trackerRecord, id: id)
-
+                
             }
         } else {
             let trackerRecord = TrackerRecord(idExecutedTracker: id, dateExecuted: datePicker.date)
@@ -401,56 +395,27 @@ extension TrackersViewController: TrackersViewControllerDelegate {
         let newCategory = TrackerCategory(name: categoryName, trackers: [newTracker])
         categories.append(newCategory)
         filteredChoosedByDatePickerDate(getSelectedWeekday())
+        print(newTracker)
     }
-    
-   
-      
-    
 }
-    //MARK: - TBD
-    //    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    //            let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
-    //            cell?.titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
-    //        }
-    //
-    //    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-    //        let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
-    //        cell?.titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-    //    }
-    //// MARK: - iOS 16+
-    //if #available(iOS 16.0, *){
-    //    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
-    //        guard indexPaths.count > 0 else {
-    //                   return nil
-    //               }
-    //        let indexPath = indexPaths[0]
-    //
-    //               return UIContextMenuConfiguration(actionProvider: { actions in    // 4
-    //                   return UIMenu(children: [                                     // 5
-    //                       UIAction(title: "Bold") { [weak self] _ in                // 6
-    //                           self?.makeBold(indexPath: indexPath)
-    //                       },
-    //                       UIAction(title: "Italic") { [weak self] _ in              // 7
-    //                           self?.makeItalic(indexPath: indexPath)
-    //                       },
-    //                   ])
-    //               })
-    //    }
-    //
-    //    private func makeBold(indexPath: IndexPath) {
-    //            let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
-    //            cell?.titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
-    //        }
-    //
-    //    private func makeItalic(indexPath: IndexPath) {
-    //        let cell = collectionView.cellForItem(at: indexPath) as? LetterCollectionViewCell
-    //        cell?.titleLabel.font = UIFont.italicSystemFont(ofSize: 17)
-    //    }
+//MARK: - TBD
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//
+//        }
+//
+//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+//
+//    }
+//MARK: - iOS 16+
+//if #available(iOS 16.0, *){
+//    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+//
+//    }
+//
 //} else {
-    // MARK: - iOS <16
-    //    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-    //        return nil
-    //    }
-//}
-//}
+// MARK: - iOS <16
+//    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+//
+//    }
+
 

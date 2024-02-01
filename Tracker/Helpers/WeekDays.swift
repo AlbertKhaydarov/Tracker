@@ -15,5 +15,6 @@ import Foundation
     case friday = "Пятница"
     case saturday = "Суббота"
     case sunday = "Воскресенье"
-    static let numberOfDays = WeekDays.allCases.count
+    static let allDaysCount = WeekDays.allCases.count
 }
+

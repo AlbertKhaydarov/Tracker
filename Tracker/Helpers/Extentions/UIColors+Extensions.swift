@@ -8,6 +8,7 @@
 import UIKit
 
 extension UIColor {
+    //MARK: - To enable for earlier Xcode
     //            static var ypBackground: UIColor { UIColor(named: "Figma Background") ?? UIColor.darkGray}
     //            static var ypBlack: UIColor { UIColor(named: "Figma Black") ?? UIColor.black}
     //            static var ypBlue: UIColor { UIColor(named: "Figma Blue") ?? UIColor.blue}

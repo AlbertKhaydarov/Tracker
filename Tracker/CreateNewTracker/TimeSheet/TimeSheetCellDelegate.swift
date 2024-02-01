@@ -8,5 +8,5 @@
 import Foundation
 
 protocol TimeSheetCellDelegate: AnyObject {
-    func getSwitchDay (for day: String)
+    func getSwitchDay (for choosedWeekDay: Int)
 }

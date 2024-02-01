@@ -11,8 +11,3 @@ struct TrackerCategory {
     let name: String
     let trackers: [TrackerModel]
 }
-
-//enum CategoryName: String {
-//    case Habits = "Привычки"
-//    case NonRegular = "Нерегулярного события"
-//}
