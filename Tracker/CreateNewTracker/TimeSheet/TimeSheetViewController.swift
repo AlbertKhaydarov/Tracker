@@ -32,9 +32,7 @@ final class TimeSheetViewController: UIViewController {
         button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
-        button.addAction(UIAction(handler: { _ in
-            self.readyButtonTapped()
-        }), for: .touchUpInside)
+        button.addTarget(self, action: #selector(readyButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -55,7 +53,8 @@ final class TimeSheetViewController: UIViewController {
         
         dataSource = UITableViewDiffableDataSource(tableView: tableView, cellProvider: { (tableView, indexPath, day) -> UITableViewCell? in
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as? TimeSheetTableViewCell else {return UITableViewCell()}
-            cell.configure(with: day)
+            cell.configure(with: day, indexPath: indexPath)
+            cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
             cell.delegate = self
             return cell
         })
@@ -80,7 +79,7 @@ final class TimeSheetViewController: UIViewController {
     }
     
     //MARK: - TBD
-    private func readyButtonTapped() {
+   @objc private func readyButtonTapped() {
         delegate?.addTimeSheet(timeSheet)
         dismiss(animated: true)
     }
@@ -88,6 +87,9 @@ final class TimeSheetViewController: UIViewController {
 //MARK: - TBD
 extension TimeSheetViewController: TimeSheetCellDelegate {
     func getSwitchDay (for choosedWeekDay: Int) {
-        timeSheet.append(choosedWeekDay)
+        if !timeSheet.contains(choosedWeekDay) {
+            timeSheet.append(choosedWeekDay)
+        }
+        timeSheet.sort()
     }
 }

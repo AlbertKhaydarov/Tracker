@@ -20,9 +20,7 @@ final class EventTypeViewController: UIViewController {
         button.tintColor = .ypWhite
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.addAction(UIAction(handler: { _ in
-            self.creatNewHabit(titleTypeEvent: TypeEvents.habitType.rawValue)
-        }), for: .touchUpInside)
+        button.addTarget(self, action: #selector(creatNewHabit(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -35,9 +33,7 @@ final class EventTypeViewController: UIViewController {
         button.tintColor = .ypWhite
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.addAction(UIAction(handler: { _ in
-            self.creatNewHabit(titleTypeEvent: TypeEvents.oneTimeType.rawValue)
-        }), for: .touchUpInside)
+        button.addTarget(self, action: #selector(creatNewHabit(_:)), for: .touchUpInside)
         return button
     }()
     
@@ -53,8 +49,9 @@ final class EventTypeViewController: UIViewController {
     private func createdNewTrackerWithEvent(newTracker: TrackerModel, category: String?, completion: (TrackerModel, String?) -> Void) {
         completion(newTracker, category)
     }
-    
-    private func creatNewHabit(titleTypeEvent: String) {
+   
+//    @objc private func creatNewHabit(titleTypeEvent: String) {
+    @objc private func creatNewHabit(_ sender: UIButton) {
         let newHabitViewController = NewTrackerViewController()
         
         newHabitViewController.completionHandlerOnCreateButtonTapped = { [weak self] tracker, category in
@@ -62,8 +59,13 @@ final class EventTypeViewController: UIViewController {
             self.delegate?.getNewTracker(tracker, categoryName: category)
         }
         
-        if let viewRouter = viewRouter {
-            viewRouter.switchToViewController(from: self, to: newHabitViewController, title: titleTypeEvent)
+        guard let viewRouter = viewRouter else {return}
+        if sender == habitTypeButton {
+            viewRouter.switchToViewController(from: self, to: newHabitViewController, title: TypeEvents.habitType.rawValue)
+        } else if sender == oneTimeTypeButton {
+            viewRouter.switchToViewController(from: self, to: newHabitViewController, title: TypeEvents.oneTimeType.rawValue)
+        } else {
+            return
         }
     }
     

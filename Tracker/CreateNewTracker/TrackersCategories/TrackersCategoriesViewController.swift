@@ -31,9 +31,7 @@ final class TrackersCategoriesViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
-        button.addAction(UIAction(handler: { _ in
-            self.addCategoryButtonTapped()
-        }), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
         return button
     }()
  
@@ -52,7 +50,7 @@ final class TrackersCategoriesViewController: UIViewController {
     }
     
     //MARK: - TBD
-    private func addCategoryButtonTapped() {
+    @objc private func addCategoryButtonTapped() {
         print(#function)
     }
     
@@ -88,13 +86,10 @@ extension TrackersCategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoriesTypeTableViewCell.reuseIdentifier, for: indexPath) as? CategoriesTypeTableViewCell else {return UITableViewCell()}
         
-        var content = cell.defaultContentConfiguration()
         let item = categoriesType[indexPath.row]
-        
-        content.text = item.name
-        content.textProperties.color = .ypBlack
-        content.textProperties.font = .ypRegular17
-        cell.contentConfiguration = content
+        cell.textLabel?.text = item.name
+        cell.textLabel?.textColor = .ypBlack
+        cell.textLabel?.font = .ypRegular17
         cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         cell.accessoryType = item.isSelected ? .checkmark : .none
         

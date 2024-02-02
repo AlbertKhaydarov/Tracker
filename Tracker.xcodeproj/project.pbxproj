@@ -41,6 +41,7 @@
 		84CF9EF12B4DAD6D006FD446 /* UIColors+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EF02B4DAD6D006FD446 /* UIColors+Extensions.swift */; };
 		84CF9EF82B4DB6C4006FD446 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EF72B4DB6C4006FD446 /* TrackersViewController.swift */; };
 		84CF9EFA2B4DB6EE006FD446 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EF92B4DB6EE006FD446 /* StatisticsViewController.swift */; };
+		84FAB1B42B6D71BD000BB5BD /* NewTrackerViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FAB1B32B6D71BD000BB5BD /* NewTrackerViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +81,7 @@
 		84CF9EF02B4DAD6D006FD446 /* UIColors+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColors+Extensions.swift"; sourceTree = "<group>"; };
 		84CF9EF72B4DB6C4006FD446 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
 		84CF9EF92B4DB6EE006FD446 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
+		84FAB1B32B6D71BD000BB5BD /* NewTrackerViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				7CA9971B2B5A571C003849F8 /* NewTrackerViewController.swift */,
+				84FAB1B32B6D71BD000BB5BD /* NewTrackerViewCell.swift */,
 				7CF780BE2B6B90D9006F68A1 /* NewTrackerViewControllerDelegate.swift */,
 				7CA997192B5973EA003849F8 /* EventTypeViewController.swift */,
 				7CA9973F2B5ABB27003849F8 /* EmojiCollectionViewCell.swift */,
@@ -318,6 +321,7 @@
 				7CF780BA2B6A972A006F68A1 /* RouterProtocol.swift in Sources */,
 				7CF780BD2B6B7FE9006F68A1 /* CategoriesTypeTableViewCell.swift in Sources */,
 				7C3062BB2B503C2A007516ED /* String+Extensions.swift in Sources */,
+				84FAB1B42B6D71BD000BB5BD /* NewTrackerViewCell.swift in Sources */,
 				7C3062B72B5038BF007516ED /* TrackerHeaderView.swift in Sources */,
 				7CF780942B67D6B3006F68A1 /* UIDatePicker+Extension.swift in Sources */,
 				84CF9EFA2B4DB6EE006FD446 /* StatisticsViewController.swift in Sources */,
@@ -474,6 +478,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -503,6 +508,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

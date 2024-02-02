@@ -12,6 +12,7 @@ final class NewTrackerViewController: UIViewController {
     private let colorSelection: [UIColor] = UIColor.colorSelection
     private let emojiesCollection: [String] = String.emojiesCollection
     private var timeSheetWeekDays: [Int]?
+    private var categoryTitle: String = "здесь будут выбранные категории"
     
     //MARK: - to redifine after completed all tracker cases
     private var nameTracker = false
@@ -78,15 +79,18 @@ final class NewTrackerViewController: UIViewController {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.separatorColor = .ypGray
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellReuseIdentifier")
+        tableView.backgroundColor = .ypWhite
+        tableView.register(NewTrackerViewCell.self, forCellReuseIdentifier: "cellReuseIdentifier")
+        tableView.isScrollEnabled = false
         tableView.layer.cornerRadius = 16
         tableView.clipsToBounds = true
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.reloadData()
+
         return tableView
     }()
-    
+
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.register(EmojiCollectionViewCell.self,
@@ -134,10 +138,7 @@ final class NewTrackerViewController: UIViewController {
         button.backgroundColor = .white
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.addAction(UIAction(handler: { _ in
-            self.cancelButtontapped()
-            button.isEnabled = false
-        }), for: .touchUpInside)
+        button.addTarget(self, action: #selector(cancelButtontapped), for: .touchUpInside)
         return button
     }()
     
@@ -148,10 +149,7 @@ final class NewTrackerViewController: UIViewController {
         button.backgroundColor = .ypGray
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.addAction(UIAction(handler: { _ in
-            self.createButtonTapped()
-            button.isEnabled = false
-        }), for: .touchUpInside)
+        button.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         button.isEnabled = false
         return button
     }()
@@ -170,8 +168,9 @@ final class NewTrackerViewController: UIViewController {
         self.viewRouter = ViewRouter()
     }
     
-    private func createButtonTapped() {
-        var category = "1"
+   @objc private func createButtonTapped() {
+       //MARK: - Mock category, to be define in categoryTitle
+       let category = "1"
         
         guard let text = nameInputTextField.text else { return }
         var newTracker: TrackerModel
@@ -193,7 +192,7 @@ final class NewTrackerViewController: UIViewController {
         self.view.window?.rootViewController?.dismiss(animated: true)
     }
     
-    private func cancelButtontapped() {
+   @objc private func cancelButtontapped() {
         dismiss(animated: true)
     }
     
@@ -419,6 +418,7 @@ extension NewTrackerViewController: UITableViewDataSource {
                 rowsInSection = 1
                 tableViewHeightConstraint.constant = 75
                 timeSheetIsEnable = true
+                tableView.separatorStyle = .none
                 createButtonIsEnabled()
             }
         }
@@ -426,23 +426,22 @@ extension NewTrackerViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellReuseIdentifier", for: indexPath)
-        
-        var content = cell.defaultContentConfiguration()
-        content.text = titlesButtons[indexPath.row]
-        content.textProperties.color = .ypBlack
-        content.textProperties.font = .ypRegular17
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cellReuseIdentifier", for: indexPath) as? NewTrackerViewCell else {return UITableViewCell()}
+
+        cell.textLabel?.text = titlesButtons[indexPath.row]
+        cell.textLabel?.textColor = .ypBlack
+        cell.textLabel?.font = .ypRegular17
         
         //MARK: - TBD
         switch indexPath.row {
         case  0:
-            content.secondaryText = "здесь будут выбранные категории"
+            cell.detailTextLabel?.text = categoryTitle
             categoryIsEnable = true
         case  1:
             if let timeSheetShortString: [String] = timeSheetWeekDays?.compactMap({ dayNumber in
                 return "".weekdayFromInt(dayNumber)
             }) {
-                content.secondaryText = timeSheetShortString.joined(separator: ", ")
+                cell.detailTextLabel?.text = timeSheetShortString.joined(separator: ", ")
                 if timeSheetShortString.isEmpty {
                     timeSheetIsEnable = false
                 } else {
@@ -453,12 +452,11 @@ extension NewTrackerViewController: UITableViewDataSource {
             break
         }
         
-        content.secondaryTextProperties.color = .ypGray
-        content.secondaryTextProperties.font  = .ypRegular17
-        cell.contentConfiguration = content
+        cell.detailTextLabel?.textColor = .ypGray
+        cell.detailTextLabel?.font  = .ypRegular17
         cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         cell.accessoryType = .disclosureIndicator
-        
+
         createButtonIsEnabled()
       return cell
     }
@@ -486,6 +484,14 @@ extension NewTrackerViewController: UITableViewDataSource {
 extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75.0
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == 1  {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        } else {
+            tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        }
     }
 }
 
