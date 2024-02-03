@@ -10,12 +10,17 @@ import UIKit
 
 final class ViewRouter: RouterProtocol  {
     
-   init() {}
+    private var viewController: UIViewController?
     
-    func switchToViewController(from: UIViewController, to destimationVC: UIViewController, title: String) {
+    init(viewController: UIViewController?) {
+        self.viewController  = viewController
+    }
+    
+    func switchToViewController(to destimationVC:UIViewController, title: String) {
+        guard let fromViewController = self.viewController else {return}
         destimationVC.title = title
         let navigationController = UINavigationController(rootViewController: destimationVC)
-        from.present(navigationController, animated: true)
+        fromViewController.present(navigationController, animated: true)
     }
 }
 

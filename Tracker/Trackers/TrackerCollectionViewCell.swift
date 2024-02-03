@@ -84,11 +84,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         emojiLabel.text = trackerItem.emoji
         setQuantityButton.backgroundColor = trackerItem.color
         trackerBackgroundView.backgroundColor = trackerItem.color
-        quantityLabel.text = "\(completedDays)"
+        quantityLabel.text = "\(completedDays) \(setupTextEnd(completedDays))"
         self.isTrackerCompleted = isTrackerCompleted
         self.trackerId = trackerItem.id
         self.indexPath = indexPath
-        //        self.isTrackerCompleted = isTrackerCompleted
         
         guard let isTrackerCompleted else {return}
         quantityButtonSetImage(isTrackerCompleted: isTrackerCompleted)
@@ -101,7 +100,25 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         else {return}
         delegate?.markCompletedTracker(id: trackerId, indexPath: indexPath, isCompleted: isTrackerCompleted)
     }
-  
+    
+    private func setupTextEnd(_ quantity: Int) -> String   {
+        if (quantity == 0) { return " дней" }
+        
+        if (quantity % 10 == 1 && quantity % 100 != 11) {
+            return String.init(format: "день", quantity)
+        }
+        else if ((quantity % 10 >= 2 && quantity % 10 <= 4) &&
+                 !(quantity % 100 >= 12 && quantity % 100 <= 14)) {
+            return String.init(format:  "дня", quantity)
+        }
+        else if (quantity % 10 == 0 ||
+                 (quantity % 10 >= 5 && quantity % 10 <= 9) ||
+                 (quantity % 100 >= 11 && quantity % 100 <= 14)) {
+            return String.init(format: "дней", quantity)
+        }
+        return "Oops!"
+    }
+    
     private func quantityButtonSetImage(isTrackerCompleted: Bool) {
         guard let image: UIImage = (isTrackerCompleted ? UIImage(named: "trackerCompleted") : UIImage(systemName: "plus")) else {return}
         setQuantityButton.setImage(image, for: .normal)

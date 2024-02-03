@@ -79,16 +79,18 @@ final class TimeSheetViewController: UIViewController {
     }
     
     //MARK: - TBD
-   @objc private func readyButtonTapped() {
+    @objc private func readyButtonTapped() {
         delegate?.addTimeSheet(timeSheet)
         dismiss(animated: true)
     }
 }
 //MARK: - TBD
 extension TimeSheetViewController: TimeSheetCellDelegate {
-    func getSwitchDay (for choosedWeekDay: Int) {
-        if !timeSheet.contains(choosedWeekDay) {
+    func getSwitchDay (for choosedWeekDay: Int, toogleIsOn: Bool) {
+        if toogleIsOn && !timeSheet.contains(choosedWeekDay) {
             timeSheet.append(choosedWeekDay)
+        } else {
+            timeSheet.removeAll { $0 == choosedWeekDay }
         }
         timeSheet.sort()
     }

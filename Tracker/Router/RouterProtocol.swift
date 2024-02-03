@@ -8,5 +8,5 @@
 import UIKit
 
 protocol RouterProtocol {
-    func switchToViewController(from: UIViewController, to destimationVC: UIViewController, title: String)
+    func switchToViewController(to destimationVC:UIViewController, title: String) 
 }

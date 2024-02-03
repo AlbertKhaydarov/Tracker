@@ -42,18 +42,16 @@ final class EventTypeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
-        self.viewRouter = ViewRouter()
+        self.viewRouter = ViewRouter(viewController: self)
         setupViews()
         setupLayout()
     }
     private func createdNewTrackerWithEvent(newTracker: TrackerModel, category: String?, completion: (TrackerModel, String?) -> Void) {
         completion(newTracker, category)
     }
-   
-//    @objc private func creatNewHabit(titleTypeEvent: String) {
+    
     @objc private func creatNewHabit(_ sender: UIButton) {
         let newHabitViewController = NewTrackerViewController()
-        
         newHabitViewController.completionHandlerOnCreateButtonTapped = { [weak self] tracker, category in
             guard let self = self else {return}
             self.delegate?.getNewTracker(tracker, categoryName: category)
@@ -61,9 +59,9 @@ final class EventTypeViewController: UIViewController {
         
         guard let viewRouter = viewRouter else {return}
         if sender == habitTypeButton {
-            viewRouter.switchToViewController(from: self, to: newHabitViewController, title: TypeEvents.habitType.rawValue)
+            viewRouter.switchToViewController(to: newHabitViewController, title: TypeEvents.habitType.rawValue)
         } else if sender == oneTimeTypeButton {
-            viewRouter.switchToViewController(from: self, to: newHabitViewController, title: TypeEvents.oneTimeType.rawValue)
+            viewRouter.switchToViewController(to: newHabitViewController, title: TypeEvents.oneTimeType.rawValue)
         } else {
             return
         }

@@ -86,11 +86,9 @@ final class NewTrackerViewController: UIViewController {
         tableView.clipsToBounds = true
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.reloadData()
-
         return tableView
     }()
-
+    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.register(EmojiCollectionViewCell.self,
@@ -165,12 +163,12 @@ final class NewTrackerViewController: UIViewController {
         setupLayout()
         setupTableViewAndCollectionViewHeight()
         
-        self.viewRouter = ViewRouter()
+        self.viewRouter = ViewRouter(viewController: self)
     }
     
-   @objc private func createButtonTapped() {
-       //MARK: - Mock category, to be define in categoryTitle
-       let category = "1"
+    @objc private func createButtonTapped() {
+        //MARK: - Mock category, to be define in categoryTitle
+        let category = "1"
         
         guard let text = nameInputTextField.text else { return }
         var newTracker: TrackerModel
@@ -192,7 +190,7 @@ final class NewTrackerViewController: UIViewController {
         self.view.window?.rootViewController?.dismiss(animated: true)
     }
     
-   @objc private func cancelButtontapped() {
+    @objc private func cancelButtontapped() {
         dismiss(animated: true)
     }
     
@@ -317,10 +315,10 @@ extension NewTrackerViewController: UIScrollViewDelegate {
 }
 // MARK: - UICollectionViewDelegate
 extension NewTrackerViewController: UICollectionViewDelegate & UICollectionViewDelegateFlowLayout {
-   
+    
     //MARK: - TBD
-        func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    }
     
     // MARK: UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -353,7 +351,6 @@ extension NewTrackerViewController: UICollectionViewDelegate & UICollectionViewD
         }
         
         view.titleLabel.text = indexPath.section == 0 ? "Emoji" : "Цвет"
-        
         return view
     }
     
@@ -427,7 +424,7 @@ extension NewTrackerViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cellReuseIdentifier", for: indexPath) as? NewTrackerViewCell else {return UITableViewCell()}
-
+        
         cell.textLabel?.text = titlesButtons[indexPath.row]
         cell.textLabel?.textColor = .ypBlack
         cell.textLabel?.font = .ypRegular17
@@ -456,9 +453,9 @@ extension NewTrackerViewController: UITableViewDataSource {
         cell.detailTextLabel?.font  = .ypRegular17
         cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         cell.accessoryType = .disclosureIndicator
-
+        
         createButtonIsEnabled()
-      return cell
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -468,11 +465,11 @@ extension NewTrackerViewController: UITableViewDataSource {
             //MARK: - TBD
         case 0: let viewController = TrackersCategoriesViewController()
             if let viewRouter = viewRouter {
-                viewRouter.switchToViewController(from: self, to: viewController, title: "Категория")
+                viewRouter.switchToViewController(to: viewController, title: "Категория")
             }
         case 1: let viewController = TimeSheetViewController()
             if let viewRouter = viewRouter {
-                viewRouter.switchToViewController(from: self, to: viewController, title: "Расписание")
+                viewRouter.switchToViewController(to: viewController, title: "Расписание")
                 viewController.delegate = self
             }
         default: break

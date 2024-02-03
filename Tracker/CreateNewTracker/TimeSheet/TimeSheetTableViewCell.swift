@@ -11,14 +11,13 @@ final class TimeSheetTableViewCell: UITableViewCell {
     
     weak var delegate: TimeSheetCellDelegate?
     
-   private lazy var weekDayToogle: UISwitch = {
+    private lazy var weekDayToogle: UISwitch = {
         let weekDay = UISwitch()
-//        weekDay.translatesAutoresizingMaskIntoConstraints = false
         weekDay.onTintColor = .systemBlue
         weekDay.addTarget(self, action: #selector(weekDayToogleTapped), for: .touchUpInside)
         return weekDay
     }()
-   
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupCell()
@@ -33,10 +32,10 @@ final class TimeSheetTableViewCell: UITableViewCell {
         accessoryView = weekDayToogle
     }
     
-  @objc private func weekDayToogleTapped() {
-      if let weekDay = textLabel?.text {
+    @objc private func weekDayToogleTapped(_ sender: UISwitch) {
+        if let weekDay = textLabel?.text {
             let day = "".shortDays(for: weekDay)
-            delegate?.getSwitchDay(for: day)
+            delegate?.getSwitchDay(for: day, toogleIsOn: sender.isOn)
         }
     }
     

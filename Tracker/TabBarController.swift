@@ -12,6 +12,11 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
+        let border = CALayer()
+        border.backgroundColor = UIColor.ypGray.cgColor
+        border.frame = CGRect(x: 0, y: 0, width: tabBar.frame.size.width, height: 1)
+        tabBar.layer.addSublayer(border)
+        
         let trackersViewCotroller = TrackersViewController()
         let navigationController = UINavigationController(rootViewController: trackersViewCotroller)
         

@@ -30,8 +30,32 @@ final class TrackersViewController: UIViewController {
         return label
     }()
     
-    private lazy var errorLogoStackView: UIStackView = {
+    private lazy var notCreatedLogoStackView: UIStackView = {
         let vStackView = UIStackView(arrangedSubviews: [errorTrackersLogo, errorTrackersLabel])
+        vStackView.translatesAutoresizingMaskIntoConstraints = false
+        vStackView.axis = .vertical
+        vStackView.spacing = 8
+        return vStackView
+    }()
+    
+    private lazy var notFoundTrackersLogo: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "notFoundLogo")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    private lazy var notFoundTrackersLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Ничего не найдено"
+        label.font = .ypMedium12
+        return label
+    }()
+    
+    private lazy var notFoundLogoStackView: UIStackView = {
+        let vStackView = UIStackView(arrangedSubviews: [notFoundTrackersLogo, notFoundTrackersLabel])
         vStackView.translatesAutoresizingMaskIntoConstraints = false
         vStackView.axis = .vertical
         vStackView.spacing = 8
@@ -66,10 +90,10 @@ final class TrackersViewController: UIViewController {
         super.viewDidLoad()
         
         //MARK: - Mock data
-        let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3, 4, 5, 6])
-        let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3, 4, 5, 6])
-        let trackerNreg2 = TrackerModel(id: UUID(), name: " Прислали открытку в вотсапе", color: .colorSelection18, emoji: "🎸", timesheet: [1, 3])
-        let trackerNreg3 = TrackerModel(id: UUID(), name: " Изучить IOS", color: .colorSelection14, emoji: "🎸", timesheet: [])
+        let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения(привычка)", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3, 4, 5, 6])
+        let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне(привычка)", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3, 4, 5, 6])
+        let trackerNreg2 = TrackerModel(id: UUID(), name: " Прислали открытку в вотсапе(привычка)", color: .colorSelection18, emoji: "🎸", timesheet: [1, 3])
+        let trackerNreg3 = TrackerModel(id: UUID(), name: " Изучить IOS(нерегул)", color: .colorSelection14, emoji: "🎸", timesheet: [])
         
         let caregory1 = TrackerCategory(name: "Домашний уют", trackers: [trackerHabits1])
         let caregory2 = TrackerCategory(name: "Радостные мелочи", trackers: [trackerNreg1, trackerNreg2])
@@ -91,6 +115,7 @@ final class TrackersViewController: UIViewController {
         addNavButton()
         setup()
         setupSearchController()
+        showNotCreatedStub()
     }
     
     private func setupSearchController() {
@@ -111,9 +136,17 @@ final class TrackersViewController: UIViewController {
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "Отмена"
     }
     
-    private func showErrorStub() {
+    private func showNotCreatedStub() {
         if displayedTrackers.isEmpty {
-            addErrorLogo()
+            addNotCreatedLogo()
+            notCreatedLogoStackView.isHidden = false
+        }
+    }
+    
+    private func showNotFoundStub() {
+        if displayedTrackers.isEmpty {
+            addNotFoundLogo()
+            notFoundLogoStackView.isHidden = false
         }
     }
     
@@ -165,16 +198,11 @@ final class TrackersViewController: UIViewController {
     private func filteredChoosedByDatePickerDate(_ selectedWeekday: Int) {
         displayedTrackers = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
-                guard let timesheet = tracker.timesheet/*, !timesheet.isEmpty*/ else {return false}
+                guard let timesheet = tracker.timesheet else {return false}
                 let isDisplayed = timesheet.contains { selectedDayNumber in
-                    selectedDayNumber == selectedWeekday || timesheet.isEmpty
+                    selectedDayNumber == selectedWeekday
                 }
-                let iDs: Set<UUID> = Set(completedTrackers.map { record in
-                    return record.idExecutedTracker
-                })
-                
-                let idCopletedNonRegular: Bool = timesheet.isEmpty && !iDs.contains(tracker.id)
-                
+                let idCopletedNonRegular: Bool = timesheet.isEmpty
                 return isDisplayed || idCopletedNonRegular
             }
             if trackers.isEmpty {
@@ -183,10 +211,9 @@ final class TrackersViewController: UIViewController {
             return TrackerCategory(name: category.name, trackers: trackers)
         }
         if displayedTrackers.isEmpty {
-            showErrorStub()
-            errorLogoStackView.isHidden = false
+            showNotCreatedStub()
         } else {
-            errorLogoStackView.isHidden = true
+            notCreatedLogoStackView.isHidden = true
         }
         collectionView.reloadData()
     }
@@ -205,10 +232,10 @@ final class TrackersViewController: UIViewController {
             return TrackerCategory(name: category.name, trackers: trackers)
         }
         if (displayedTrackers.isEmpty && !filteredText.isEmpty){
-            errorLogoStackView.isHidden = false
-            showErrorStub()
+            showNotFoundStub()
+            notCreatedLogoStackView.isHidden = true
         } else {
-            errorLogoStackView.isHidden = true
+            notFoundLogoStackView.isHidden = true
         }
     }
     
@@ -221,15 +248,27 @@ final class TrackersViewController: UIViewController {
     }
     
     //MARK: - setup Stub image
-    private func addErrorLogo() {
-        view.addSubview(errorLogoStackView)
+    private func addNotCreatedLogo() {
+        view.addSubview(notCreatedLogoStackView)
         setupErrorLogoLayout()
+    }
+    
+    private func addNotFoundLogo() {
+        view.addSubview(notFoundLogoStackView)
+        setupNotFoundLogoLayout()
     }
     
     private func setupErrorLogoLayout() {
         NSLayoutConstraint.activate([
-            errorLogoStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            errorLogoStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)]
+            notCreatedLogoStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            notCreatedLogoStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)]
+        )
+    }
+    
+    private func setupNotFoundLogoLayout() {
+        NSLayoutConstraint.activate([
+            notFoundLogoStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            notFoundLogoStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)]
         )
     }
     
@@ -284,6 +323,7 @@ extension TrackersViewController: UISearchBarDelegate  {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         filteredChoosedByDatePickerDate(getSelectedWeekday())
+        notFoundLogoStackView.isHidden = true
         collectionView.reloadData()
     }
     
@@ -295,6 +335,7 @@ extension TrackersViewController: UISearchBarDelegate  {
         }
     }
 }
+
 //MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     
