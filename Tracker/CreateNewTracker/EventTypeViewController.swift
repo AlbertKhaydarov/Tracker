@@ -38,6 +38,7 @@ final class EventTypeViewController: UIViewController {
     }()
     
     private var viewRouter: RouterProtocol?
+    private var storage: UserDefaultsStorageProtocol? = UserDefaultsStorage.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,6 +47,7 @@ final class EventTypeViewController: UIViewController {
         setupViews()
         setupLayout()
     }
+    
     private func createdNewTrackerWithEvent(newTracker: TrackerModel, category: String?, completion: (TrackerModel, String?) -> Void) {
         completion(newTracker, category)
     }
@@ -60,6 +62,7 @@ final class EventTypeViewController: UIViewController {
         guard let viewRouter = viewRouter else {return}
         if sender == habitTypeButton {
             viewRouter.switchToViewController(to: newHabitViewController, title: TypeEvents.habitType.rawValue)
+            storage?.timeSheetStorage = []
         } else if sender == oneTimeTypeButton {
             viewRouter.switchToViewController(to: newHabitViewController, title: TypeEvents.oneTimeType.rawValue)
         } else {

@@ -220,11 +220,15 @@ final class TrackersViewController: UIViewController {
     
     private func filteredByText(_ filteredText: String?) {
         guard let filteredText = filteredText?.lowercased() else {return}
-        
         displayedTrackers = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
-                let isFilteredText = filteredText.isEmpty ||  tracker.name.lowercased().contains(filteredText)
-                return isFilteredText
+                let isFilteredText = filteredText.isEmpty || tracker.name.lowercased().contains(filteredText)
+                guard let timesheet = tracker.timesheet else {return false}
+                let selectedWeekday = self.getSelectedWeekday()
+                let isDisplayedByDay: Bool = timesheet.isEmpty || timesheet.contains { selectedDayNumber in
+                    selectedDayNumber == selectedWeekday
+                }
+                return isFilteredText && isDisplayedByDay
             }
             if trackers.isEmpty {
                 return nil

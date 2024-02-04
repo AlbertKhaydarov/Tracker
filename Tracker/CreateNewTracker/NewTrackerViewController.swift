@@ -162,7 +162,6 @@ final class NewTrackerViewController: UIViewController {
         setupViews()
         setupLayout()
         setupTableViewAndCollectionViewHeight()
-        
         self.viewRouter = ViewRouter(viewController: self)
     }
     
@@ -188,6 +187,16 @@ final class NewTrackerViewController: UIViewController {
             return
         }
         self.view.window?.rootViewController?.dismiss(animated: true)
+    }
+    
+    //MARK: - sort short weekdays
+    private func sortShortWeekdays(timeSheetShortString: [String]) -> [String] {
+        let order = ["Пн": 0, "Вт": 1, "Ср": 2, "Чт": 3, "Пт": 4, "Сб": 5, "Вс": 6]
+        let sortedDaysOfWeek = timeSheetShortString.sorted {
+            guard let index1 = order[$0], let index2 = order[$1] else { return false }
+            return index1 < index2
+        }
+        return sortedDaysOfWeek
     }
     
     @objc private func cancelButtontapped() {
@@ -438,7 +447,8 @@ extension NewTrackerViewController: UITableViewDataSource {
             if let timeSheetShortString: [String] = timeSheetWeekDays?.compactMap({ dayNumber in
                 return "".weekdayFromInt(dayNumber)
             }) {
-                cell.detailTextLabel?.text = timeSheetShortString.joined(separator: ", ")
+                let sortedDays = sortShortWeekdays(timeSheetShortString: timeSheetShortString)
+                cell.detailTextLabel?.text = sortedDays.joined(separator: ", ")
                 if timeSheetShortString.isEmpty {
                     timeSheetIsEnable = false
                 } else {
@@ -482,7 +492,7 @@ extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75.0
     }
-    
+ 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == 1  {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)

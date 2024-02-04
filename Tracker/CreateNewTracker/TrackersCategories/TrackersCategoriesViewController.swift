@@ -10,15 +10,12 @@ import UIKit
 final class TrackersCategoriesViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 200), style: .insetGrouped)
+        let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.separatorColor = .ypGray
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.separatorStyle = .none
         tableView.register(CategoriesTypeTableViewCell.self, forCellReuseIdentifier: CategoriesTypeTableViewCell.reuseIdentifier)
-        tableView.layer.cornerRadius = 16
-        tableView.clipsToBounds = true
-        tableView.backgroundColor = .white
-        tableView.isScrollEnabled = true
+        tableView.backgroundColor = .ypWhite
+        tableView.isScrollEnabled = false
         tableView.dataSource = self
         tableView.delegate = self
         return tableView
@@ -34,10 +31,10 @@ final class TrackersCategoriesViewController: UIViewController {
         button.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
         return button
     }()
- 
+    
     //MARK: - Mock data
     private lazy var categoriesType: [Item] = {
-        let data = [Item(name: "Домашний уют", isSelected: false),Item(name: "Радостные мелочи", isSelected: false), Item(name: "Учеба", isSelected: false)]
+        let data = [Item(name: "Домашний уют", isSelected: false),Item(name: "Радостные мелочи", isSelected: false), Item(name: "Учеба", isSelected: false), Item(name: "Радостные мелочи +", isSelected: false)]
         return data
     }()
     
@@ -65,7 +62,7 @@ final class TrackersCategoriesViewController: UIViewController {
     
     private func setuplayout() {
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
@@ -93,6 +90,19 @@ extension TrackersCategoriesViewController: UITableViewDataSource {
         cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         cell.accessoryType = item.isSelected ? .checkmark : .none
         
+        if indexPath.row == 0 {
+            cell.configure(with: true)
+            cell.layer.masksToBounds = true
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        } else if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+            cell.configure(with: false)
+            cell.layer.masksToBounds = true
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else {
+            cell.configure(with: true)
+        }
         return cell
     }
 }
@@ -104,30 +114,16 @@ extension TrackersCategoriesViewController: UITableViewDelegate {
     
     //MARK: - move the element to the first row after selected
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-            categoriesType[indexPath.row].isSelected = false
-            
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-            categoriesType[indexPath.row].isSelected = true
-            let element = categoriesType[indexPath.row]
-            categoriesType.remove(at: indexPath.row)
-            categoriesType.insert(element, at: 0)
-            
-            tableView.beginUpdates()
-            tableView.moveRow(at: indexPath, to: IndexPath(row: 0, section: 0))
-            tableView.deselectRow(at: indexPath, animated: true)
-            tableView.endUpdates()
+        for row in 0..<tableView.numberOfRows(inSection: indexPath.section) {
+            if let cell = tableView.cellForRow(at: IndexPath(row: row, section: indexPath.section)) {
+                cell.accessoryType = .none
+            }
         }
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.layer.transform = CATransform3DMakeScale(0.1,0.1,1)
-        UIView.animate(withDuration: 0.25, animations: {
-            cell.layer.transform = CATransform3DMakeScale(1,1,1)
-        })
+        
+        if let cell = tableView.cellForRow(at: indexPath) {
+            cell.accessoryType = .checkmark
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+        dismiss(animated: true)
     }
 }

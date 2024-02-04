@@ -11,11 +11,17 @@ final class TimeSheetTableViewCell: UITableViewCell {
     
     weak var delegate: TimeSheetCellDelegate?
     
-    private lazy var weekDayToogle: UISwitch = {
+    lazy var weekDayToogle: UISwitch = {
         let weekDay = UISwitch()
         weekDay.onTintColor = .systemBlue
         weekDay.addTarget(self, action: #selector(weekDayToogleTapped), for: .touchUpInside)
         return weekDay
+    }()
+    
+    private lazy var customSeparatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .ypGray
+        return view
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -32,6 +38,22 @@ final class TimeSheetTableViewCell: UITableViewCell {
         accessoryView = weekDayToogle
     }
     
+    private func setuplayout() {
+        NSLayoutConstraint.activate([
+            customSeparatorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            customSeparatorView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            customSeparatorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            customSeparatorView.heightAnchor.constraint(equalToConstant: 0.5)
+        ])
+    }
+    
+    func configureSeparator(with sepatarorIsOn: Bool) {
+        if sepatarorIsOn {
+            contentView.addSubview(customSeparatorView)
+            setuplayout()
+        }
+    }
+    
     @objc private func weekDayToogleTapped(_ sender: UISwitch) {
         if let weekDay = textLabel?.text {
             let day = "".shortDays(for: weekDay)
@@ -41,7 +63,7 @@ final class TimeSheetTableViewCell: UITableViewCell {
     
     private func setupCell() {
         contentView.addSubview(weekDayToogle)
-        
+        customSeparatorView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             weekDayToogle.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
             weekDayToogle.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16)
