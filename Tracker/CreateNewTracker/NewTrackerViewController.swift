@@ -13,12 +13,6 @@ final class NewTrackerViewController: UIViewController {
     private let emojiesCollection: [String] = String.emojiesCollection
     private var timeSheetWeekDays: [Int]?
     private var categoryTitle: String = "здесь будут выбранные категории"
-    
-    //MARK: - to redifine after completed all tracker cases
-    private var nameTracker = false
-    private var timeSheetIsEnable = false
-    private var categoryIsEnable = false
-    
     private let titlesButtons: [String] = ["Категория", "Расписание"]
     
     private let scrollView: UIScrollView = {
@@ -153,6 +147,16 @@ final class NewTrackerViewController: UIViewController {
     }()
     
     var completionHandlerOnCreateButtonTapped: ((_ newTracker: TrackerModel, _ nameCategory: String?) -> Void)?
+    
+    private var indexPathForSelectedEmoji: IndexPath?
+    private var indexPathForSelectedColor: IndexPath?
+
+    private var nameTracker = false
+    private var timeSheetIsEnable = false
+    private var categoryIsEnable = false
+    private var emojiSelectedIsEnable = false
+    private var colorSelectedIsEnable = false
+    
     private var viewRouter: RouterProtocol?
     
     override func viewDidLoad() {
@@ -172,14 +176,24 @@ final class NewTrackerViewController: UIViewController {
         guard let text = nameInputTextField.text else { return }
         var newTracker: TrackerModel
         if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
+            guard let indexPathForSelectedEmoji = indexPathForSelectedEmoji,
+                  let indexPathForSelectedColor = indexPathForSelectedColor
+            else {return}
+            
+            let emoji = self.emojiesCollection[indexPathForSelectedEmoji.row]
+            let color = self.colorSelection[indexPathForSelectedColor.row]
+            
             switch typeEvent {
             case .habitType:
                 guard let timeSheet = timeSheetWeekDays else {return}
-                newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "🙂", timesheet: timeSheet)
-                completionHandlerOnCreateButtonTapped?(newTracker, category)
+                
+            
+                newTracker = TrackerModel(id: UUID(), name: text, color: color, emoji: emoji, timesheet: timeSheet)
+                self.completionHandlerOnCreateButtonTapped?(newTracker, category)
+                
                 
             case .oneTimeType:
-                newTracker = TrackerModel(id: UUID(), name: text, color: .blue, emoji: .emojiesCollection.first ?? "🏓", timesheet: [])
+                newTracker = TrackerModel(id: UUID(), name: text, color: color, emoji: emoji, timesheet: [])
                 completionHandlerOnCreateButtonTapped?(newTracker, category)
             }
         } else {
@@ -205,7 +219,7 @@ final class NewTrackerViewController: UIViewController {
     
     //MARK: - add others check up
     private func createButtonIsEnabled() {
-        if nameTracker && timeSheetIsEnable && categoryIsEnable {
+        if nameTracker && timeSheetIsEnable && categoryIsEnable && emojiSelectedIsEnable && colorSelectedIsEnable {
             createButton.isEnabled = true
             createButton.backgroundColor = .ypBlack
         } else {
@@ -284,35 +298,11 @@ final class NewTrackerViewController: UIViewController {
     }
 }
 
-// MARK: - UICollectionViewDataSource
-extension NewTrackerViewController: UICollectionViewDataSource {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return section == 0 ? emojiesCollection.count : colorSelection.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.section == 0 {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.emojiCollectionViewCellIdentifier, for: indexPath
-            ) as? EmojiCollectionViewCell else { return UICollectionViewCell()}
-            
-            cell.titleLabel.text = emojiesCollection[indexPath.row]
-            cell.backgroundColor = cell.isSelected ? .ypBackground : .clear
-            
-            return cell
-        } else if indexPath.section == 1 {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorsCollectionViewCell.colorsCollectionViewCellIdentifier, for: indexPath
-            ) as? ColorsCollectionViewCell else { return UICollectionViewCell()}
-            
-            cell.sizeToFit()
-            cell.colorItemView.backgroundColor = colorSelection[indexPath.row]
-            
-            return cell
-        }
-        return UICollectionViewCell()
+//MARK: - NewTrackerViewControllerDelegate
+extension NewTrackerViewController: NewTrackerViewControllerDelegate {
+    func addTimeSheet(_ weekDays: [Int]) {
+        timeSheetWeekDays = weekDays
+        tableView.reloadData()
     }
 }
 
@@ -320,58 +310,6 @@ extension NewTrackerViewController: UICollectionViewDataSource {
 extension NewTrackerViewController: UIScrollViewDelegate {
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         view.endEditing(true)
-    }
-}
-// MARK: - UICollectionViewDelegate
-extension NewTrackerViewController: UICollectionViewDelegate & UICollectionViewDelegateFlowLayout {
-    
-    //MARK: - TBD
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    }
-    
-    // MARK: UICollectionViewDelegateFlowLayout
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 52, height: 52)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 5
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 5
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 24, left: 18, bottom: 24, right: 19)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        var id: String
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            id = "header"
-        default:
-            id = "default"
-        }
-        
-        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else {
-            return UICollectionReusableView()
-        }
-        
-        view.titleLabel.text = indexPath.section == 0 ? "Emoji" : "Цвет"
-        return view
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        let indexPath = IndexPath(row: 0, section: section)
-        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath
-        )
-        
-        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,
-                                                         height: UIView.layoutFittingExpandedSize.height),
-                                                  withHorizontalFittingPriority: .required,
-                                                  verticalFittingPriority: .fittingSizeLevel)
     }
 }
 
@@ -502,10 +440,130 @@ extension NewTrackerViewController: UITableViewDelegate {
     }
 }
 
-//MARK: - NewTrackerViewControllerDelegate
-extension NewTrackerViewController: NewTrackerViewControllerDelegate {
-    func addTimeSheet(_ weekDays: [Int]) {
-        timeSheetWeekDays = weekDays
-        tableView.reloadData()
+// MARK: - UICollectionViewDataSource
+extension NewTrackerViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return section == 0 ? emojiesCollection.count : colorSelection.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.section == 0 {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.emojiCollectionViewCellIdentifier, for: indexPath
+            ) as? EmojiCollectionViewCell else { return UICollectionViewCell()}
+            
+            cell.titleLabel.text = emojiesCollection[indexPath.row]
+            cell.backgroundColor = cell.isSelected ? .ypBackground : .clear
+            
+            return cell
+        } else if indexPath.section == 1 {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorsCollectionViewCell.colorsCollectionViewCellIdentifier, for: indexPath
+            ) as? ColorsCollectionViewCell else { return UICollectionViewCell()}
+            
+            cell.sizeToFit()
+            cell.colorItemView.backgroundColor = colorSelection[indexPath.row]
+            
+            return cell
+        }
+        return UICollectionViewCell()
+    }
+}
+
+// MARK: UICollectionViewDelegateFlowLayout
+extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 52, height: 52)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 24, left: 18, bottom: 24, right: 19)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        var id: String
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            id = "header"
+        default:
+            id = "default"
+        }
+        
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else {
+            return UICollectionReusableView()
+        }
+        
+        view.titleLabel.text = indexPath.section == 0 ? "Emoji" : "Цвет"
+        return view
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let indexPath = IndexPath(row: 0, section: section)
+        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath
+        )
+        
+        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width,
+                                                         height: UIView.layoutFittingExpandedSize.height),
+                                                  withHorizontalFittingPriority: .required,
+                                                  verticalFittingPriority: .fittingSizeLevel)
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+extension NewTrackerViewController: UICollectionViewDelegate {
+    
+    //MARK: - TBD
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        dismissKeyboard()
+//       
+        if indexPath.section == 0 {
+            guard let cell = collectionView.cellForItem(at: indexPath) else {return}
+            indexPathForSelectedEmoji = indexPath
+            emojiSelectedIsEnable = true
+            cell.backgroundColor = .ypLightGray
+            cell.layer.cornerRadius = 16
+            cell.layer.masksToBounds = true
+            createButtonIsEnabled()
+        } else if indexPath.section == 1 {
+            guard let cell = collectionView.cellForItem(at: indexPath) else {return}
+            indexPathForSelectedColor = indexPath
+            colorSelectedIsEnable = true
+            cell.layer.cornerRadius = 0
+            cell.layer.masksToBounds = true
+            cell.layer.borderWidth = 3
+            cell.layer.borderColor = colorSelection[indexPath.row].withAlphaComponent(0.3).cgColor
+            
+            createButtonIsEnabled()
+            print("1")
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) else {return}
+        cell.backgroundColor = .clear
+        collectionView.deselectItem(at: indexPath, animated: true)
+        cell.layer.borderWidth = 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        if let selectedIndexPaths = collectionView.indexPathsForSelectedItems {
+                let selectedIndexPathsInSection = selectedIndexPaths.filter { $0.section == indexPath.section }
+                if selectedIndexPathsInSection.isEmpty {
+                    return true
+                } else {
+                    return selectedIndexPathsInSection.contains(indexPath)
+                }
+            }
+        return true
     }
 }
