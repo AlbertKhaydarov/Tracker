@@ -33,8 +33,8 @@ final class TrackersCategoriesViewController: UIViewController {
     }()
     
     //MARK: - Mock data
-    private lazy var categoriesType: [Item] = {
-        let data = [Item(name: "Домашний уют", isSelected: false),Item(name: "Радостные мелочи", isSelected: false), Item(name: "Учеба", isSelected: false), Item(name: "Радостные мелочи +", isSelected: false)]
+    private lazy var categoriesType: [String] = {
+        let data = ["Домашний уют", "Радостные мелочи", "Учеба", "Радостные мелочи +"]
         return data
     }()
     
@@ -83,12 +83,11 @@ extension TrackersCategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoriesTypeTableViewCell.reuseIdentifier, for: indexPath) as? CategoriesTypeTableViewCell else {return UITableViewCell()}
         
-        let item = categoriesType[indexPath.row]
-        cell.textLabel?.text = item.name
+//        let item = categoriesType[indexPath.row]
+        cell.textLabel?.text = categoriesType[indexPath.row]
         cell.textLabel?.textColor = .ypBlack
         cell.textLabel?.font = .ypRegular17
         cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
-        cell.accessoryType = item.isSelected ? .checkmark : .none
         
         if indexPath.row == 0 {
             cell.configure(with: true)
@@ -124,6 +123,6 @@ extension TrackersCategoriesViewController: UITableViewDelegate {
             cell.accessoryType = .checkmark
         }
         tableView.deselectRow(at: indexPath, animated: true)
-        dismiss(animated: true)
+//        dismiss(animated: true)
     }
 }
