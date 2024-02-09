@@ -90,10 +90,10 @@ final class TrackersViewController: UIViewController {
         super.viewDidLoad()
         
         //MARK: - Mock data
-        let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения(привычка)", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3, 4, 5, 6])
-        let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне(привычка)", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3, 4, 5, 6])
-        let trackerNreg2 = TrackerModel(id: UUID(), name: " Прислали открытку в вотсапе(привычка)", color: .colorSelection18, emoji: "🎸", timesheet: [1, 3])
-        let trackerNreg3 = TrackerModel(id: UUID(), name: " Изучить IOS(нерегул)", color: .colorSelection14, emoji: "🎸", timesheet: [])
+        let trackerHabits1 = TrackerModel(idTracker: UUID(), name: "Поливать растения(привычка)", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3, 4, 5, 6])
+        let trackerNreg1 = TrackerModel(idTracker: UUID(), name: "Кошка заслонила камеру на созвоне(привычка)", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3, 4, 5, 6])
+        let trackerNreg2 = TrackerModel(idTracker: UUID(), name: " Прислали открытку в вотсапе(привычка)", color: .colorSelection18, emoji: "🎸", timesheet: [1, 3])
+        let trackerNreg3 = TrackerModel(idTracker: UUID(), name: " Изучить IOS(нерегул)", color: .colorSelection14, emoji: "🎸", timesheet: [])
         
         let caregory1 = TrackerCategory(name: "Домашний уют", trackers: [trackerHabits1])
         let caregory2 = TrackerCategory(name: "Радостные мелочи", trackers: [trackerNreg1, trackerNreg2])
@@ -354,8 +354,8 @@ extension TrackersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell.trackerCellIdentifier, for: indexPath) as? TrackerCollectionViewCell else {return UICollectionViewCell()}
         let trackerItem = displayedTrackers[indexPath.section].trackers[indexPath.row]
-        let completedDays = completedTrackers.filter { $0.idExecutedTracker == trackerItem.id }.count
-        isCompleted = isTrackerCompletedToday(id: trackerItem.id)
+        let completedDays = completedTrackers.filter { $0.idExecutedTracker == trackerItem.idTracker }.count
+        isCompleted = isTrackerCompletedToday(id: trackerItem.idTracker)
         cell.configurationCell(trackerItem, completedDays: completedDays, indexPath: indexPath, isTrackerCompleted: isCompleted)
         
         cell.delegate = self

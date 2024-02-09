@@ -86,7 +86,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         trackerBackgroundView.backgroundColor = trackerItem.color
         quantityLabel.text = "\(completedDays) \(setupTextEnd(completedDays))"
         self.isTrackerCompleted = isTrackerCompleted
-        self.trackerId = trackerItem.id
+        self.trackerId = trackerItem.idTracker
         self.indexPath = indexPath
         
         guard let isTrackerCompleted else {return}

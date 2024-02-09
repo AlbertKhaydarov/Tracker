@@ -188,12 +188,20 @@ final class NewTrackerViewController: UIViewController {
                 guard let timeSheet = timeSheetWeekDays else {return}
                 
             
-                newTracker = TrackerModel(id: UUID(), name: text, color: color, emoji: emoji, timesheet: timeSheet)
+                newTracker = TrackerModel(idTracker: UUID(),
+                                          name: text,
+                                          color: color,
+                                          emoji: emoji,
+                                          timesheet: timeSheet)
                 self.completionHandlerOnCreateButtonTapped?(newTracker, category)
                 
                 
             case .oneTimeType:
-                newTracker = TrackerModel(id: UUID(), name: text, color: color, emoji: emoji, timesheet: [])
+                newTracker = TrackerModel(idTracker: UUID(),
+                                          name: text,
+                                          color: color,
+                                          emoji: emoji,
+                                          timesheet: [])
                 completionHandlerOnCreateButtonTapped?(newTracker, category)
             }
         } else {
