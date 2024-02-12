@@ -49,6 +49,7 @@ final class TrackerCategoryStore: NSObject {
         guard let object = self.fetchedResultsController.fetchedObjects else {
             throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
         }
+
         var categories: [TrackerCategory] = []
         do {
             categories = try object.map { item in
@@ -57,18 +58,17 @@ final class TrackerCategoryStore: NSObject {
                 else {
                     throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
                 }
+                
                 let trackers = try trackersCoreData.map { trackerCoreData in
                     guard let trackerCoreData = trackerCoreData as? TrackerCoreData else {
                         throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
                     }
-                  
+
                     let tracker = try trackerStore.getTracker(from: trackerCoreData)
                     return tracker
                 }
-                print(trackers)
                 let category = TrackerCategory(name: name,
                                                trackers: trackers)
-                print(category)
                 return category
 //                TrackerCategory(name: name,
 //                                       trackers: trackers)
@@ -83,17 +83,28 @@ final class TrackerCategoryStore: NSObject {
         let trackerCoreData = try trackerStore.createTrackerCoreData(newTracker)
         
         if let category = try? fetchedCategory(name: category) {
+            
+          
             guard let trackers = category.trackers,
-                  var newTrackers = trackers.allObjects as? [TrackerCoreData] else { return }
+                  var newTrackers = trackers.allObjects as? [TrackerCoreData]
+            else { return }
+            print(newTrackers)
             newTrackers.append(trackerCoreData)
+          
             category.trackers = NSSet(array: newTrackers)
         } else {
             let newCategory = TrackerCategoryCoreData(context: context)
             newCategory.name = category
             newCategory.trackers = NSSet(array: [trackerCoreData])
         }
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            try appDelegate.saveContext()
+//        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+//            try appDelegate.saveContext()
+//        }
+
+        do {
+            try context.save()
+        } catch {
+            print("Unable to save category. Error: \(error), \(error.localizedDescription)")
         }
     }
     

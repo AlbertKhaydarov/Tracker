@@ -60,7 +60,9 @@ final class TrackerStore: NSObject {
         else {
             throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
         }
+      
         if let transformedTimesheet = TimeSheetDaysValueTransformer().transformedValue(timesheet) as? [Int] {
+           
             return TrackerModel(idTracker: idTracker,
                                 name: name,
                                 color: uiColorMarshalling.color(from: color),
@@ -77,11 +79,15 @@ final class TrackerStore: NSObject {
         trackerCoreData.name = tracker.name
         trackerCoreData.color = uiColorMarshalling.hexString(from: tracker.color)
         trackerCoreData.emoji = tracker.emoji
+        
         if let transformedTimesheet = TimeSheetDaysValueTransformer().transformedValue(tracker.timesheet) as? NSObject {
             trackerCoreData.timesheet = transformedTimesheet
+//            let time = TimeSheetDaysValueTransformer().transformedValue(transformedTimesheet) as? [Int]
+//            print("2",time)
         } else {
             throw CoreDataErrors.creatError(NSError(domain: "CoreData", code: 0, userInfo: nil))
         }
+
         return trackerCoreData
     }
 }

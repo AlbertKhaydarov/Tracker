@@ -16,19 +16,22 @@ final class TimeSheetDaysValueTransformer: ValueTransformer {
     
     override func transformedValue(_ value: Any?) -> Any? {
         guard let days = value as? [Int] else { return nil }
-        return try? JSONEncoder().encode(days)
+        let data = try? JSONEncoder().encode(days)
+        print("data", data)
+        return data
     }
     
     override func reverseTransformedValue(_ value: Any?) -> Any? {
-        guard let data = value as? NSData else { return nil }
-        return try? JSONDecoder().decode([Int].self, from: data as Data)
+        guard let data = value as? Data else { return nil }
+        let time = try? JSONDecoder().decode([Int].self, from: data)
+        
+        print("time", time)
+        return time
     }
     
     static func register() {
-        ValueTransformer.setValueTransformer(
-            TimeSheetDaysValueTransformer(),
-            forName: NSValueTransformerName(rawValue: String(describing: TimeSheetDaysValueTransformer.self))
-        )
+        let transformer = TimeSheetDaysValueTransformer()
+        ValueTransformer.setValueTransformer(transformer, forName: NSValueTransformerName(String(describing: type(of: transformer))))
     }
 }
 //@objc

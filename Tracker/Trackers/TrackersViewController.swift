@@ -449,7 +449,7 @@ extension TrackersViewController: TrackersViewControllerDelegate {
 //        let newCategory = TrackerCategory(name: categoryName, trackers: [newTracker])
 //        categories.append(newCategory)
         do {
-            try trackerCategoryStore.createNewTrackerRecord(newTracker: newTracker, for: categoryName)
+           try trackerCategoryStore.createNewTrackerRecord(newTracker: newTracker, for: categoryName)
         } catch {
             self.showAlert("Извините, ошибка создания трекера")
             assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
