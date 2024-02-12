@@ -9,7 +9,7 @@
         <attribute name="emoji" attributeType="String"/>
         <attribute name="idTracker" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" attributeType="String"/>
-        <attribute name="timesheet" optional="YES" attributeType="Transformable"/>
+        <attribute name="timesheet" optional="YES" attributeType="Transformable" valueTransformerName="TimeSheetDaysValueTransformer"/>
         <relationship name="trackerCategory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerCategoryCoreData" inverseName="trackers" inverseEntity="TrackerCategoryCoreData"/>
         <relationship name="trackerRecord" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TrackerRecordCoreData" inverseName="tracker" inverseEntity="TrackerRecordCoreData"/>
     </entity>

@@ -35,6 +35,7 @@ final class TrackerStore: NSObject {
 
     init(context: NSManagedObjectContext) {
         self.context = context
+        super.init()
     }
     
     private func getTrackersArray() throws -> [TrackerModel] {
@@ -43,8 +44,7 @@ final class TrackerStore: NSObject {
         }
         var trackers = [TrackerModel]()
             do {
-                trackers = try object.map { try self.getTracker(from: $0)
-                }
+                trackers = try object.map { try self.getTracker(from: $0)}
             } catch {
                 throw CoreDataErrors.decodingError(error)
             }

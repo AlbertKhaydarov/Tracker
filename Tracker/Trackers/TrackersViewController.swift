@@ -13,6 +13,9 @@ final class TrackersViewController: UIViewController {
     private var completedTrackers: [TrackerRecord] = []
     private var displayedTrackers: [TrackerCategory] = []
     
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
+
     //MARK: - add Stub Scene Logo
     private lazy var errorTrackersLogo: UIImageView = {
         let imageView = UIImageView()
@@ -426,6 +429,12 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
             }
         } else {
             let trackerRecord = TrackerRecord(idExecutedTracker: id, dateExecuted: datePicker.date)
+            do {
+               try trackerRecordStore.createTrackerRecordCoreData(from: trackerRecord)
+            } catch {
+                assertionFailure("Failed to validate \(String(describing: CoreDataErrors.validationError))", file: #file, line: #line)
+                self.showAlert("Извините, ошибка работы с трекером")
+            }
             completedTrackers.append(trackerRecord)
             filteredChoosedByDatePickerDate(getSelectedWeekday())
         }
@@ -437,10 +446,24 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
 extension TrackersViewController: TrackersViewControllerDelegate {
     func getNewTracker(_ newTracker: TrackerModel?, categoryName: String?) {
         guard let newTracker = newTracker, let categoryName = categoryName else { return }
-        let newCategory = TrackerCategory(name: categoryName, trackers: [newTracker])
-        categories.append(newCategory)
+//        let newCategory = TrackerCategory(name: categoryName, trackers: [newTracker])
+//        categories.append(newCategory)
+        do {
+            try trackerCategoryStore.createNewTrackerRecord(newTracker: newTracker, for: categoryName)
+        } catch {
+            self.showAlert("Извините, ошибка создания трекера")
+            assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
+
+        }
+        
+        do {
+            try categories = trackerCategoryStore.getTrackersCategory()
+        } catch {
+            assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
+            self.showAlert("Извините, ошибка создания трекера")
+        }
+        
         filteredChoosedByDatePickerDate(getSelectedWeekday())
-        print(newTracker)
     }
 }
 //MARK: - TBD

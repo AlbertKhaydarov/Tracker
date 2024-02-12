@@ -16,8 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow()
         window?.rootViewController = TabBarController()
-        TimeSheetDaysValueTransformer.register()
         window?.makeKeyAndVisible()
+        return true
+    }
+    
+ 
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        TimeSheetDaysValueTransformer.register()
         return true
     }
     
@@ -40,23 +45,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return container
         }()
     
-    func saveContext() {
+    func saveContext() throws {
         let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
                 try context.save()
             } catch {
-                fatalError("Не удалось сохранить контекст CoreData: \(CoreDataErrors.saveError(error))")
+                context.rollback()
+//                fatalError("Не удалось сохранить контекст CoreData: \(CoreDataErrors.saveError(error))")
+               throw CoreDataErrors.saveError(NSError(domain: "CoreData", code: 0, userInfo: nil))
             }
         }
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        saveContext()
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        saveContext()
     }
 }
 

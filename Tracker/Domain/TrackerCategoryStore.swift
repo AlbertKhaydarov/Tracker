@@ -42,9 +42,10 @@ final class TrackerCategoryStore: NSObject {
     
     init(context: NSManagedObjectContext) {
         self.context = context
+        super.init()
     }
     
-    private func getTrackersCategory() throws -> [TrackerCategory] {
+    func getTrackersCategory() throws -> [TrackerCategory] {
         guard let object = self.fetchedResultsController.fetchedObjects else {
             throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
         }
@@ -60,11 +61,17 @@ final class TrackerCategoryStore: NSObject {
                     guard let trackerCoreData = trackerCoreData as? TrackerCoreData else {
                         throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
                     }
+                  
                     let tracker = try trackerStore.getTracker(from: trackerCoreData)
                     return tracker
                 }
-                return TrackerCategory(name: name,
-                                       trackers: trackers)
+                print(trackers)
+                let category = TrackerCategory(name: name,
+                                               trackers: trackers)
+                print(category)
+                return category
+//                TrackerCategory(name: name,
+//                                       trackers: trackers)
             }
         } catch {
             throw CoreDataErrors.decodingError(error)
@@ -85,12 +92,15 @@ final class TrackerCategoryStore: NSObject {
             newCategory.name = category
             newCategory.trackers = NSSet(array: [trackerCoreData])
         }
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            try appDelegate.saveContext()
+        }
     }
     
     private func fetchedCategory(name: String) throws -> TrackerCategoryCoreData? {
         let request = fetchedResultsController.fetchRequest
-        request.predicate = NSPredicate(format: "%K == %@", argumentArray: ["name", name])
+//        request.predicate = NSPredicate(format: "%K == %@", argumentArray: ["name", name])
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCategoryCoreData.name))
         do {
             let category = try context.fetch(request)
             return category.first

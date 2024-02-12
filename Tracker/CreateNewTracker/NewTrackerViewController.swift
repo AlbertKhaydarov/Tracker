@@ -171,7 +171,7 @@ final class NewTrackerViewController: UIViewController {
     
     @objc private func createButtonTapped() {
         //MARK: - Mock category, to be define in categoryTitle
-        let category = "1"
+        let category = "Категория трекера_Stub"
         
         guard let text = nameInputTextField.text else { return }
         var newTracker: TrackerModel
@@ -552,7 +552,6 @@ extension NewTrackerViewController: UICollectionViewDelegate {
             cell.layer.borderColor = colorSelection[indexPath.row].withAlphaComponent(0.3).cgColor
             
             createButtonIsEnabled()
-            print("1")
         }
     }
     
