@@ -43,75 +43,151 @@ final class TrackerCategoryStore: NSObject {
     init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
+//        deleteAllData()
     }
     
-    func getTrackersCategory() throws -> [TrackerCategory] {
-        guard let object = self.fetchedResultsController.fetchedObjects else {
-            throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
+    //MARK: - удалить после отладки
+    func deleteAllData() {
+        guard let managedContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
+            fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")
+           }
+       
+//        let fetchRequest = TrackerCoreData.fetchRequest()
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TrackerCategoryCoreData")
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try managedContext.execute(batchDeleteRequest)
+        } catch {
+            print("Failed to delete all data: \(error)")
         }
-
+    }
+    
+//    func getTrackersCategory() throws -> [TrackerCategory] {
+//        guard let object = self.fetchedResultsController.fetchedObjects else {
+//            throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
+//        }
+//
+//        var categories: [TrackerCategory] = []
+//        do {
+//            categories = try object.map { item in
+//                guard let name = item.name,
+//                      let trackersCoreData = item.trackers
+//                else {
+//                    throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
+//                }
+//                
+//                let trackers = try trackersCoreData.map { trackerCoreData in
+//                    guard let trackerCoreData = trackerCoreData as? TrackerCoreData else {
+//                        throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
+//                    }
+//
+//                    let tracker = try trackerStore.getTracker(from: trackerCoreData)
+//                    return tracker
+//                }
+//                let category = TrackerCategory(name: name,
+//                                               trackers: trackers)
+//                return category
+////                TrackerCategory(name: name,
+////                                       trackers: trackers)
+//            }
+//        } catch {
+//            throw CoreDataErrors.decodingError(error)
+//        }
+//        return categories
+//    }
+    
+    func getTrackersCategory() -> [TrackerCategory] {
+        guard let object = self.fetchedResultsController.fetchedObjects else {
+            assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
+            return []
+        }
+     
+     
         var categories: [TrackerCategory] = []
         do {
-            categories = try object.map { item in
-                guard let name = item.name,
-                      let trackersCoreData = item.trackers
-                else {
-                    throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
-                }
+        
+            categories =  try object.map { item in
                 
-                let trackers = try trackersCoreData.map { trackerCoreData in
-                    guard let trackerCoreData = trackerCoreData as? TrackerCoreData else {
-                        throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
-                    }
-
-                    let tracker = try trackerStore.getTracker(from: trackerCoreData)
-                    return tracker
-                }
+                guard let name = item.name,
+                                     let trackersCoreData = item.trackers
+                               else {
+                                   throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
+                               }
+                let trackers = trackerStore.getTrackersArray()
                 let category = TrackerCategory(name: name,
-                                               trackers: trackers)
+                                            trackers: trackers)
+                
                 return category
-//                TrackerCategory(name: name,
-//                                       trackers: trackers)
             }
+            
+//            categories = try object.map { item in
+//               
+//                guard let name = item.name,
+//                      let trackersCoreData = item.trackers
+//                else {
+//                    throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
+//                }
+//         
+//                let trackers = try trackersCoreData.map { trackerCoreData in
+//           
+//                    guard let trackerCoreData = trackerCoreData as? TrackerCoreData else {
+//                        throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
+//                    }
+//               
+//                    let tracker = try trackerStore.getTracker(from: trackerCoreData)
+//        
+//                    return tracker
+//                }
+//                let category = TrackerCategory(name: name,
+//                                               trackers: trackers)
+//                return category
+////                TrackerCategory(name: name,
+////                                       trackers: trackers)
+//            }
         } catch {
-            throw CoreDataErrors.decodingError(error)
+            assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
         }
         return categories
     }
     
     func createNewTrackerRecord(newTracker: TrackerModel, for category: String) throws {
         let trackerCoreData = try trackerStore.createTrackerCoreData(newTracker)
-        
-        if let category = try? fetchedCategory(name: category) {
+       
+        if let category = try fetchedCategory(name: category) {
             
-          
-            guard let trackers = category.trackers,
-                  var newTrackers = trackers.allObjects as? [TrackerCoreData]
-            else { return }
-            print(newTrackers)
-            newTrackers.append(trackerCoreData)
-          
-            category.trackers = NSSet(array: newTrackers)
+
+//            guard let trackers = category.trackers,
+//                  var newTrackers = trackers.allObjects as? [TrackerCoreData]
+//            else { return }
+           
+//            newTrackers.append(trackerCoreData)
+          let newTrackers = category.mutableSetValue(forKey: "trackers")
+            newTrackers.add(trackerCoreData)
+         
+//            category.trackers = NSSet(array: newTrackers)
+        
         } else {
             let newCategory = TrackerCategoryCoreData(context: context)
             newCategory.name = category
-            newCategory.trackers = NSSet(array: [trackerCoreData])
+//            newCategory.trackers = NSSet(array: [trackerCoreData])
+            newCategory.addToTrackers(trackerCoreData)
         }
-//        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-//            try appDelegate.saveContext()
-//        }
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            try appDelegate.saveContext()
+        }
 
-        do {
-            try context.save()
-        } catch {
-            print("Unable to save category. Error: \(error), \(error.localizedDescription)")
-        }
+//        do {
+//        
+//            try context.save()
+//        } catch {
+//            print("Ошибка сохранения CoreData: \(error), \(error.localizedDescription)")
+//        }
     }
     
     private func fetchedCategory(name: String) throws -> TrackerCategoryCoreData? {
         let request = fetchedResultsController.fetchRequest
-//        request.predicate = NSPredicate(format: "%K == %@", argumentArray: ["name", name])
-        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCategoryCoreData.name))
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCategoryCoreData.name), name)
         do {
             let category = try context.fetch(request)
             return category.first

@@ -101,10 +101,12 @@ final class TrackersViewController: UIViewController {
         let caregory1 = TrackerCategory(name: "Домашний уют", trackers: [trackerHabits1])
         let caregory2 = TrackerCategory(name: "Радостные мелочи", trackers: [trackerNreg1, trackerNreg2])
         let caregory3 = TrackerCategory(name: "Учеба", trackers: [trackerNreg3])
-        categories.append(caregory1)
-        categories.append(caregory2)
-        categories.append(caregory3)
+//        categories.append(caregory1)
+//        categories.append(caregory2)
+//        categories.append(caregory3)
         //MARK: - end Mock data
+        
+//        categories = trackerCategoryStore.getTrackersCategory()
         
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -450,19 +452,14 @@ extension TrackersViewController: TrackersViewControllerDelegate {
 //        categories.append(newCategory)
         do {
            try trackerCategoryStore.createNewTrackerRecord(newTracker: newTracker, for: categoryName)
+         
         } catch {
             self.showAlert("Извините, ошибка создания трекера")
             assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
 
         }
-        
-        do {
-            try categories = trackerCategoryStore.getTrackersCategory()
-        } catch {
-            assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
-            self.showAlert("Извините, ошибка создания трекера")
-        }
-        
+            categories = trackerCategoryStore.getTrackersCategory()
+        print("try trackerCategoryStore.createNewTrackerRecord(newTracker: newTracker, for: categoryName)", categories)
         filteredChoosedByDatePickerDate(getSelectedWeekday())
     }
 }

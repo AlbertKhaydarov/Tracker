@@ -66,8 +66,14 @@ final class TrackerRecordStore: NSObject {
         trackerRecordCoreData.idExecutedTracker = trackerRecord.idExecutedTracker
         trackerRecordCoreData.dateExecuted = trackerRecord.dateExecuted
        
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            try appDelegate.saveContext()
+//        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+//            try appDelegate.saveContext()
+//        }
+        do {
+        
+            try context.save()
+        } catch {
+            print("Ошибка сохранения CoreData: \(error), \(error.localizedDescription)")
         }
     }
     
