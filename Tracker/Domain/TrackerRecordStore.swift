@@ -36,18 +36,39 @@ final class TrackerRecordStore: NSObject {
     init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
+//        deleteAllData()
     }
+    func deleteAllData() {
+        guard let managedContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
+            fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")
+           }
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TrackerRecordCoreData")
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try managedContext.execute(batchDeleteRequest)
+        } catch {
+            print("Failed to delete all data: \(error)")
+        }
+    }
+
     
     func getTrackersRecords() throws -> [TrackerRecord] {
         guard let object = self.fetchedResultsController.fetchedObjects else {
             throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
         }
         var records: [TrackerRecord] = []
-        do {
-            records = try object.map { try self.getRecord(from: $0)}
-        } catch {
-            throw CoreDataErrors.decodingError(error)
-        }
+            records = object.compactMap({ item in
+                do {
+                    let record = try self.getRecord(from: item)
+                    
+                    return record
+
+                } catch {
+                    assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
+                    return nil
+                }
+        })
         return records
     }
     
@@ -65,16 +86,31 @@ final class TrackerRecordStore: NSObject {
         let trackerRecordCoreData = TrackerRecordCoreData(context: context)
         trackerRecordCoreData.idExecutedTracker = trackerRecord.idExecutedTracker
         trackerRecordCoreData.dateExecuted = trackerRecord.dateExecuted
-       
-//        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-//            try appDelegate.saveContext()
-//        }
+
         do {
-        
             try context.save()
         } catch {
             print("Ошибка сохранения CoreData: \(error), \(error.localizedDescription)")
         }
     }
     
+    func deleteTrackerRecord(trackerRecord: TrackerRecord) throws {
+        let request = TrackerRecordCoreData.fetchRequest()
+        guard let trackerRecords = try? context.fetch(request) else {
+            assertionFailure("Enabled to fetch(request)")
+            return
+        }
+        let trackerRecordCoreData = TrackerRecordCoreData(context: context)
+        trackerRecordCoreData.idExecutedTracker = trackerRecord.idExecutedTracker
+        trackerRecordCoreData.dateExecuted = trackerRecord.dateExecuted
+        
+        if trackerRecordCoreData == trackerRecords.first {
+            context.delete(trackerRecordCoreData)
+        }
+        do {
+            try context.save()
+        } catch {
+            print("Ошибка сохранения CoreData: \(error), \(error.localizedDescription)")
+        }
+    }
 }

@@ -204,6 +204,12 @@ final class TrackersViewController: UIViewController {
     
     private func filteredChoosedByDatePickerDate(_ selectedWeekday: Int) {
         categories = trackerCategoryStore.getTrackersCategory()
+        do {
+            completedTrackers = try trackerRecordStore.getTrackersRecords()
+        } catch {
+            assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
+        }
+        
         displayedTrackers = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
                 guard let timesheet = tracker.timesheet else {return false}
@@ -429,18 +435,31 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
             self.showAlert("Нельзя отмечать трекеры для будущих дат")
         } else if isCompleted {
             completedTrackers.removeAll { trackerRecord in
-                isSameTrackerInTrackerCompleted(trackerRecord, id: id)
                 
+//                do {
+//                    try trackerRecordStore.deleteTrackerRecord(trackerRecord: trackerRecord)
+//                } catch {
+//                    assertionFailure("Enabled to delete \(trackerRecord)")
+//                }
+                isSameTrackerInTrackerCompleted(trackerRecord, id: id)
             }
         } else {
             let trackerRecord = TrackerRecord(idExecutedTracker: id, dateExecuted: datePicker.date)
+//            completedTrackers.append(trackerRecord)
             do {
                try trackerRecordStore.createTrackerRecordCoreData(from: trackerRecord)
             } catch {
-                assertionFailure("Failed to validate \(String(describing: CoreDataErrors.validationError))", file: #file, line: #line)
                 self.showAlert("Извините, ошибка работы с трекером")
+                assertionFailure("Failed to validate \(String(describing: CoreDataErrors.validationError))", file: #file, line: #line)
+             
             }
-            completedTrackers.append(trackerRecord)
+            do {
+            completedTrackers = try trackerRecordStore.getTrackersRecords()
+            } catch {
+                self.showAlert("Извините, ошибка работы с трекером")
+                assertionFailure("Failed to validate \(String(describing: CoreDataErrors.validationError))", file: #file, line: #line)             
+            }
+           
             filteredChoosedByDatePickerDate(getSelectedWeekday())
         }
         collectionView.reloadItems(at: [indexPath])
@@ -455,7 +474,7 @@ extension TrackersViewController: TrackersViewControllerDelegate {
 //        categories.append(newCategory)
         do {
            try trackerCategoryStore.createNewTrackerRecord(newTracker: newTracker, for: categoryName)
-         
+          
         } catch {
             self.showAlert("Извините, ошибка создания трекера")
             assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)

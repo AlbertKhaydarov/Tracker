@@ -14,8 +14,8 @@ final class TrackerStore: NSObject {
     private let arrayMarshalling = ArrayMarshalling()
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
-     
         let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.resultType = .managedObjectResultType
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(keyPath: \TrackerCoreData.name, ascending: true)
         ]
@@ -47,8 +47,6 @@ final class TrackerStore: NSObject {
         guard let managedContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
             fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")
            }
-       
-//        let fetchRequest = TrackerCoreData.fetchRequest()
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TrackerCoreData")
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         
@@ -60,25 +58,23 @@ final class TrackerStore: NSObject {
     }
 
 
-    func getTrackersArray() -> [TrackerModel] {
-        guard let object = self.fetchedResultsController.fetchedObjects else {
-            assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
-          return []
-        }
-        var trackers = [TrackerModel]()
-//            do {
-//                trackers = try object.map { try self.getTracker(from: $0)}
-                trackers = object.compactMap({ item in
-                    do {
-                        let tracker = try self.getTracker(from: item)
-                        return tracker
-                    } catch {
-                        assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
-                        return nil
-                    }
-                })
-        return trackers
-    }
+//    func getTrackersArray() -> [TrackerModel] {
+//        guard let object = self.fetchedResultsController.fetchedObjects else {
+//            assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
+//          return []
+//        }
+//        var trackers = [TrackerModel]()
+//                trackers = object.compactMap({ item in
+//                    do {
+//                        let tracker = try self.getTracker(from: item)
+//                        return tracker
+//                    } catch {
+//                        assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
+//                        return nil
+//                    }
+//                })
+//        return trackers
+//    }
     
     func getTracker(from trackerCoreData: TrackerCoreData) throws -> TrackerModel {
        guard
