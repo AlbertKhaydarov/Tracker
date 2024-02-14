@@ -164,7 +164,7 @@ final class TrackerCategoryStore: NSObject {
 //            newTrackers.append(trackerCoreData)
           let newTrackers = category.mutableSetValue(forKey: "trackers")
             newTrackers.add(trackerCoreData)
-         
+            print(#function, trackerCoreData)
 //            category.trackers = NSSet(array: newTrackers)
         
         } else {

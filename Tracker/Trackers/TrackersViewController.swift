@@ -106,7 +106,7 @@ final class TrackersViewController: UIViewController {
 //        categories.append(caregory3)
         //MARK: - end Mock data
         
-//        categories = trackerCategoryStore.getTrackersCategory()
+
         
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -121,6 +121,8 @@ final class TrackersViewController: UIViewController {
         setup()
         setupSearchController()
         showNotCreatedStub()
+//        categories = trackerCategoryStore.getTrackersCategory()
+
     }
     
     private func setupSearchController() {
@@ -201,6 +203,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func filteredChoosedByDatePickerDate(_ selectedWeekday: Int) {
+        categories = trackerCategoryStore.getTrackersCategory()
         displayedTrackers = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
                 guard let timesheet = tracker.timesheet else {return false}
@@ -458,8 +461,7 @@ extension TrackersViewController: TrackersViewControllerDelegate {
             assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
 
         }
-            categories = trackerCategoryStore.getTrackersCategory()
-        print("try trackerCategoryStore.createNewTrackerRecord(newTracker: newTracker, for: categoryName)", categories)
+//        categories = trackerCategoryStore.getTrackersCategory()
         filteredChoosedByDatePickerDate(getSelectedWeekday())
     }
 }

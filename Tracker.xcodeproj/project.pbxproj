@@ -23,6 +23,7 @@
 		7C95DD412B74A57C00787681 /* CoreData Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C95DD402B74A57C00787681 /* CoreData Errors.swift */; };
 		7C95DD4B2B74E6DD00787681 /* Transformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C95DD4A2B74E6DD00787681 /* Transformer.swift */; };
 		7C95DD612B768B5E00787681 /* TrackersCategoryStoreUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C95DD602B768B5E00787681 /* TrackersCategoryStoreUpdate.swift */; };
+		7C95DD8A2B7CE69F00787681 /* ArrayMarshalling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C95DD892B7CE69F00787681 /* ArrayMarshalling.swift */; };
 		7CA9971A2B5973EA003849F8 /* EventTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA997192B5973EA003849F8 /* EventTypeViewController.swift */; };
 		7CA9971E2B5A59ED003849F8 /* TypeEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA9971D2B5A59ED003849F8 /* TypeEvents.swift */; };
 		7CA997402B5ABB27003849F8 /* EmojiCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA9973F2B5ABB27003849F8 /* EmojiCollectionViewCell.swift */; };
@@ -70,6 +71,7 @@
 		7C95DD402B74A57C00787681 /* CoreData Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreData Errors.swift"; sourceTree = "<group>"; };
 		7C95DD4A2B74E6DD00787681 /* Transformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transformer.swift; sourceTree = "<group>"; };
 		7C95DD602B768B5E00787681 /* TrackersCategoryStoreUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersCategoryStoreUpdate.swift; sourceTree = "<group>"; };
+		7C95DD892B7CE69F00787681 /* ArrayMarshalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayMarshalling.swift; sourceTree = "<group>"; };
 		7CA997192B5973EA003849F8 /* EventTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTypeViewController.swift; sourceTree = "<group>"; };
 		7CA9971D2B5A59ED003849F8 /* TypeEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeEvents.swift; sourceTree = "<group>"; };
 		7CA9973F2B5ABB27003849F8 /* EmojiCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				7C95DD3D2B74A40000787681 /* UIColorMarshalling.swift */,
+				7C95DD892B7CE69F00787681 /* ArrayMarshalling.swift */,
 				7C95DD4A2B74E6DD00787681 /* Transformer.swift */,
 				7C95DD402B74A57C00787681 /* CoreData Errors.swift */,
 				7C95DD602B768B5E00787681 /* TrackersCategoryStoreUpdate.swift */,
@@ -358,6 +361,7 @@
 				846CD2FE2B66827F005B9724 /* WeekDays.swift in Sources */,
 				7C95DD612B768B5E00787681 /* TrackersCategoryStoreUpdate.swift in Sources */,
 				7C95DD3C2B74A37900787681 /* TrackerRecordStore.swift in Sources */,
+				7C95DD8A2B7CE69F00787681 /* ArrayMarshalling.swift in Sources */,
 				7C95DD3A2B74A35300787681 /* TrackerCategoryStore.swift in Sources */,
 				7C3062AB2B4F1489007516ED /* TrackerCategory.swift in Sources */,
 				7C95DD372B74A30400787681 /* TrackerStore.swift in Sources */,
