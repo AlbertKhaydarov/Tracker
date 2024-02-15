@@ -20,11 +20,9 @@ final class TrackerCategoryStore: NSObject {
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.resultType = .managedObjectResultType
-
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(keyPath: \TrackerCategoryCoreData.name, ascending: true)
         ]
-        
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                                   managedObjectContext: context,
                                                                   sectionNameKeyPath: nil,
@@ -36,68 +34,34 @@ final class TrackerCategoryStore: NSObject {
     
     convenience override init() {
         guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
-                fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")
-            }
-            self.init(context: context)
-
+            fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")
+        }
+        self.init(context: context)
     }
     
     init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
-//        deleteAllData()
+        //MARK: - удалить после отладки
+//                deleteAllData()
+        //         print( FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        
     }
     
     //MARK: - удалить после отладки
-    func deleteAllData() {
+    private func deleteAllData() {
+        trackerStore.deleteAllData()
         guard let managedContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
             fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")
-           }
-       
-//        let fetchRequest = TrackerCoreData.fetchRequest()
+        }
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TrackerCategoryCoreData")
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
         do {
             try managedContext.execute(batchDeleteRequest)
         } catch {
             print("Failed to delete all data: \(error)")
         }
     }
-    
-//    func getTrackersCategory() throws -> [TrackerCategory] {
-//        guard let object = self.fetchedResultsController.fetchedObjects else {
-//            throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
-//        }
-//
-//        var categories: [TrackerCategory] = []
-//        do {
-//            categories = try object.map { item in
-//                guard let name = item.name,
-//                      let trackersCoreData = item.trackers
-//                else {
-//                    throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
-//                }
-//                
-//                let trackers = try trackersCoreData.map { trackerCoreData in
-//                    guard let trackerCoreData = trackerCoreData as? TrackerCoreData else {
-//                        throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
-//                    }
-//
-//                    let tracker = try trackerStore.getTracker(from: trackerCoreData)
-//                    return tracker
-//                }
-//                let category = TrackerCategory(name: name,
-//                                               trackers: trackers)
-//                return category
-////                TrackerCategory(name: name,
-////                                       trackers: trackers)
-//            }
-//        } catch {
-//            throw CoreDataErrors.decodingError(error)
-//        }
-//        return categories
-//    }
     
     func getTrackersCategory() -> [TrackerCategory] {
         guard let object = self.fetchedResultsController.fetchedObjects else {
@@ -123,9 +87,8 @@ final class TrackerCategoryStore: NSObject {
                     return nil
                 }
                 
-                  // Отсортировать трекеры по их названию
+                // MARK: - sort trackers (by name)
                 let sortedTrackers = trackers.sorted { $0.name < $1.name }
-
                 let category = TrackerCategory(name: name,
                                                trackers: sortedTrackers)
                 return category
@@ -138,11 +101,9 @@ final class TrackerCategoryStore: NSObject {
     
     func createNewTrackerRecord(newTracker: TrackerModel, for category: String) throws {
         let trackerCoreData = try trackerStore.createTrackerCoreData(newTracker)
-       
         if let category = try fetchedCategory(name: category) {
-          let newTrackers = category.mutableSetValue(forKey: "trackers")
+            let newTrackers = category.mutableSetValue(forKey: "trackers")
             newTrackers.add(trackerCoreData)
-
         } else {
             let newCategory = TrackerCategoryCoreData(context: context)
             newCategory.name = category

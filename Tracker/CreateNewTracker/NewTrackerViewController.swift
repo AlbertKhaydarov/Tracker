@@ -150,7 +150,7 @@ final class NewTrackerViewController: UIViewController {
     
     private var indexPathForSelectedEmoji: IndexPath?
     private var indexPathForSelectedColor: IndexPath?
-
+    
     private var nameTracker = false
     private var timeSheetIsEnable = false
     private var categoryIsEnable = false
@@ -187,7 +187,7 @@ final class NewTrackerViewController: UIViewController {
             case .habitType:
                 guard let timeSheet = timeSheetWeekDays else {return}
                 
-            
+                
                 newTracker = TrackerModel(idTracker: UUID(),
                                           name: text,
                                           color: color,
@@ -438,7 +438,7 @@ extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75.0
     }
- 
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == 1  {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
@@ -530,10 +530,9 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - UICollectionViewDelegate
 extension NewTrackerViewController: UICollectionViewDelegate {
     
-    //MARK: - TBD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         dismissKeyboard()
-//       
+        //
         if indexPath.section == 0 {
             guard let cell = collectionView.cellForItem(at: indexPath) else {return}
             indexPathForSelectedEmoji = indexPath
@@ -546,7 +545,7 @@ extension NewTrackerViewController: UICollectionViewDelegate {
             guard let cell = collectionView.cellForItem(at: indexPath) else {return}
             indexPathForSelectedColor = indexPath
             colorSelectedIsEnable = true
-            cell.layer.cornerRadius = 0
+            cell.layer.cornerRadius = 8
             cell.layer.masksToBounds = true
             cell.layer.borderWidth = 3
             cell.layer.borderColor = colorSelection[indexPath.row].withAlphaComponent(0.3).cgColor
@@ -564,13 +563,13 @@ extension NewTrackerViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         if let selectedIndexPaths = collectionView.indexPathsForSelectedItems {
-                let selectedIndexPathsInSection = selectedIndexPaths.filter { $0.section == indexPath.section }
-                if selectedIndexPathsInSection.isEmpty {
-                    return true
-                } else {
-                    return selectedIndexPathsInSection.contains(indexPath)
-                }
+            let selectedIndexPathsInSection = selectedIndexPaths.filter { $0.section == indexPath.section }
+            if selectedIndexPathsInSection.isEmpty {
+                return true
+            } else {
+                return selectedIndexPathsInSection.contains(indexPath)
             }
+        }
         return true
     }
 }
