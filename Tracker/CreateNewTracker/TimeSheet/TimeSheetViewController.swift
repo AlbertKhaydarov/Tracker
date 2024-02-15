@@ -104,14 +104,12 @@ final class TimeSheetViewController: UIViewController {
         ])
     }
     
-    //MARK: - TBD
     @objc private func readyButtonTapped() {
         delegate?.addTimeSheet(timeSheet)
         dismiss(animated: true)
     }
 }
 
-//MARK: - TBD
 extension TimeSheetViewController: TimeSheetCellDelegate {
     func getSwitchDay (for choosedWeekDay: Int, toogleIsOn: Bool) {
         if toogleIsOn {

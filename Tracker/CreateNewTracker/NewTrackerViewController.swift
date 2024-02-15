@@ -384,7 +384,6 @@ extension NewTrackerViewController: UITableViewDataSource {
         cell.textLabel?.textColor = .ypBlack
         cell.textLabel?.font = .ypRegular17
         
-        //MARK: - TBD
         switch indexPath.row {
         case  0:
             cell.detailTextLabel?.text = categoryTitle
@@ -532,7 +531,7 @@ extension NewTrackerViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         dismissKeyboard()
-        //
+        
         if indexPath.section == 0 {
             guard let cell = collectionView.cellForItem(at: indexPath) else {return}
             indexPathForSelectedEmoji = indexPath
@@ -549,7 +548,6 @@ extension NewTrackerViewController: UICollectionViewDelegate {
             cell.layer.masksToBounds = true
             cell.layer.borderWidth = 3
             cell.layer.borderColor = colorSelection[indexPath.row].withAlphaComponent(0.3).cgColor
-            
             createButtonIsEnabled()
         }
     }
