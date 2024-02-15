@@ -393,7 +393,11 @@ extension NewTrackerViewController: UITableViewDataSource {
                 return "".weekdayFromInt(dayNumber)
             }) {
                 let sortedDays = sortShortWeekdays(timeSheetShortString: timeSheetShortString)
-                cell.detailTextLabel?.text = sortedDays.joined(separator: ", ")
+                if sortedDays.count == 7 {
+                    cell.detailTextLabel?.text = "Каждый день"
+                } else {
+                    cell.detailTextLabel?.text = sortedDays.joined(separator: ", ")
+                }
                 if timeSheetShortString.isEmpty {
                     timeSheetIsEnable = false
                 } else {
