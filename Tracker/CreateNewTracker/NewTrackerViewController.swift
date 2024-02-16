@@ -8,7 +8,6 @@
 import UIKit
 
 final class NewTrackerViewController: UIViewController {
-    
     private let colorSelection: [UIColor] = UIColor.colorSelection
     private let emojiesCollection: [String] = String.emojiesCollection
     private var timeSheetWeekDays: [Int]?
@@ -240,6 +239,49 @@ final class NewTrackerViewController: UIViewController {
         view.endEditing(true)
     }
     
+    //MARK: - Handle selection in CollectionView
+    private func handleEmojiSelection(at indexPath: IndexPath) {
+        if let selectedIndexPath = indexPathForSelectedEmoji, let cell = collectionView.cellForItem(at: selectedIndexPath) {
+            clearSelection(for: cell, at: selectedIndexPath)
+        }
+        guard let cell = collectionView.cellForItem(at: indexPath) else { return }
+        indexPathForSelectedEmoji = indexPath
+        emojiSelectedIsEnable = true
+        selectedCell(cell, at: indexPath,
+                     withColor: .ypLightGray,
+                     cornerRadius: 16)
+        createButtonIsEnabled()
+    }
+
+    private func handleColorSelection(at indexPath: IndexPath) {
+        if let selectedIndexPath = indexPathForSelectedColor, let cell = collectionView.cellForItem(at: selectedIndexPath) {
+            clearSelection(for: cell, at: selectedIndexPath)
+        }
+        guard let cell = collectionView.cellForItem(at: indexPath) else { return }
+        indexPathForSelectedColor = indexPath
+        colorSelectedIsEnable = true
+        selectedCell(cell, at: indexPath,
+                     withColor: colorSelection[indexPath.row].withAlphaComponent(0.3),
+                     cornerRadius: 8,
+                     borderWidth: 3)
+        createButtonIsEnabled()
+    }
+
+    private func clearSelection(for cell: UICollectionViewCell, at indexPath: IndexPath) {
+        cell.backgroundColor = .clear
+        cell.layer.borderWidth = 0
+        collectionView.deselectItem(at: indexPath, animated: true)
+    }
+
+    private func selectedCell(_ cell: UICollectionViewCell, at indexPath: IndexPath, withColor color: UIColor, cornerRadius: CGFloat, borderWidth: CGFloat = 0) {
+        cell.backgroundColor = color
+        cell.layer.cornerRadius = cornerRadius
+        cell.layer.masksToBounds = true
+        cell.layer.borderWidth = borderWidth
+        cell.layer.borderColor = color.cgColor
+    }
+    
+    //MARK: - setup Views and Layouts
     private func setupViews() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentViewForScrollView)
@@ -532,46 +574,12 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - UICollectionViewDelegate
 extension NewTrackerViewController: UICollectionViewDelegate {
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         dismissKeyboard()
-        
         if indexPath.section == 0 {
-            guard let cell = collectionView.cellForItem(at: indexPath) else {return}
-            indexPathForSelectedEmoji = indexPath
-            emojiSelectedIsEnable = true
-            cell.backgroundColor = .ypLightGray
-            cell.layer.cornerRadius = 16
-            cell.layer.masksToBounds = true
-            createButtonIsEnabled()
+            handleEmojiSelection(at: indexPath)
         } else if indexPath.section == 1 {
-            guard let cell = collectionView.cellForItem(at: indexPath) else {return}
-            indexPathForSelectedColor = indexPath
-            colorSelectedIsEnable = true
-            cell.layer.cornerRadius = 8
-            cell.layer.masksToBounds = true
-            cell.layer.borderWidth = 3
-            cell.layer.borderColor = colorSelection[indexPath.row].withAlphaComponent(0.3).cgColor
-            createButtonIsEnabled()
+            handleColorSelection(at: indexPath)
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) else {return}
-        cell.backgroundColor = .clear
-        collectionView.deselectItem(at: indexPath, animated: true)
-        cell.layer.borderWidth = 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        if let selectedIndexPaths = collectionView.indexPathsForSelectedItems {
-            let selectedIndexPathsInSection = selectedIndexPaths.filter { $0.section == indexPath.section }
-            if selectedIndexPathsInSection.isEmpty {
-                return true
-            } else {
-                return selectedIndexPathsInSection.contains(indexPath)
-            }
-        }
-        return true
     }
 }
