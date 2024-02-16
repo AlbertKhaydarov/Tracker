@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import CoreData
 
 final class UIColorMarshalling {
     func hexString(from color: UIColor) -> String {

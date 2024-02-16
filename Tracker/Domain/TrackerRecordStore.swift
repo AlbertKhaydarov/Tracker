@@ -5,8 +5,8 @@
 //  Created by Альберт Хайдаров on 08.02.2024.
 //
 
-import UIKit
 import CoreData
+import UIKit
 
 final class TrackerRecordStore: NSObject {
     private let context: NSManagedObjectContext
@@ -34,11 +34,11 @@ final class TrackerRecordStore: NSObject {
     init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
-        //MARK: - удалить после отладки
+        //TODO: - удалить после отладки
 //                        deleteAllData()
     }
     
-    //MARK: - удалить после отладки
+    //TODO: - удалить после отладки
     private func deleteAllData() {
         guard let managedContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
             fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")

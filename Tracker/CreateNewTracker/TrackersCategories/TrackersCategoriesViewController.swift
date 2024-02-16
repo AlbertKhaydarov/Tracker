@@ -82,8 +82,7 @@ extension TrackersCategoriesViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoriesTypeTableViewCell.reuseIdentifier, for: indexPath) as? CategoriesTypeTableViewCell else {return UITableViewCell()}
-        
-//        let item = categoriesType[indexPath.row]
+ 
         cell.textLabel?.text = categoriesType[indexPath.row]
         cell.textLabel?.textColor = .ypBlack
         cell.textLabel?.font = .ypRegular17

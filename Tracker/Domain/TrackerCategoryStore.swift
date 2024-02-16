@@ -5,8 +5,8 @@
 //  Created by Альберт Хайдаров on 08.02.2024.
 //
 
-import UIKit
 import CoreData
+import UIKit
 
 final class TrackerCategoryStore: NSObject {
     private let context: NSManagedObjectContext
@@ -42,13 +42,13 @@ final class TrackerCategoryStore: NSObject {
     init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
-        //MARK: - удалить после отладки
+        //TODO: - удалить после отладки
 //                deleteAllData()
         //         print( FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
     }
     
-    //MARK: - удалить после отладки
+    //TODO: - удалить после отладки
     private func deleteAllData() {
         trackerStore.deleteAllData()
         guard let managedContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
