@@ -23,8 +23,8 @@ final class CategoriesTypeTableViewCell: UITableViewCell {
     
     private func setuplayout() {
         NSLayoutConstraint.activate([
-            customSeparatorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            customSeparatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            customSeparatorView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            customSeparatorView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
             customSeparatorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             customSeparatorView.heightAnchor.constraint(equalToConstant: 0.5)
         ])

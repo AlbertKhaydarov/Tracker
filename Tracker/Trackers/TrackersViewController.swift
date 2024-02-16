@@ -13,6 +13,15 @@ final class TrackersViewController: UIViewController {
     private var completedTrackers: [TrackerRecord] = []
     private var displayedTrackers: [TrackerCategory] = []
     
+    //MARK: - add CoreData Stores
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
+    
+    private var searchController: UISearchController?
+    private var currentDate: String = ""
+    private var isCompleted: Bool = false
+    
+    
     //MARK: - add Stub Scene Logo
     private lazy var errorTrackersLogo: UIImageView = {
         let imageView = UIImageView()
@@ -82,26 +91,8 @@ final class TrackersViewController: UIViewController {
         return datePicker
     }()
     
-    private var searchController: UISearchController?
-    private var currentDate: String = ""
-    private var isCompleted: Bool = false
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //MARK: - Mock data
-        let trackerHabits1 = TrackerModel(id: UUID(), name: "Поливать растения(привычка)", color: .colorSelection16, emoji: "😻", timesheet: [1, 2, 3, 4, 5, 6])
-        let trackerNreg1 = TrackerModel(id: UUID(), name: "Кошка заслонила камеру на созвоне(привычка)", color: .colorSelection18, emoji: "🥦", timesheet: [1, 3, 4, 5, 6])
-        let trackerNreg2 = TrackerModel(id: UUID(), name: " Прислали открытку в вотсапе(привычка)", color: .colorSelection18, emoji: "🎸", timesheet: [1, 3])
-        let trackerNreg3 = TrackerModel(id: UUID(), name: " Изучить IOS(нерегул)", color: .colorSelection14, emoji: "🎸", timesheet: [])
-        
-        let caregory1 = TrackerCategory(name: "Домашний уют", trackers: [trackerHabits1])
-        let caregory2 = TrackerCategory(name: "Радостные мелочи", trackers: [trackerNreg1, trackerNreg2])
-        let caregory3 = TrackerCategory(name: "Учеба", trackers: [trackerNreg3])
-        categories.append(caregory1)
-        categories.append(caregory2)
-        categories.append(caregory3)
-        //MARK: - end Mock data
         
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -111,11 +102,21 @@ final class TrackersViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         
+        getCompletedTrackers()
+        
         setupCustomDatePickerView(with: Date())
         addNavButton()
         setup()
         setupSearchController()
         showNotCreatedStub()
+    }
+    
+    private func getCompletedTrackers() {
+        do {
+            completedTrackers = try trackerRecordStore.getTrackersRecords()
+        } catch {
+            assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
+        }
     }
     
     private func setupSearchController() {
@@ -196,6 +197,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func filteredChoosedByDatePickerDate(_ selectedWeekday: Int) {
+        categories = trackerCategoryStore.getTrackersCategory()
         displayedTrackers = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
                 guard let timesheet = tracker.timesheet else {return false}
@@ -354,8 +356,8 @@ extension TrackersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell.trackerCellIdentifier, for: indexPath) as? TrackerCollectionViewCell else {return UICollectionViewCell()}
         let trackerItem = displayedTrackers[indexPath.section].trackers[indexPath.row]
-        let completedDays = completedTrackers.filter { $0.idExecutedTracker == trackerItem.id }.count
-        isCompleted = isTrackerCompletedToday(id: trackerItem.id)
+        let completedDays = completedTrackers.filter { $0.idExecutedTracker == trackerItem.idTracker }.count
+        isCompleted = isTrackerCompletedToday(id: trackerItem.idTracker)
         cell.configurationCell(trackerItem, completedDays: completedDays, indexPath: indexPath, isTrackerCompleted: isCompleted)
         
         cell.delegate = self
@@ -416,17 +418,30 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
 //MARK: - TrackerCollectionViewCellDelegate
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func markCompletedTracker(id: UUID, indexPath: IndexPath, isCompleted: Bool) {
-        
         if datePicker.date > Date() {
             self.showAlert("Нельзя отмечать трекеры для будущих дат")
         } else if isCompleted {
+            completedTrackers
+                .filter { trackerRecord in
+                    isSameTrackerInTrackerCompleted(trackerRecord, id: id)
+                }.forEach { trackerRecord in
+                    do {
+                        try trackerRecordStore.deleteTrackerRecord(trackerRecord: trackerRecord)
+                    } catch {
+                        assertionFailure("Enabled to delete \(CoreDataErrors.deleteError(error))")
+                    }
+                }
             completedTrackers.removeAll { trackerRecord in
                 isSameTrackerInTrackerCompleted(trackerRecord, id: id)
-                
             }
         } else {
             let trackerRecord = TrackerRecord(idExecutedTracker: id, dateExecuted: datePicker.date)
             completedTrackers.append(trackerRecord)
+            do {
+                try trackerRecordStore.createTrackerRecordCoreData(from: trackerRecord)
+            } catch {
+                self.showAlert("Извините, ошибка работы с трекером \(String(describing: CoreDataErrors.validationError))")
+            }
             filteredChoosedByDatePickerDate(getSelectedWeekday())
         }
         collectionView.reloadItems(at: [indexPath])
@@ -437,10 +452,12 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
 extension TrackersViewController: TrackersViewControllerDelegate {
     func getNewTracker(_ newTracker: TrackerModel?, categoryName: String?) {
         guard let newTracker = newTracker, let categoryName = categoryName else { return }
-        let newCategory = TrackerCategory(name: categoryName, trackers: [newTracker])
-        categories.append(newCategory)
+        do {
+            try trackerCategoryStore.createNewTrackerRecord(newTracker: newTracker, for: categoryName)
+        } catch {
+            self.showAlert("Извините, ошибка создания трекера \(String(describing: CoreDataErrors.creatError))")
+        }
         filteredChoosedByDatePickerDate(getSelectedWeekday())
-        print(newTracker)
     }
 }
 //MARK: - TBD
