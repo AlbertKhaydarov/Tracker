@@ -9,6 +9,7 @@ import Foundation
 
 enum StorageKeys: String {
     case timeSheetStorageKey
+    case isFirstLaunchKey
 }
 
 final class UserDefaultsStorage: UserDefaultsStorageProtocol {
@@ -25,5 +26,14 @@ final class UserDefaultsStorage: UserDefaultsStorageProtocol {
             storage.set(newValue, forKey: StorageKeys.timeSheetStorageKey.rawValue)
         }
     }
+   
+      var isFirstLaunch: Bool {
+          get {
+              return storage.bool(forKey: StorageKeys.isFirstLaunchKey.rawValue)
+          }
+          set {
+              storage.set(newValue, forKey: StorageKeys.isFirstLaunchKey.rawValue)
+          }
+      }
 }
 
