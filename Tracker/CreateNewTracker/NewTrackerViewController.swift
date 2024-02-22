@@ -155,8 +155,22 @@ final class NewTrackerViewController: UIViewController {
     private var categoryIsEnable = false
     private var emojiSelectedIsEnable = false
     private var colorSelectedIsEnable = false
+    private var category: String?
     
     private var viewRouter: RouterProtocol?
+    
+    //MARK - add binding
+    
+    private var indexPathForSelectedCategoryType: IndexPath?
+    
+//    var viewModel: NewTrackerVCViewModel! {
+//        didSet {
+//            viewModel.selectedCategoryIndexPathBinding = { [weak self] categoryType in
+//                guard let self = self else {return}
+//                self.indexPathForSelectedCategoryType = categoryType
+//            }
+//        }
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -169,10 +183,9 @@ final class NewTrackerViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
-        //MARK: - Mock category, to be define in categoryTitle
-        let category = "Категория трекера_Stub"
-        
-        guard let text = nameInputTextField.text else { return }
+        guard let text = nameInputTextField.text,
+        let category = category
+        else { return }
         var newTracker: TrackerModel
         if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
             guard let indexPathForSelectedEmoji = indexPathForSelectedEmoji,
@@ -576,10 +589,19 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
 extension NewTrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         dismissKeyboard()
+        let viewModel = CategoryTypeVCViewModel()
+        viewModel.delegate = self
         if indexPath.section == 0 {
             handleEmojiSelection(at: indexPath)
         } else if indexPath.section == 1 {
             handleColorSelection(at: indexPath)
         }
+    }
+}
+
+extension NewTrackerViewController: NewTrackerViewControllerCategoryTypeDelegate {
+    func getSelectedCategoryType(_ selectedCategoryType: String) {
+        category = selectedCategoryType
+        tableView.reloadData()
     }
 }

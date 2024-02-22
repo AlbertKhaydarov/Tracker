@@ -16,6 +16,14 @@ final class CategoriesTypeTableViewCell: UITableViewCell {
         return view
     }()
     
+    var viewModel: CategoryTypeCellViewModel! {
+        didSet {
+            viewModel.categoryTitleBinding = { [weak self] category in
+                self?.textLabel?.text = category
+            }
+        }
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
         customSeparatorView.translatesAutoresizingMaskIntoConstraints = false
@@ -44,6 +52,7 @@ final class CategoriesTypeTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         self.accessoryType = .none
+        viewModel?.categoryTitleBinding = nil
     }
 }
 

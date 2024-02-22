@@ -32,23 +32,95 @@ final class TrackersCategoriesViewController: UIViewController {
         return button
     }()
     
-    //MARK: - Mock data
-    private lazy var categoriesType: [String] = {
-        let data = ["Домашний уют", "Радостные мелочи", "Учеба", "Радостные мелочи +"]
-        return data
+    //MARK: - add Stub Scene Logo
+    private lazy var errorTrackersLogo: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "errorTrackersLogo")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
     }()
+    
+    private lazy var errorTrackersLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Привычки и события можно\nобъединить по смыслу"
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private lazy var notCreatedLogoStackView: UIStackView = {
+        let vStackView = UIStackView(arrangedSubviews: [errorTrackersLogo, errorTrackersLabel])
+        vStackView.translatesAutoresizingMaskIntoConstraints = false
+        vStackView.axis = .vertical
+        vStackView.spacing = 8
+        return vStackView
+    }()
+    
+    private var viewModel: CategoryTypeVCViewModel?
+    private var viewRouter: RouterProtocol?
+//    private var indexPathForSelectedCategoryType: IndexPath?
+    var completionHandlerSelectedCategoryType: ((_ indexPathForSelectedCategoryType: IndexPath?) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
+        
+        viewModel = CategoryTypeVCViewModel()
+        if let viewModel = viewModel {
+            bind(viewModel: viewModel)
+        }
+        
+        self.viewRouter = ViewRouter(viewController: self)
+        
+        title = "Категория"
         setupViews()
         setuplayout()
         updateLayout(with: self.view.frame.size)
+        showNotCreatedStub()
+    }
+    
+    private func bind(viewModel: CategoryTypeVCViewModel) {
+        viewModel.categotyTypesBinding = { [weak self] _ in
+            guard let self = self else {return}
+            self.tableView.reloadData()
+        }
+    }
+    
+    private func showNotCreatedStub() {
+        if viewModel?.categoryType.count == 0 {
+            addNotCreatedLogo()
+            notCreatedLogoStackView.isHidden = false
+        }
+    }
+    
+    //MARK: - setup Stub image
+    private func addNotCreatedLogo() {
+        view.addSubview(notCreatedLogoStackView)
+        setupErrorLogoLayout()
+    }
+    
+    private func setupErrorLogoLayout() {
+        NSLayoutConstraint.activate([
+            notCreatedLogoStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            notCreatedLogoStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)]
+        )
     }
     
     //MARK: - TBD
     @objc private func addCategoryButtonTapped() {
-        print(#function)
+        switchToNewCategoryTypeViewController(categoryTitle: "")
+    }
+    
+    private func switchToNewCategoryTypeViewController(categoryTitle: String?){
+        let newCategoryTypeViewController = NewCategoryTypeViewController()
+        newCategoryTypeViewController.delegate = viewModel
+        
+        if let viewRouter = viewRouter {
+            viewRouter.switchToViewController(to: newCategoryTypeViewController, title: "Новая категория")
+        }
     }
     
     private func updateLayout(with size: CGSize) {
@@ -77,29 +149,44 @@ final class TrackersCategoriesViewController: UIViewController {
 
 extension TrackersCategoriesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoriesType.isEmpty ? 0 : categoriesType.count
+        return viewModel?.categoryType.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoriesTypeTableViewCell.reuseIdentifier, for: indexPath) as? CategoriesTypeTableViewCell else {return UITableViewCell()}
  
-        cell.textLabel?.text = categoriesType[indexPath.row]
+        cell.viewModel = viewModel?.categoryType[indexPath.row]
         cell.textLabel?.textColor = .ypBlack
         cell.textLabel?.font = .ypRegular17
         cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         
-        if indexPath.row == 0 {
-            cell.configure(with: true)
-            cell.layer.masksToBounds = true
-            cell.layer.cornerRadius = 16
-            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        } else if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+        //MARK: - Set cusro separator behavior
+        let count = viewModel?.categoryType.count ?? 0
+        if count != 0 {
+            notCreatedLogoStackView.isHidden = true
+        }
+        
+        if count > 1 {
+            if indexPath.row == 0 {
+                cell.configure(with: true)
+                cell.layer.masksToBounds = true
+                cell.layer.cornerRadius = 16
+                cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            } else if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+                cell.configure(with: false)
+                cell.layer.masksToBounds = true
+                cell.layer.cornerRadius = 16
+                cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            } else {
+                cell.configure(with: true)
+                cell.layer.cornerRadius = 0
+                cell.layer.masksToBounds = true
+            }
+        } else {
             cell.configure(with: false)
             cell.layer.masksToBounds = true
             cell.layer.cornerRadius = 16
-            cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        } else {
-            cell.configure(with: true)
+            
         }
         return cell
     }
@@ -120,8 +207,22 @@ extension TrackersCategoriesViewController: UITableViewDelegate {
         
         if let cell = tableView.cellForRow(at: indexPath) {
             cell.accessoryType = .checkmark
+            handleCategoryTypeSelection(at: indexPath)
         }
         tableView.deselectRow(at: indexPath, animated: true)
-//        dismiss(animated: true)
+        dismiss(animated: true)
+    }
+    
+    //MARK: - Handle selection in CollectionView
+    private func handleCategoryTypeSelection(at indexPath: IndexPath) {
+        completionHandlerSelectedCategoryType?(indexPath)
+        viewModel?.addSelectedCategoryType(categories[indexPath.row].name)
+        dismiss(animated: true)
+    }
+    
+    private func clearSelection(for cell: UITableViewCell, at indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
+
+

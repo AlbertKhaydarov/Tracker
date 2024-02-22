@@ -17,6 +17,8 @@ final class TrackerCategoryStore: NSObject {
     private var updatedIndexes: IndexSet?
     private var movedIndexes: Set<TrackersCategoryStoreUpdate.Move>?
     
+    weak var delegate: TrackerCategoryStoreDelegate?
+    
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.resultType = .managedObjectResultType
@@ -44,7 +46,7 @@ final class TrackerCategoryStore: NSObject {
         super.init()
         //TODO: - удалить после отладки
 //                deleteAllData()
-        //         print( FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        print( FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
     }
     
@@ -61,6 +63,10 @@ final class TrackerCategoryStore: NSObject {
         } catch {
             print("Failed to delete all data: \(error)")
         }
+    }
+    
+    var categoryTypes: [TrackerCategoryCoreData] {
+        return self.fetchedResultsController.fetchedObjects ?? []
     }
     
     func getTrackersCategory() -> [TrackerCategory] {
@@ -97,6 +103,17 @@ final class TrackerCategoryStore: NSObject {
             assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
         }
         return categories
+    }
+    
+    func addNewCategoryType(_ categoryType: TrackerCategory) throws {
+        let categoryTypeCoreData = TrackerCategoryCoreData(context: context)
+        categoryTypeCoreData.name = categoryType.name
+        categoryTypeCoreData.trackers = []
+        do {
+            try context.save()
+        } catch {
+            print("Ошибка сохранения CoreData: \(error), \(error.localizedDescription)")
+        }
     }
     
     func createNewTrackerRecord(newTracker: TrackerModel, for category: String) throws {
@@ -147,5 +164,9 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         @unknown default:
             fatalError()
         }
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        delegate?.storeDidUpdate(self)
     }
 }
