@@ -62,7 +62,7 @@ final class TrackersCategoriesViewController: UIViewController {
     private var viewModel: CategoryTypeVCViewModel?
     private var viewRouter: RouterProtocol?
 //    private var indexPathForSelectedCategoryType: IndexPath?
-    var completionHandlerSelectedCategoryType: ((_ indexPathForSelectedCategoryType: IndexPath?) -> Void)?
+//    var completionHandlerSelectedCategoryType: ((_ indexPathForSelectedCategoryType: IndexPath?) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()

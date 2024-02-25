@@ -8,17 +8,24 @@
 import Foundation
 
 final class NewTrackerVCViewModel {
+    let viewModel = CategoryTypeVCViewModel()
     
-//    private var selectedCategoryIndexPath: IndexPath
-//    
-//    init (selectedCategoryIndexPath: IndexPath) {
-//        self.selectedCategoryIndexPath = selectedCategoryIndexPath
-//    }
-//
-//    var selectedCategoryIndexPathBinding: Binding<IndexPath>? {
-//        didSet {
-//            selectedCategoryIndexPathBinding?(selectedCategoryIndexPath)
-//        }
-//    }
+    var selectedCategoryBinding: Binding<String>?
     
+    private(set) var selectedCategory: String = "" {
+        didSet {
+            selectedCategoryBinding?(selectedCategory)
+        }
+    }
+
+        init (selectedCategory: String) {
+            self.selectedCategory = selectedCategory
+            viewModel.delegate = self
+        }
+}
+
+extension NewTrackerVCViewModel: NewTrackerVCViewModelDelegate {
+    func getSelectedCategoryType(_ selectedCategoryType: String) {
+        selectedCategory = selectedCategoryType
+    }
 }

@@ -48,7 +48,7 @@
 		84CC80382B7254BD0075F606 /* TrackerCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 84CC80362B7254BD0075F606 /* TrackerCoreDataModel.xcdatamodeld */; };
 		84CF625D2B8775530020E1AD /* CategoryTypeCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF625C2B8775530020E1AD /* CategoryTypeCellViewModel.swift */; };
 		84CF625F2B8775850020E1AD /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF625E2B8775850020E1AD /* Binding.swift */; };
-		84CF62612B8775FD0020E1AD /* NewCategoryTypeViewControllerDelegateNewCategoryTypeViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF62602B8775FD0020E1AD /* NewCategoryTypeViewControllerDelegateNewCategoryTypeViewControllerDelegate.swift */; };
+		84CF62612B8775FD0020E1AD /* NewCategoryTypeViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF62602B8775FD0020E1AD /* NewCategoryTypeViewControllerDelegate.swift */; };
 		84CF62632B87761E0020E1AD /* CategoryTypeVCViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF62622B87761E0020E1AD /* CategoryTypeVCViewModel.swift */; };
 		84CF62652B8779420020E1AD /* TrackerCategoryStoreDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF62642B8779420020E1AD /* TrackerCategoryStoreDelegate.swift */; };
 		84CF62672B8780DA0020E1AD /* NewCategoryTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF62662B8780DA0020E1AD /* NewCategoryTypeViewController.swift */; };
@@ -61,7 +61,7 @@
 		84CF9EF82B4DB6C4006FD446 /* TrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EF72B4DB6C4006FD446 /* TrackersViewController.swift */; };
 		84CF9EFA2B4DB6EE006FD446 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9EF92B4DB6EE006FD446 /* StatisticsViewController.swift */; };
 		84E4AFDE2B879EDA009DA96B /* NewTrackerVCViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E4AFDD2B879EDA009DA96B /* NewTrackerVCViewModel.swift */; };
-		84E4AFE02B87A830009DA96B /* NewTrackerViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E4AFDF2B87A830009DA96B /* NewTrackerViewControllerDelegate.swift */; };
+		84E4AFE02B87A830009DA96B /* NewTrackerVCViewModelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E4AFDF2B87A830009DA96B /* NewTrackerVCViewModelDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,7 +106,7 @@
 		84CC80372B7254BD0075F606 /* TrackerCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrackerCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 		84CF625C2B8775530020E1AD /* CategoryTypeCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTypeCellViewModel.swift; sourceTree = "<group>"; };
 		84CF625E2B8775850020E1AD /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
-		84CF62602B8775FD0020E1AD /* NewCategoryTypeViewControllerDelegateNewCategoryTypeViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryTypeViewControllerDelegateNewCategoryTypeViewControllerDelegate.swift; sourceTree = "<group>"; };
+		84CF62602B8775FD0020E1AD /* NewCategoryTypeViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryTypeViewControllerDelegate.swift; sourceTree = "<group>"; };
 		84CF62622B87761E0020E1AD /* CategoryTypeVCViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTypeVCViewModel.swift; sourceTree = "<group>"; };
 		84CF62642B8779420020E1AD /* TrackerCategoryStoreDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStoreDelegate.swift; sourceTree = "<group>"; };
 		84CF62662B8780DA0020E1AD /* NewCategoryTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryTypeViewController.swift; sourceTree = "<group>"; };
@@ -121,7 +121,7 @@
 		84CF9EF72B4DB6C4006FD446 /* TrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersViewController.swift; sourceTree = "<group>"; };
 		84CF9EF92B4DB6EE006FD446 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 		84E4AFDD2B879EDA009DA96B /* NewTrackerVCViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerVCViewModel.swift; sourceTree = "<group>"; };
-		84E4AFDF2B87A830009DA96B /* NewTrackerViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerViewControllerDelegate.swift; sourceTree = "<group>"; };
+		84E4AFDF2B87A830009DA96B /* NewTrackerVCViewModelDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTrackerVCViewModelDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -229,8 +229,8 @@
 				7CF780BC2B6B7FE9006F68A1 /* CategoriesTypeTableViewCell.swift */,
 				84CF62622B87761E0020E1AD /* CategoryTypeVCViewModel.swift */,
 				84CF625C2B8775530020E1AD /* CategoryTypeCellViewModel.swift */,
-				84CF62602B8775FD0020E1AD /* NewCategoryTypeViewControllerDelegateNewCategoryTypeViewControllerDelegate.swift */,
-				84E4AFDF2B87A830009DA96B /* NewTrackerViewControllerDelegate.swift */,
+				84CF62602B8775FD0020E1AD /* NewCategoryTypeViewControllerDelegate.swift */,
+				84E4AFDF2B87A830009DA96B /* NewTrackerVCViewModelDelegate.swift */,
 				84CF62642B8779420020E1AD /* TrackerCategoryStoreDelegate.swift */,
 			);
 			path = TrackersCategories;
@@ -426,7 +426,7 @@
 				841C34042B6E874600B2F890 /* NewTrackerViewCell.swift in Sources */,
 				7C27495F2B6F5CA800DD808E /* UserDefaultsStorageProtocol.swift in Sources */,
 				84CF9EDD2B4DA568006FD446 /* AppDelegate.swift in Sources */,
-				84E4AFE02B87A830009DA96B /* NewTrackerViewControllerDelegate.swift in Sources */,
+				84E4AFE02B87A830009DA96B /* NewTrackerVCViewModelDelegate.swift in Sources */,
 				841C34052B6E874600B2F890 /* NewTrackerViewController.swift in Sources */,
 				84CF625D2B8775530020E1AD /* CategoryTypeCellViewModel.swift in Sources */,
 				846CD3002B6682B6005B9724 /* TimeSheetViewController.swift in Sources */,
@@ -445,7 +445,7 @@
 				84E4AFDE2B879EDA009DA96B /* NewTrackerVCViewModel.swift in Sources */,
 				84CF9EDF2B4DA568006FD446 /* SceneDelegate.swift in Sources */,
 				846CD3072B668BBC005B9724 /* TrackersViewControllerDelegate.swift in Sources */,
-				84CF62612B8775FD0020E1AD /* NewCategoryTypeViewControllerDelegateNewCategoryTypeViewControllerDelegate.swift in Sources */,
+				84CF62612B8775FD0020E1AD /* NewCategoryTypeViewControllerDelegate.swift in Sources */,
 				7C95DE0D2B860C6A00787681 /* OnboardingPageViewController.swift in Sources */,
 				84CF9EF12B4DAD6D006FD446 /* UIColors+Extensions.swift in Sources */,
 				84CC80382B7254BD0075F606 /* TrackerCoreDataModel.xcdatamodeld in Sources */,

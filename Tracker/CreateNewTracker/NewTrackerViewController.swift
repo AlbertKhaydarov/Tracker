@@ -589,8 +589,6 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
 extension NewTrackerViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         dismissKeyboard()
-        let viewModel = CategoryTypeVCViewModel()
-        viewModel.delegate = self
         if indexPath.section == 0 {
             handleEmojiSelection(at: indexPath)
         } else if indexPath.section == 1 {
@@ -599,9 +597,3 @@ extension NewTrackerViewController: UICollectionViewDelegate {
     }
 }
 
-extension NewTrackerViewController: NewTrackerViewControllerCategoryTypeDelegate {
-    func getSelectedCategoryType(_ selectedCategoryType: String) {
-        category = selectedCategoryType
-        tableView.reloadData()
-    }
-}

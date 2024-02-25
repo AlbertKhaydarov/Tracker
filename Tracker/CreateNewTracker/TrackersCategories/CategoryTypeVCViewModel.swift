@@ -20,7 +20,7 @@ final class CategoryTypeVCViewModel{
         }
     }
     
-    weak var delegate: NewTrackerViewControllerCategoryTypeDelegate?
+    weak var delegate: NewTrackerVCViewModelDelegate?
     
     convenience init() {
        let trackerCategoryStore = TrackerCategoryStore(

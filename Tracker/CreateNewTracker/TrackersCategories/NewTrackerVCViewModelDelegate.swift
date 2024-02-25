@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol NewTrackerViewControllerCategoryTypeDelegate: AnyObject {
+protocol NewTrackerVCViewModelDelegate: AnyObject {
     func getSelectedCategoryType(_ selectedCategoryType: String)
 }
