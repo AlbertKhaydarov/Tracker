@@ -8,7 +8,7 @@
 import UIKit
 
 final class CategoriesTypeTableViewCell: UITableViewCell {
-    static let reuseIdentifier = "ImagesListCell"
+    static let reuseIdentifier = "CategoriesTypeCell"
     
     private lazy var customSeparatorView: UIView = {
         let view = UIView()

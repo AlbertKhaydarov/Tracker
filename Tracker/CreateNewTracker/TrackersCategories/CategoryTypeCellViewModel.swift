@@ -9,6 +9,7 @@ import Foundation
 
 final class CategoryTypeCellViewModel: Identifiable {
     let id: String
+    
     private var categoryTitle: String
     
     init (id: String, categoryTitle: String) {
@@ -21,4 +22,6 @@ final class CategoryTypeCellViewModel: Identifiable {
             categoryTitleBinding?(categoryTitle)
         }
     }
+   
+    
 }

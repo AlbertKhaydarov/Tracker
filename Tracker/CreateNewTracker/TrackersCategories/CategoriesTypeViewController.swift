@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class TrackersCategoriesViewController: UIViewController {
+final class CategoriesTypeViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -59,6 +59,7 @@ final class TrackersCategoriesViewController: UIViewController {
         return vStackView
     }()
     
+    weak var delegate: NewTrackerVCViewModelDelegate?
     private var viewModel: CategoryTypeVCViewModel?
     private var viewRouter: RouterProtocol?
 //    private var indexPathForSelectedCategoryType: IndexPath?
@@ -147,7 +148,7 @@ final class TrackersCategoriesViewController: UIViewController {
     }
 }
 
-extension TrackersCategoriesViewController: UITableViewDataSource {
+extension CategoriesTypeViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel?.categoryType.count ?? 0
     }
@@ -192,7 +193,7 @@ extension TrackersCategoriesViewController: UITableViewDataSource {
     }
 }
 
-extension TrackersCategoriesViewController: UITableViewDelegate {
+extension CategoriesTypeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
@@ -213,10 +214,16 @@ extension TrackersCategoriesViewController: UITableViewDelegate {
         dismiss(animated: true)
     }
     
-    //MARK: - Handle selection in CollectionView
+    //MARK: - Handle selection Category Type
     private func handleCategoryTypeSelection(at indexPath: IndexPath) {
-        completionHandlerSelectedCategoryType?(indexPath)
-        viewModel?.addSelectedCategoryType(categories[indexPath.row].name)
+//        completionHandlerSelectedCategoryType?(indexPath)
+
+        guard let categoryTypeCellViewModel = viewModel?.categoryType[indexPath.row] else {return}
+
+        let newTrackerVCViewModel = NewTrackerVCViewModel(selectedCategory: "")
+        viewModel?.delegate = newTrackerVCViewModel
+        viewModel?.addSelectedCategoryType(categoryTypeCellViewModel)
+//        delegate?.getSelectedCategoryType("sn")
         dismiss(animated: true)
     }
     

@@ -8,24 +8,30 @@
 import Foundation
 
 final class NewTrackerVCViewModel {
-    let viewModel = CategoryTypeVCViewModel()
+    //    var selectedCategoryBinding: Binding<String>?
     
-    var selectedCategoryBinding: Binding<String>?
-    
-    private(set) var selectedCategory: String = "" {
+    private(set) var selectedCategory: String {
         didSet {
             selectedCategoryBinding?(selectedCategory)
         }
     }
-
-        init (selectedCategory: String) {
-            self.selectedCategory = selectedCategory
-            viewModel.delegate = self
+    
+    init (selectedCategory: String?) {
+        self.selectedCategory = selectedCategory ?? ""
+        
+    }
+    
+    var selectedCategoryBinding: Binding<String>? {
+        didSet {
+            selectedCategoryBinding?(selectedCategory)
         }
+    }
 }
 
 extension NewTrackerVCViewModel: NewTrackerVCViewModelDelegate {
-    func getSelectedCategoryType(_ selectedCategoryType: String) {
-        selectedCategory = selectedCategoryType
+    func getSelectedCategoryType(_ selectedCategory: String) {
+        self.selectedCategory = selectedCategory
+        print("delegate \(selectedCategory)")
     }
 }
+

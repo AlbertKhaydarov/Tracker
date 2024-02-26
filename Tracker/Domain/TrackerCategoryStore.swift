@@ -46,7 +46,7 @@ final class TrackerCategoryStore: NSObject {
         super.init()
         //TODO: - удалить после отладки
 //                deleteAllData()
-        print( FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+//        print( FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
     }
     

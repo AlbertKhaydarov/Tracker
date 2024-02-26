@@ -5,11 +5,10 @@
 //  Created by Admin on 22.02.2024.
 //
 
-import Foundation
-
 import UIKit
 
 final class CategoryTypeVCViewModel{
+    
     var categotyTypesBinding:  Binding<[CategoryTypeCellViewModel]>?
     
     private var trackerCategoryStore: TrackerCategoryStore
@@ -19,7 +18,7 @@ final class CategoryTypeVCViewModel{
             categotyTypesBinding?(categoryType)
         }
     }
-    
+  
     weak var delegate: NewTrackerVCViewModelDelegate?
     
     convenience init() {
@@ -31,13 +30,16 @@ final class CategoryTypeVCViewModel{
     
     init( trackerCategoryStore: TrackerCategoryStore) {
         self.trackerCategoryStore = trackerCategoryStore
-        
         trackerCategoryStore.delegate = self
         categoryType = getСategoryTypeFromStore()
     }
     
-    func addSelectedCategoryType(_ categoryType: String) {
-        delegate?.getSelectedCategoryType(categoryType)
+//    func addSelectedCategoryType(_ categoryType: CategoryTypeCellViewModel) {
+    func addSelectedCategoryType(_ categoryType: CategoryTypeCellViewModel) {
+        categoryType.categoryTitleBinding = { [weak self] category in
+            guard let self = self else {return}
+            self.delegate?.getSelectedCategoryType(category)
+        }
     }
     
     private func getСategoryTypeFromStore() -> [CategoryTypeCellViewModel]{

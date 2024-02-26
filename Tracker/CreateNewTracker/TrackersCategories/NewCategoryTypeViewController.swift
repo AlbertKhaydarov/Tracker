@@ -11,7 +11,6 @@ final class NewCategoryTypeViewController: UIViewController {
     
     weak var delegate: NewCategoryTypeViewControllerDelegate?
     
-    
     private lazy var inputNewCategoryTextField: UITextField = {
         let textField = UITextField()
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 30))

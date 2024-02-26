@@ -11,7 +11,7 @@ final class NewTrackerViewController: UIViewController {
     private let colorSelection: [UIColor] = UIColor.colorSelection
     private let emojiesCollection: [String] = String.emojiesCollection
     private var timeSheetWeekDays: [Int]?
-    private var categoryTitle: String = "здесь будут выбранные категории"
+//    private var categoryTitle: String = "здесь будут выбранные категории"
     private let titlesButtons: [String] = ["Категория", "Расписание"]
     
     private let scrollView: UIScrollView = {
@@ -155,23 +155,12 @@ final class NewTrackerViewController: UIViewController {
     private var categoryIsEnable = false
     private var emojiSelectedIsEnable = false
     private var colorSelectedIsEnable = false
-    private var category: String?
-    
+
     private var viewRouter: RouterProtocol?
-    
+
     //MARK - add binding
-    
-    private var indexPathForSelectedCategoryType: IndexPath?
-    
-//    var viewModel: NewTrackerVCViewModel! {
-//        didSet {
-//            viewModel.selectedCategoryIndexPathBinding = { [weak self] categoryType in
-//                guard let self = self else {return}
-//                self.indexPathForSelectedCategoryType = categoryType
-//            }
-//        }
-//    }
-    
+    var viewModel: NewTrackerVCViewModel?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -180,12 +169,28 @@ final class NewTrackerViewController: UIViewController {
         setupLayout()
         setupTableViewAndCollectionViewHeight()
         self.viewRouter = ViewRouter(viewController: self)
+     
+        viewModel = NewTrackerVCViewModel(selectedCategory: nil)
+        if let viewModel = viewModel {
+            bind(viewModel: viewModel)
+        }
+    }
+    
+    private func bind(viewModel: NewTrackerVCViewModel) {
+        viewModel.selectedCategoryBinding = { [weak self] _ in
+            guard let self = self else {return}
+            print("bind:")
+            tableView.reloadData()
+        }
     }
     
     @objc private func createButtonTapped() {
         guard let text = nameInputTextField.text,
-        let category = category
+//        let category = category
+              let category = viewModel?.selectedCategory
+                
         else { return }
+
         var newTracker: TrackerModel
         if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
             guard let indexPathForSelectedEmoji = indexPathForSelectedEmoji,
@@ -441,7 +446,11 @@ extension NewTrackerViewController: UITableViewDataSource {
         
         switch indexPath.row {
         case  0:
-            cell.detailTextLabel?.text = categoryTitle
+//            cell.detailTextLabel?.text = "category"
+            
+            cell.detailTextLabel?.text = viewModel?.selectedCategory
+            print("! \(viewModel?.selectedCategory )")
+        
             categoryIsEnable = true
         case  1:
             if let timeSheetShortString: [String] = timeSheetWeekDays?.compactMap({ dayNumber in
@@ -477,9 +486,12 @@ extension NewTrackerViewController: UITableViewDataSource {
         dismissKeyboard()
         switch indexPath.row {
             //MARK: - TBD
-        case 0: let viewController = TrackersCategoriesViewController()
+        case 0: let viewController = CategoriesTypeViewController()
             if let viewRouter = viewRouter {
                 viewRouter.switchToViewController(to: viewController, title: "Категория")
+//                let categoryTypeVCViewModel = CategoryTypeVCViewModel()
+//                categoryTypeVCViewModel.delegate = viewModel
+//                viewModel.delegate = self
             }
         case 1: let viewController = TimeSheetViewController()
             if let viewRouter = viewRouter {
@@ -597,3 +609,10 @@ extension NewTrackerViewController: UICollectionViewDelegate {
     }
 }
 
+//extension NewTrackerViewController: NewTrackerVCViewModelDelegate {
+//    func getSelectedCategoryType(_ selectedCategory: String) {
+//        self.category = selectedCategory
+//        tableView.reloadData()
+//        print(category)
+//    }
+//}
