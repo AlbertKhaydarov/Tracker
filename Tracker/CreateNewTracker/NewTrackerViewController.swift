@@ -11,7 +11,7 @@ final class NewTrackerViewController: UIViewController {
     private let colorSelection: [UIColor] = UIColor.colorSelection
     private let emojiesCollection: [String] = String.emojiesCollection
     private var timeSheetWeekDays: [Int]?
-//    private var categoryTitle: String = "здесь будут выбранные категории"
+    private var categoryTitle: String = "здесь будут выбранные категории"
     private let titlesButtons: [String] = ["Категория", "Расписание"]
     
     private let scrollView: UIScrollView = {
@@ -170,27 +170,28 @@ final class NewTrackerViewController: UIViewController {
         setupTableViewAndCollectionViewHeight()
         self.viewRouter = ViewRouter(viewController: self)
      
-        viewModel = NewTrackerVCViewModel(selectedCategory: nil)
+        viewModel = NewTrackerVCViewModel(selectedCategory: "")
         if let viewModel = viewModel {
             bind(viewModel: viewModel)
         }
     }
     
     private func bind(viewModel: NewTrackerVCViewModel) {
-        viewModel.selectedCategoryBinding = { [weak self] _ in
+        viewModel.selectedCategoryBinding = { [weak self] selectedCategory in
             guard let self = self else {return}
-            print("bind:")
+            print("bind:", selectedCategory)
             tableView.reloadData()
         }
     }
     
     @objc private func createButtonTapped() {
         guard let text = nameInputTextField.text,
-//        let category = category
-              let category = viewModel?.selectedCategory
-                
-        else { return }
+        let category = viewModel?.selectedCategory
 
+        else { return }
+//        var category: String?
+//          category  = viewModel?.selectedCategory
+          
         var newTracker: TrackerModel
         if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
             guard let indexPathForSelectedEmoji = indexPathForSelectedEmoji,
@@ -446,10 +447,10 @@ extension NewTrackerViewController: UITableViewDataSource {
         
         switch indexPath.row {
         case  0:
-//            cell.detailTextLabel?.text = "category"
-            
-            cell.detailTextLabel?.text = viewModel?.selectedCategory
-            print("! \(viewModel?.selectedCategory )")
+
+    let text = viewModel?.selectedCategory
+            cell.detailTextLabel?.text = text
+            print("! \(text)")
         
             categoryIsEnable = true
         case  1:

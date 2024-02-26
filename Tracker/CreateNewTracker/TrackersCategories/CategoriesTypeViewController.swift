@@ -216,14 +216,11 @@ extension CategoriesTypeViewController: UITableViewDelegate {
     
     //MARK: - Handle selection Category Type
     private func handleCategoryTypeSelection(at indexPath: IndexPath) {
-//        completionHandlerSelectedCategoryType?(indexPath)
-
         guard let categoryTypeCellViewModel = viewModel?.categoryType[indexPath.row] else {return}
 
         let newTrackerVCViewModel = NewTrackerVCViewModel(selectedCategory: "")
         viewModel?.delegate = newTrackerVCViewModel
         viewModel?.addSelectedCategoryType(categoryTypeCellViewModel)
-//        delegate?.getSelectedCategoryType("sn")
         dismiss(animated: true)
     }
     

@@ -8,11 +8,13 @@
 import Foundation
 
 final class NewTrackerVCViewModel {
-    //    var selectedCategoryBinding: Binding<String>?
+    
+//    var selectedCategoryBinding: Binding<String>?
     
     private(set) var selectedCategory: String {
         didSet {
             selectedCategoryBinding?(selectedCategory)
+            print("delegate \(selectedCategory)")
         }
     }
     
@@ -24,14 +26,16 @@ final class NewTrackerVCViewModel {
     var selectedCategoryBinding: Binding<String>? {
         didSet {
             selectedCategoryBinding?(selectedCategory)
+            
         }
     }
 }
 
 extension NewTrackerVCViewModel: NewTrackerVCViewModelDelegate {
+
     func getSelectedCategoryType(_ selectedCategory: String) {
         self.selectedCategory = selectedCategory
-        print("delegate \(selectedCategory)")
-    }
+
+      }
 }
 

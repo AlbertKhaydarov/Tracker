@@ -34,7 +34,6 @@ final class CategoryTypeVCViewModel{
         categoryType = getСategoryTypeFromStore()
     }
     
-//    func addSelectedCategoryType(_ categoryType: CategoryTypeCellViewModel) {
     func addSelectedCategoryType(_ categoryType: CategoryTypeCellViewModel) {
         categoryType.categoryTitleBinding = { [weak self] category in
             guard let self = self else {return}
