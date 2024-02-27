@@ -8,34 +8,25 @@
 import Foundation
 
 final class NewTrackerVCViewModel {
+    var selectedCategory: NewTrackerObservable<[CategoryNewTrackerViewCellViewModel]> = NewTrackerObservable(value: [])
+    var weekDays: NewTrackerObservable<[TimeSheetNewTrackerViewCellViewModel]> = NewTrackerObservable(value: [])
     
-//    var selectedCategoryBinding: Binding<String>?
-    
-    private(set) var selectedCategory: String {
-        didSet {
-            selectedCategoryBinding?(selectedCategory)
-            print("delegate \(selectedCategory)")
-        }
-    }
-    
-    init (selectedCategory: String?) {
-        self.selectedCategory = selectedCategory ?? ""
-        
-    }
-    
-    var selectedCategoryBinding: Binding<String>? {
-        didSet {
-            selectedCategoryBinding?(selectedCategory)
-            
-        }
+}
+
+//MARK: - NewTrackerVCViewModelDelegate
+extension NewTrackerVCViewModel: NewTrackerVCViewModelDelegate {
+    func getSelectedCategoryType(_ selectedCategory: String) {
+        let newElement = CategoryNewTrackerViewCellViewModel(selectedCategory: selectedCategory)
+        self.selectedCategory.value?.insert(newElement, at: 0)
+        print(selectedCategory)
     }
 }
 
-extension NewTrackerVCViewModel: NewTrackerVCViewModelDelegate {
-
-    func getSelectedCategoryType(_ selectedCategory: String) {
-        self.selectedCategory = selectedCategory
-
-      }
+//MARK: - NewTrackerVCViewModelTimeSheetDelegate
+extension NewTrackerVCViewModel: NewTrackerVCViewModelTimeSheetDelegate {
+    func addTimeSheet(_ timeSheetDays: String, _ weekDays: [Int]) {
+        let newElement = TimeSheetNewTrackerViewCellViewModel(timeSheetDays: timeSheetDays, weekdays: weekDays)
+        self.weekDays.value?.append(newElement)
+    }
 }
 
