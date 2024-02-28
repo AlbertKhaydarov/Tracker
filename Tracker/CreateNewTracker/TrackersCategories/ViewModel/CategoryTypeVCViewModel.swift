@@ -19,7 +19,7 @@ final class CategoryTypeVCViewModel{
         }
     }
   
-    weak var delegate: NewTrackerVCViewModelDelegate?
+    weak var delegate: NewTrackerVCViewModelCategoryTypeDelegate?
     var delegateViewModel = NewTrackerVCViewModel()
     
     convenience init() {

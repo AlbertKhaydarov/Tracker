@@ -13,16 +13,22 @@ final class NewTrackerVCViewModel {
 //    var weekDays: NewTrackerObservable<[TimeSheetNewTrackerViewCellViewModel]> = NewTrackerObservable(value: [])
     var weekDays: NewTrackerObservable<TimeSheetNewTrackerViewCellViewModel>
     
+    var selectedEmoji: NewTrackerObservable<EmojiCollectionViewCellViewModel>
+    
+    var selectedColor: NewTrackerObservable<ColorsCollectionViewCellViewModel>
+    
     init() {
            // Устанавливаем значение по умолчанию для selectedCategory
         selectedCategory = NewTrackerObservable(value: CategoryNewTrackerViewCellViewModel(selectedCategory: ""))
         weekDays = NewTrackerObservable(value: TimeSheetNewTrackerViewCellViewModel(timeSheetDays: "", weekdays: []))
+        selectedEmoji = NewTrackerObservable(value: EmojiCollectionViewCellViewModel(selectedEmoji: ""))
+        selectedColor = NewTrackerObservable(value: ColorsCollectionViewCellViewModel(selectedColors: .clear))
        }
 
 }
 
 //MARK: - NewTrackerVCViewModelDelegate
-extension NewTrackerVCViewModel: NewTrackerVCViewModelDelegate {
+extension NewTrackerVCViewModel: NewTrackerVCViewModelCategoryTypeDelegate {
     func getSelectedCategoryType(_ selectedCategory: String) {
         let newElement = CategoryNewTrackerViewCellViewModel(selectedCategory: selectedCategory)
         self.selectedCategory.value = newElement
@@ -34,9 +40,9 @@ extension NewTrackerVCViewModel: NewTrackerVCViewModelDelegate {
 extension NewTrackerVCViewModel: NewTrackerVCViewModelTimeSheetDelegate {
     func addTimeSheet(_ timeSheetDays: String, _ weekDays: [Int]) {
         let newElement = TimeSheetNewTrackerViewCellViewModel(timeSheetDays: timeSheetDays, weekdays: weekDays)
-        
         self.weekDays.value? = newElement
         print( self.weekDays.value?.timeSheetDays)
     }
 }
+
 

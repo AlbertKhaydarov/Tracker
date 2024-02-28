@@ -10,7 +10,6 @@ import UIKit
 final class NewTrackerViewController: UIViewController {
     private let colorSelection: [UIColor] = UIColor.colorSelection
     private let emojiesCollection: [String] = String.emojiesCollection
-//    private var timeSheetWeekDays: [Int]?
     private var categoryTitle: String = "здесь будут выбранные категории"
     private let titlesButtons: [String] = ["Категория", "Расписание"]
     
@@ -71,7 +70,6 @@ final class NewTrackerViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-//        tableView.separatorColor = .ypGray
         tableView.separatorStyle = .none
         tableView.backgroundColor = .ypWhite
         tableView.register(CategoryNewTrackerViewCell.self, forCellReuseIdentifier: "categoryCellReuseIdentifier")
@@ -157,12 +155,11 @@ final class NewTrackerViewController: UIViewController {
     private var categoryIsEnable = false
     private var emojiSelectedIsEnable = false
     private var colorSelectedIsEnable = false
-
+    
     private var viewRouter: RouterProtocol?
-
-    //MARK - add binding
+    
     var viewModel: NewTrackerVCViewModel?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -171,13 +168,14 @@ final class NewTrackerViewController: UIViewController {
         setupLayout()
         setupTableViewAndCollectionViewHeight()
         self.viewRouter = ViewRouter(viewController: self)
-     
+        
         viewModel = NewTrackerVCViewModel()
         if let viewModel = viewModel {
             bind(viewModel: viewModel)
         }
     }
     
+    //MARK: - add binding
     private func bind(viewModel: NewTrackerVCViewModel) {
         viewModel.selectedCategory.bind { [weak self] _ in
             guard let self = self else {return}
@@ -191,24 +189,16 @@ final class NewTrackerViewController: UIViewController {
     
     @objc private func createButtonTapped() {
         guard let text = nameInputTextField.text,
-//              let category = viewModel?.selectedCategory.value?.first?.selectedCategory
               let category = viewModel?.selectedCategory.value?.selectedCategory
         else { return }
-
+        
         var newTracker: TrackerModel
         if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
-            guard let indexPathForSelectedEmoji = indexPathForSelectedEmoji,
-                  let indexPathForSelectedColor = indexPathForSelectedColor
+            guard let emoji = viewModel?.selectedEmoji.value?.selectedEmoji,
+                  let color = viewModel?.selectedColor.value?.selectedColors
             else {return}
-            
-            let emoji = self.emojiesCollection[indexPathForSelectedEmoji.row]
-            let color = self.colorSelection[indexPathForSelectedColor.row]
-            
             switch typeEvent {
             case .habitType:
-//                guard let timeSheet = timeSheetWeekDays else {return}
-                // TODO: - Проверить
-//                guard let timeSheet = viewModel?.weekDays.value?.first?.weekdays else {return}
                 guard let timeSheet = viewModel?.weekDays.value?.weekdays else {return}
                 newTracker = TrackerModel(idTracker: UUID(),
                                           name: text,
@@ -216,8 +206,6 @@ final class NewTrackerViewController: UIViewController {
                                           emoji: emoji,
                                           timesheet: timeSheet)
                 self.completionHandlerOnCreateButtonTapped?(newTracker, category)
-                
-                
             case .oneTimeType:
                 newTracker = TrackerModel(idTracker: UUID(),
                                           name: text,
@@ -231,16 +219,6 @@ final class NewTrackerViewController: UIViewController {
             return
         }
         self.view.window?.rootViewController?.dismiss(animated: true)
-    }
-    
-    //MARK: - sort short weekdays
-    private func sortShortWeekdays(timeSheetShortString: [String]) -> [String] {
-        let order = ["Пн": 0, "Вт": 1, "Ср": 2, "Чт": 3, "Пт": 4, "Сб": 5, "Вс": 6]
-        let sortedDaysOfWeek = timeSheetShortString.sorted {
-            guard let index1 = order[$0], let index2 = order[$1] else { return false }
-            return index1 < index2
-        }
-        return sortedDaysOfWeek
     }
     
     @objc private func cancelButtontapped() {
@@ -269,19 +247,25 @@ final class NewTrackerViewController: UIViewController {
         }
         guard let cell = collectionView.cellForItem(at: indexPath) else { return }
         indexPathForSelectedEmoji = indexPath
+        let selectedEmoji = emojiesCollection[indexPath.row]
+        viewModel?.selectedEmoji.value?.selectedEmoji = selectedEmoji
+        
         emojiSelectedIsEnable = true
         selectedCell(cell, at: indexPath,
                      withColor: .ypLightGray,
                      cornerRadius: 16)
         createButtonIsEnabled()
     }
-
+    
     private func handleColorSelection(at indexPath: IndexPath) {
         if let selectedIndexPath = indexPathForSelectedColor, let cell = collectionView.cellForItem(at: selectedIndexPath) {
             clearSelection(for: cell, at: selectedIndexPath)
         }
         guard let cell = collectionView.cellForItem(at: indexPath) else { return }
         indexPathForSelectedColor = indexPath
+        let selectedColor = colorSelection[indexPath.row]
+        viewModel?.selectedColor.value?.selectedColors = selectedColor
+        
         colorSelectedIsEnable = true
         selectedCell(cell, at: indexPath,
                      withColor: colorSelection[indexPath.row].withAlphaComponent(0.3),
@@ -289,13 +273,13 @@ final class NewTrackerViewController: UIViewController {
                      borderWidth: 3)
         createButtonIsEnabled()
     }
-
+    
     private func clearSelection(for cell: UICollectionViewCell, at indexPath: IndexPath) {
         cell.backgroundColor = .clear
         cell.layer.borderWidth = 0
         collectionView.deselectItem(at: indexPath, animated: true)
     }
-
+    
     private func selectedCell(_ cell: UICollectionViewCell, at indexPath: IndexPath, withColor color: UIColor, cornerRadius: CGFloat, borderWidth: CGFloat = 0) {
         cell.backgroundColor = color
         cell.layer.cornerRadius = cornerRadius
@@ -371,16 +355,6 @@ final class NewTrackerViewController: UIViewController {
     }
 }
 
-//MARK: - NewTrackerViewControllerDelegate
-//extension NewTrackerViewController: NewTrackerViewControllerDelegate {
-//    func addTimeSheet(_ weekDays: [Int]) {
-//        timeSheetWeekDays = weekDays
-//        tableView.reloadData()
-//    }
-//}
-
-
-
 // MARK: - UIScrollViewDelegate
 extension NewTrackerViewController: UIScrollViewDelegate {
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -452,22 +426,24 @@ extension NewTrackerViewController: UITableViewDataSource {
         return rowsInSection
     }
     
+    private func configureCell(cell: UITableViewCell, indexPath: IndexPath) {
+        cell.textLabel?.text = titlesButtons[indexPath.section]
+        cell.textLabel?.textColor = .ypBlack
+        cell.textLabel?.font = .ypRegular17
+        cell.detailTextLabel?.textColor = .ypGray
+        cell.detailTextLabel?.font  = .ypRegular17
+        cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
+        cell.accessoryType = .disclosureIndicator
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        if indexPath.count == 2 {
         if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
             switch typeEvent {
             case .habitType:
                 if indexPath.section == 0 {
                     guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCellReuseIdentifier", for: indexPath) as? CategoryNewTrackerViewCell else {return UITableViewCell()}
-                    cell.textLabel?.text = titlesButtons[indexPath.section]
-                    cell.textLabel?.textColor = .ypBlack
-                    cell.textLabel?.font = .ypRegular17
-                    cell.detailTextLabel?.textColor = .ypGray
-                    cell.detailTextLabel?.font  = .ypRegular17
-                    cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
-                    cell.accessoryType = .disclosureIndicator
+                    configureCell(cell: cell, indexPath: indexPath)
                     if let viewModel = viewModel {
-                        //                    let selectedCategory = viewModel.selectedCategory.value?.first?.selectedCategory
                         let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
                         cell.detailTextLabel?.text = selectedCategory
                     }
@@ -476,28 +452,13 @@ extension NewTrackerViewController: UITableViewDataSource {
                     return cell
                 } else if indexPath.section == 1 {
                     guard let cell = tableView.dequeueReusableCell(withIdentifier: "timeSheetCellReuseIdentifier", for: indexPath) as? TimeSheetNewTrackerViewCell else {return UITableViewCell()}
+                    configureCell(cell: cell, indexPath: indexPath)
                     
-                    cell.textLabel?.text = titlesButtons[indexPath.section]
-                    cell.textLabel?.textColor = .ypBlack
-                    cell.textLabel?.font = .ypRegular17
-                    cell.detailTextLabel?.textColor = .ypGray
-                    cell.detailTextLabel?.font  = .ypRegular17
-                    cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
-                    cell.accessoryType = .disclosureIndicator
-                    //TODO: - проверить
-                    let modelArray = viewModel?.weekDays.value
-                    let daysArray = modelArray?.weekdays
-                    //                let daysArray = modelArray?.first?.weekdays
-                    print("modelArray", modelArray)
-                    
-                    if let timeSheetDays = daysArray,
-                       //                   let timeSheetList = viewModel?.weekDays.value?.first?.weekdays
-                       let timeSheetList = viewModel?.weekDays.value?.weekdays
+                    if let timeSheetDays = viewModel?.weekDays.value?.weekdays
                     {
                         if timeSheetDays.count == 7 {
                             cell.detailTextLabel?.text = "Каждый день"
                         } else {
-                            //                        cell.detailTextLabel?.text = viewModel?.weekDays.value?.first?.timeSheetDays
                             cell.detailTextLabel?.text = viewModel?.weekDays.value?.timeSheetDays
                         }
                         if timeSheetDays.isEmpty {
@@ -513,83 +474,18 @@ extension NewTrackerViewController: UITableViewDataSource {
                 }
             case .oneTimeType:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCellReuseIdentifier", for: indexPath) as? CategoryNewTrackerViewCell else {return UITableViewCell()}
-                               cell.textLabel?.text = titlesButtons[indexPath.section]
-                               cell.textLabel?.textColor = .ypBlack
-                               cell.textLabel?.font = .ypRegular17
-                               cell.detailTextLabel?.textColor = .ypGray
-                               cell.detailTextLabel?.font  = .ypRegular17
-                               cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
-                               cell.accessoryType = .disclosureIndicator
-                               if let viewModel = viewModel {
-                                   let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
-               //                    let selectedCategory = viewModel.selectedCategory.value?.first?.selectedCategory
-                                   cell.detailTextLabel?.text = selectedCategory
-                               }
-                               categoryIsEnable = true
-                               createButtonIsEnabled()
-                               return cell
+                configureCell(cell: cell, indexPath: indexPath)
+                if let viewModel = viewModel {
+                    let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
+                    cell.detailTextLabel?.text = selectedCategory
+                }
+                categoryIsEnable = true
+                createButtonIsEnabled()
+                return cell
             }
         }
-//        else if indexPath.count == 1 {
-//            if indexPath.section == 0 {
-//                guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCellReuseIdentifier", for: indexPath) as? CategoryNewTrackerViewCell else {return UITableViewCell()}
-//                cell.textLabel?.text = titlesButtons[indexPath.section]
-//                cell.textLabel?.textColor = .ypBlack
-//                cell.textLabel?.font = .ypRegular17
-//                cell.detailTextLabel?.textColor = .ypGray
-//                cell.detailTextLabel?.font  = .ypRegular17
-//                cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
-//                cell.accessoryType = .disclosureIndicator
-//                if let viewModel = viewModel {
-//                    let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
-////                    let selectedCategory = viewModel.selectedCategory.value?.first?.selectedCategory
-//                    cell.detailTextLabel?.text = selectedCategory
-//                }
-//                categoryIsEnable = true
-//                createButtonIsEnabled()
-//                return cell
-//            }
-//        } 
         return UITableViewCell()
     }
-//        } else {
-//            guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCellReuseIdentifier", for: indexPath) as? NewTrackerViewCell else {return UITableViewCell()}
-//            cell.textLabel?.text = titlesButtons[indexPath.row]
-//            cell.textLabel?.textColor = .ypBlack
-//            cell.textLabel?.font = .ypRegular17
-//        }
-        
-//        switch indexPath.row {
-//        case  0:
-//            if let viewModel = viewModel {
-//                let selectedCategory = viewModel.newTrackers.value?.first?.selectedCategory
-//                cell.detailTextLabel?.text = selectedCategory
-//            }
-//            categoryIsEnable = true
-//        case  1:
-//            //TODO: - проверить
-//              let modelArray = viewModel?.newTrackers.value
-//            let daysArray = modelArray?.first?.selectedCategory
-//            print("modelArray", modelArray?.count)
-//            if let timeSheetDays = daysArray,
-//               let timeSheetList = viewModel?.newTrackers.value?.first?.selectedCategory
-//            {
-//                if timeSheetDays.count == 7 {
-//                    cell.detailTextLabel?.text = "Каждый день"
-//                } else {
-//                    cell.detailTextLabel?.text = timeSheetList
-//                }
-//                if timeSheetDays.isEmpty {
-//                    timeSheetIsEnable = false
-//                } else {
-//                    timeSheetIsEnable = true
-//                }
-//            }
-//
-//        default:
-//            break
-
-    
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -597,31 +493,17 @@ extension NewTrackerViewController: UITableViewDataSource {
         
         if indexPath.section == 0{
             let viewController = CategoriesTypeViewController()
-               if let viewRouter = viewRouter {
-                   viewRouter.switchToViewController(to: viewController, title: "Категория")
-                   viewController.delegate = viewModel
-               }
+            if let viewRouter = viewRouter {
+                viewRouter.switchToViewController(to: viewController, title: "Категория")
+                viewController.delegate = viewModel
+            }
         } else {
             let viewController = TimeSheetViewController()
-                if let viewRouter = viewRouter {
-                    viewRouter.switchToViewController(to: viewController, title: "Расписание")
-                    viewController.delegate = viewModel
-                }
+            if let viewRouter = viewRouter {
+                viewRouter.switchToViewController(to: viewController, title: "Расписание")
+                viewController.delegate = viewModel
+            }
         }
-//        switch indexPath.row {
-//            //MARK: - TBD
-//        case 0: let viewController = CategoriesTypeViewController()
-//            if let viewRouter = viewRouter {
-//                viewRouter.switchToViewController(to: viewController, title: "Категория")
-//                viewController.delegate = viewModel
-//            }
-//        case 1: let viewController = TimeSheetViewController()
-//            if let viewRouter = viewRouter {
-//                viewRouter.switchToViewController(to: viewController, title: "Расписание")
-//                viewController.delegate = viewModel
-//            }
-//        default: break
-//        }
     }
 }
 
@@ -629,19 +511,6 @@ extension NewTrackerViewController: UITableViewDataSource {
 extension NewTrackerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75.0
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        if indexPath.row == 1   {
-//            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-//        } else {
-//            tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-//        }
-        if indexPath.row == 1 && indexPath.section == 1   {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-        } else {
-            tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }
     }
 }
 
@@ -735,20 +604,3 @@ extension NewTrackerViewController: UICollectionViewDelegate {
         }
     }
 }
-
-
-//            if let timeSheetShortString: [String] = timeSheetWeekDays?.compactMap({ dayNumber in
-//                return "".weekdayFromInt(dayNumber)
-//            }) {
-//                let sortedDays = sortShortWeekdays(timeSheetShortString: timeSheetShortString)
-//                if sortedDays.count == 7 {
-//                    cell.detailTextLabel?.text = "Каждый день"
-//                } else {
-//                    cell.detailTextLabel?.text = sortedDays.joined(separator: ", ")
-//                }
-//                if timeSheetShortString.isEmpty {
-//                    timeSheetIsEnable = false
-//                } else {
-//                    timeSheetIsEnable = true
-//                }
-//            }
