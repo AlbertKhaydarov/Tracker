@@ -71,7 +71,8 @@ final class NewTrackerViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.separatorColor = .ypGray
+//        tableView.separatorColor = .ypGray
+        tableView.separatorStyle = .none
         tableView.backgroundColor = .ypWhite
         tableView.register(CategoryNewTrackerViewCell.self, forCellReuseIdentifier: "categoryCellReuseIdentifier")
         tableView.register(TimeSheetNewTrackerViewCell.self, forCellReuseIdentifier: "timeSheetCellReuseIdentifier")
@@ -190,7 +191,8 @@ final class NewTrackerViewController: UIViewController {
     
     @objc private func createButtonTapped() {
         guard let text = nameInputTextField.text,
-              let category = viewModel?.selectedCategory.value?.first?.selectedCategory
+//              let category = viewModel?.selectedCategory.value?.first?.selectedCategory
+              let category = viewModel?.selectedCategory.value?.selectedCategory
         else { return }
 
         var newTracker: TrackerModel
@@ -206,8 +208,8 @@ final class NewTrackerViewController: UIViewController {
             case .habitType:
 //                guard let timeSheet = timeSheetWeekDays else {return}
                 // TODO: - Проверить
-                guard let timeSheet = viewModel?.weekDays.value?.first?.weekdays else {return}
-                
+//                guard let timeSheet = viewModel?.weekDays.value?.first?.weekdays else {return}
+                guard let timeSheet = viewModel?.weekDays.value?.weekdays else {return}
                 newTracker = TrackerModel(idTracker: UUID(),
                                           name: text,
                                           color: color,
@@ -451,73 +453,103 @@ extension NewTrackerViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.count == 2 {
-            if indexPath.section == 0 {
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCellReuseIdentifier", for: indexPath) as? CategoryNewTrackerViewCell else {return UITableViewCell()}
-                cell.textLabel?.text = titlesButtons[indexPath.section]
-                cell.textLabel?.textColor = .ypBlack
-                cell.textLabel?.font = .ypRegular17
-                cell.detailTextLabel?.textColor = .ypGray
-                cell.detailTextLabel?.font  = .ypRegular17
-                cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
-                cell.accessoryType = .disclosureIndicator
-                if let viewModel = viewModel {
-                    let selectedCategory = viewModel.selectedCategory.value?.first?.selectedCategory
-                    cell.detailTextLabel?.text = selectedCategory
-                }
-                categoryIsEnable = true
-                createButtonIsEnabled()
-                return cell
-            } else if indexPath.section == 1 {
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: "timeSheetCellReuseIdentifier", for: indexPath) as? TimeSheetNewTrackerViewCell else {return UITableViewCell()}
-                
-                cell.textLabel?.text = titlesButtons[indexPath.section]
-                cell.textLabel?.textColor = .ypBlack
-                cell.textLabel?.font = .ypRegular17
-                cell.detailTextLabel?.textColor = .ypGray
-                cell.detailTextLabel?.font  = .ypRegular17
-                cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
-                cell.accessoryType = .disclosureIndicator
-                //TODO: - проверить
-                let modelArray = viewModel?.weekDays.value
-                let daysArray = modelArray?.first?.weekdays
-                print("modelArray", modelArray?.count)
-                if let timeSheetDays = daysArray,
-                   let timeSheetList = viewModel?.weekDays.value?.first?.weekdays
-                {
-                    if timeSheetDays.count == 7 {
-                        cell.detailTextLabel?.text = "Каждый день"
-                    } else {
-                        cell.detailTextLabel?.text = viewModel?.weekDays.value?.first?.timeSheetDays
+//        if indexPath.count == 2 {
+        if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
+            switch typeEvent {
+            case .habitType:
+                if indexPath.section == 0 {
+                    guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCellReuseIdentifier", for: indexPath) as? CategoryNewTrackerViewCell else {return UITableViewCell()}
+                    cell.textLabel?.text = titlesButtons[indexPath.section]
+                    cell.textLabel?.textColor = .ypBlack
+                    cell.textLabel?.font = .ypRegular17
+                    cell.detailTextLabel?.textColor = .ypGray
+                    cell.detailTextLabel?.font  = .ypRegular17
+                    cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
+                    cell.accessoryType = .disclosureIndicator
+                    if let viewModel = viewModel {
+                        //                    let selectedCategory = viewModel.selectedCategory.value?.first?.selectedCategory
+                        let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
+                        cell.detailTextLabel?.text = selectedCategory
                     }
-                    if timeSheetDays.isEmpty {
-                        timeSheetIsEnable = false
-                    } else {
-                        timeSheetIsEnable = true
+                    categoryIsEnable = true
+                    createButtonIsEnabled()
+                    return cell
+                } else if indexPath.section == 1 {
+                    guard let cell = tableView.dequeueReusableCell(withIdentifier: "timeSheetCellReuseIdentifier", for: indexPath) as? TimeSheetNewTrackerViewCell else {return UITableViewCell()}
+                    
+                    cell.textLabel?.text = titlesButtons[indexPath.section]
+                    cell.textLabel?.textColor = .ypBlack
+                    cell.textLabel?.font = .ypRegular17
+                    cell.detailTextLabel?.textColor = .ypGray
+                    cell.detailTextLabel?.font  = .ypRegular17
+                    cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
+                    cell.accessoryType = .disclosureIndicator
+                    //TODO: - проверить
+                    let modelArray = viewModel?.weekDays.value
+                    let daysArray = modelArray?.weekdays
+                    //                let daysArray = modelArray?.first?.weekdays
+                    print("modelArray", modelArray)
+                    
+                    if let timeSheetDays = daysArray,
+                       //                   let timeSheetList = viewModel?.weekDays.value?.first?.weekdays
+                       let timeSheetList = viewModel?.weekDays.value?.weekdays
+                    {
+                        if timeSheetDays.count == 7 {
+                            cell.detailTextLabel?.text = "Каждый день"
+                        } else {
+                            //                        cell.detailTextLabel?.text = viewModel?.weekDays.value?.first?.timeSheetDays
+                            cell.detailTextLabel?.text = viewModel?.weekDays.value?.timeSheetDays
+                        }
+                        if timeSheetDays.isEmpty {
+                            timeSheetIsEnable = false
+                        } else {
+                            timeSheetIsEnable = true
+                        }
                     }
+                    cell.configureSeparator(with: true)
+                    categoryIsEnable = true
+                    createButtonIsEnabled()
+                    return cell
                 }
-                createButtonIsEnabled()
-                return cell
-            }
-        } else if indexPath.count == 1 {
-            if indexPath.section == 0 {
+            case .oneTimeType:
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCellReuseIdentifier", for: indexPath) as? CategoryNewTrackerViewCell else {return UITableViewCell()}
-                cell.textLabel?.text = titlesButtons[indexPath.section]
-                cell.textLabel?.textColor = .ypBlack
-                cell.textLabel?.font = .ypRegular17
-                cell.detailTextLabel?.textColor = .ypGray
-                cell.detailTextLabel?.font  = .ypRegular17
-                cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
-                cell.accessoryType = .disclosureIndicator
-                if let viewModel = viewModel {
-                    let selectedCategory = viewModel.selectedCategory.value?.first?.selectedCategory
-                    cell.detailTextLabel?.text = selectedCategory
-                }
-                categoryIsEnable = true
-                createButtonIsEnabled()
-                return cell
+                               cell.textLabel?.text = titlesButtons[indexPath.section]
+                               cell.textLabel?.textColor = .ypBlack
+                               cell.textLabel?.font = .ypRegular17
+                               cell.detailTextLabel?.textColor = .ypGray
+                               cell.detailTextLabel?.font  = .ypRegular17
+                               cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
+                               cell.accessoryType = .disclosureIndicator
+                               if let viewModel = viewModel {
+                                   let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
+               //                    let selectedCategory = viewModel.selectedCategory.value?.first?.selectedCategory
+                                   cell.detailTextLabel?.text = selectedCategory
+                               }
+                               categoryIsEnable = true
+                               createButtonIsEnabled()
+                               return cell
             }
-        } 
+        }
+//        else if indexPath.count == 1 {
+//            if indexPath.section == 0 {
+//                guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCellReuseIdentifier", for: indexPath) as? CategoryNewTrackerViewCell else {return UITableViewCell()}
+//                cell.textLabel?.text = titlesButtons[indexPath.section]
+//                cell.textLabel?.textColor = .ypBlack
+//                cell.textLabel?.font = .ypRegular17
+//                cell.detailTextLabel?.textColor = .ypGray
+//                cell.detailTextLabel?.font  = .ypRegular17
+//                cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
+//                cell.accessoryType = .disclosureIndicator
+//                if let viewModel = viewModel {
+//                    let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
+////                    let selectedCategory = viewModel.selectedCategory.value?.first?.selectedCategory
+//                    cell.detailTextLabel?.text = selectedCategory
+//                }
+//                categoryIsEnable = true
+//                createButtonIsEnabled()
+//                return cell
+//            }
+//        } 
         return UITableViewCell()
     }
 //        } else {
@@ -605,7 +637,7 @@ extension NewTrackerViewController: UITableViewDelegate {
 //        } else {
 //            tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
 //        }
-        if indexPath.row == 1 && indexPath.section == 0   {
+        if indexPath.row == 1 && indexPath.section == 1   {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         } else {
             tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)

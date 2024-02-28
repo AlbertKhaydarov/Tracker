@@ -106,12 +106,12 @@ final class TimeSheetViewController: UIViewController {
     }
     
     @objc private func readyButtonTapped() {
-//        delegate?.addTimeSheet(timeSheet)
         let timeSheetShortString = getTimeSheetShortString(timeSheet: timeSheet)
         delegate?.addTimeSheet(timeSheetShortString, timeSheet)
         dismiss(animated: true)
     }
 }
+
 func getTimeSheetShortString(timeSheet: [Int]?) -> String {
     var text: String = ""
     if let timeSheetShortString: [String] = timeSheet?.compactMap({ dayNumber in
@@ -146,6 +146,7 @@ extension TimeSheetViewController: TimeSheetCellDelegate {
                     timeSheet.append(choosedWeekDay)
                 }
                 self.storageTimeSheet = timeSheet
+
             }
         } else {
             timeSheet.removeAll { $0 == choosedWeekDay }
