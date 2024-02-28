@@ -47,7 +47,7 @@ final class OnboardingPageViewController: UIViewController {
         stackView.addArrangedSubview(button)
         return stackView
     }()
-   
+    
     init(imageName: String, titleText: String) {
         super.init(nibName: nil, bundle: nil)
         imageView.image = UIImage(named: imageName)
@@ -66,10 +66,9 @@ final class OnboardingPageViewController: UIViewController {
     }
     
     @objc private func buttonTapped () {
-//        delegate?.getNextPage()
         delegate?.switchToMainPage()
     }
-
+    
     private func style() {
         view.addSubview(imageView)
         view.addSubview(stackView)

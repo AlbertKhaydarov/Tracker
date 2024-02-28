@@ -7,11 +7,11 @@
 
 import Foundation
 
-class TimeSheetNewTrackerViewCellViewModel: Identifiable {
-
+final class TimeSheetNewTrackerViewCellViewModel: Identifiable {
+    
     var timeSheetDays: String
     var weekdays: [Int]
-
+    
     init( timeSheetDays: String, weekdays: [Int]) {
         self.timeSheetDays = timeSheetDays
         self.weekdays = weekdays

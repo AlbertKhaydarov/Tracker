@@ -81,6 +81,7 @@ final class CategoriesTypeViewController: UIViewController {
         showNotCreatedStub()
     }
     
+    //MARK: - add binding
     private func bind(viewModel: CategoryTypeVCViewModel) {
         viewModel.categotyTypesBinding = { [weak self] _ in
             guard let self = self else {return}
@@ -108,7 +109,6 @@ final class CategoriesTypeViewController: UIViewController {
         )
     }
     
-    //MARK: - TBD
     @objc private func addCategoryButtonTapped() {
         switchToNewCategoryTypeViewController(categoryTitle: "")
     }
@@ -116,7 +116,6 @@ final class CategoriesTypeViewController: UIViewController {
     private func switchToNewCategoryTypeViewController(categoryTitle: String?){
         let newCategoryTypeViewController = NewCategoryTypeViewController()
         newCategoryTypeViewController.delegate = viewModel
-        
         if let viewRouter = viewRouter {
             viewRouter.switchToViewController(to: newCategoryTypeViewController, title: "Новая категория")
         }
@@ -153,13 +152,13 @@ extension CategoriesTypeViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoriesTypeTableViewCell.reuseIdentifier, for: indexPath) as? CategoriesTypeTableViewCell else {return UITableViewCell()}
- 
+        
         cell.viewModel = viewModel?.categoryType[indexPath.row]
         cell.textLabel?.textColor = .ypBlack
         cell.textLabel?.font = .ypRegular17
         cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         
-        //MARK: - Set cusro separator behavior
+        //MARK: - Set custom separator behavior
         let count = viewModel?.categoryType.count ?? 0
         if count != 0 {
             notCreatedLogoStackView.isHidden = true
@@ -216,7 +215,7 @@ extension CategoriesTypeViewController: UITableViewDelegate {
     //MARK: - Handle selection Category Type
     private func handleCategoryTypeSelection(categoryTypeCellViewModel: CategoryTypeCellViewModel) {
         categoryTypeCellViewModel.categoryTitleBinding = {[weak self] category in
-                          guard let self = self else {return}
+            guard let self = self else {return}
             self.delegate?.getSelectedCategoryType(category)
         }
     }

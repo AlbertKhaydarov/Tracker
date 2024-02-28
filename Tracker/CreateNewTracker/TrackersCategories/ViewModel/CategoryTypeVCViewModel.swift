@@ -18,14 +18,14 @@ final class CategoryTypeVCViewModel{
             categotyTypesBinding?(categoryType)
         }
     }
-  
+    
     weak var delegate: NewTrackerVCViewModelCategoryTypeDelegate?
     var delegateViewModel = NewTrackerVCViewModel()
     
     convenience init() {
-       let trackerCategoryStore = TrackerCategoryStore(
-                context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-            )
+        let trackerCategoryStore = TrackerCategoryStore(
+            context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        )
         self.init(trackerCategoryStore: trackerCategoryStore)
     }
     
@@ -35,7 +35,7 @@ final class CategoryTypeVCViewModel{
         categoryType = getСategoryTypeFromStore()
     }
     
-
+    
     private func getСategoryTypeFromStore() -> [CategoryTypeCellViewModel]{
         let сategoryTypeCellViewModel = trackerCategoryStore.categoryTypes.map({ item in
             return CategoryTypeCellViewModel(id: item.objectID.uriRepresentation().absoluteString,

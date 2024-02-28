@@ -16,12 +16,10 @@ final class CategoryTypeCellViewModel: Identifiable {
         self.id = id
         self.categoryTitle = categoryTitle
     }
-
+    
     var categoryTitleBinding: Binding<String>? {
         didSet {
             categoryTitleBinding?(categoryTitle)
         }
     }
-   
-    
 }

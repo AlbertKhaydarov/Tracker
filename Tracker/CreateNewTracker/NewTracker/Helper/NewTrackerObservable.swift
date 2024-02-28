@@ -6,7 +6,7 @@
 //
 
 import Foundation
-class NewTrackerObservable<T> {
+final class NewTrackerObservable<T> {
     var value: T? {
         didSet {
             listener?(value)
@@ -23,21 +23,4 @@ class NewTrackerObservable<T> {
         listener(value)
         self.listener = listener
     }
-    
-//    var value: T? {
-//        didSet {
-//            listeners.forEach { $0(value) }
-//        }
-//    }
-//    
-//    init(value: T?) {
-//        self.value = value
-//    }
-//    
-//    private var listeners: [((T?) -> Void)] = []
-//    
-//    func bind(_ listener: @escaping (T?) -> Void) {
-//        listener(value)
-//        self.listeners.append(listener)
-//    }
 }

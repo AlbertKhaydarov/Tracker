@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ColorsCollectionViewCellViewModel {
+final class ColorsCollectionViewCellViewModel {
     
     var selectedColors: UIColor
 

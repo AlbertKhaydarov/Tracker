@@ -38,12 +38,12 @@ final class NewCategoryTypeViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-  
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
     }
-  
+    
     @objc
     private func creatButtonTapped() {
         guard let newCategoryTypeText = inputNewCategoryTextField.text, !newCategoryTypeText.trimmingCharacters(in: .whitespaces).isEmpty else { return }

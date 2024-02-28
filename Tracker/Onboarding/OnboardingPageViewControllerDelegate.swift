@@ -8,6 +8,5 @@
 import Foundation
 
 protocol OnboardingPageViewControllerDelegate: AnyObject {
-//    func getNextPage()
     func switchToMainPage()
 }

@@ -21,10 +21,10 @@ final class TimeSheetNewTrackerViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-     
+    
     private func setuplayout() {
         customSeparatorView.translatesAutoresizingMaskIntoConstraints = false
-    
+        
         NSLayoutConstraint.activate([
             customSeparatorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             customSeparatorView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),

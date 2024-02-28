@@ -9,5 +9,4 @@ import Foundation
 
 protocol NewTrackerVCViewModelCategoryTypeDelegate: AnyObject {
     func getSelectedCategoryType(_ selectedCategory: String)
-//    func getSelectedCategoryType(_ selectedCategory: [CategoryTypeCellViewModel])
 }

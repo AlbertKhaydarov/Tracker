@@ -6,7 +6,8 @@
 //
 
 import Foundation
-class EmojiCollectionViewCellViewModel {
+
+final class EmojiCollectionViewCellViewModel {
     
     var selectedEmoji: String
 

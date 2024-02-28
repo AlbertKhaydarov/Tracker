@@ -7,10 +7,6 @@
 
 import Foundation
 
-//protocol NewTrackerViewControllerDelegate: AnyObject {
-//    func addTimeSheet(_ weekDays: [Int])
-//}
-
 protocol NewTrackerVCViewModelTimeSheetDelegate: AnyObject {
     func addTimeSheet(_ selectedParametr: String, _ weekDays: [Int]) 
 }

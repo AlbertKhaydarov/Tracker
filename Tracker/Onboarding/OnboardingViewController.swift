@@ -40,12 +40,12 @@ final class OnboardingViewController: UIPageViewController {
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
-    
+
 extension OnboardingViewController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
@@ -70,10 +70,10 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
         }
         return pages[nextIndex]
     }
-    }
-    
-    // MARK: - UIPageViewControllerDelegate
-    extension OnboardingViewController: UIPageViewControllerDelegate {
+}
+
+// MARK: - UIPageViewControllerDelegate
+extension OnboardingViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         
         if let currentViewController = pageViewController.viewControllers?.first,

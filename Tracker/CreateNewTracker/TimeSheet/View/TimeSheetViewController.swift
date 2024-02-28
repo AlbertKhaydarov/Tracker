@@ -17,7 +17,6 @@ final class TimeSheetViewController: UIViewController {
         set {storage?.timeSheetStorage = newValue}
     }
     
-//    weak var delegate: NewTrackerViewControllerDelegate?
     weak var delegate: NewTrackerVCViewModelTimeSheetDelegate?
     
     private lazy var tableView: UITableView = {
@@ -127,7 +126,7 @@ func getTimeSheetShortString(timeSheet: [Int]?) -> String {
     return text
 }
 
-    //MARK: - sort short weekdays
+//MARK: - sort short weekdays
 private func sortShortWeekdays(timeSheetShortString: [String]) -> [String] {
     let order = ["Пн": 0, "Вт": 1, "Ср": 2, "Чт": 3, "Пт": 4, "Сб": 5, "Вс": 6]
     let sortedDaysOfWeek = timeSheetShortString.sorted {
@@ -146,7 +145,6 @@ extension TimeSheetViewController: TimeSheetCellDelegate {
                     timeSheet.append(choosedWeekDay)
                 }
                 self.storageTimeSheet = timeSheet
-
             }
         } else {
             timeSheet.removeAll { $0 == choosedWeekDay }
