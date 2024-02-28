@@ -19,7 +19,8 @@ final class CategoryTypeVCViewModel{
         }
     }
   
-    weak var delegate: NewTrackerVCViewModelDelegate?
+    weak var delegate: NewTrackerVCViewModelCategoryTypeDelegate?
+    var delegateViewModel = NewTrackerVCViewModel()
     
     convenience init() {
        let trackerCategoryStore = TrackerCategoryStore(
@@ -34,13 +35,7 @@ final class CategoryTypeVCViewModel{
         categoryType = getСategoryTypeFromStore()
     }
     
-    func addSelectedCategoryType(_ categoryType: CategoryTypeCellViewModel) {
-        categoryType.categoryTitleBinding = { [weak self] category in
-            guard let self = self else {return}
-            self.delegate?.getSelectedCategoryType(category)
-        }
-    }
-    
+
     private func getСategoryTypeFromStore() -> [CategoryTypeCellViewModel]{
         let сategoryTypeCellViewModel = trackerCategoryStore.categoryTypes.map({ item in
             return CategoryTypeCellViewModel(id: item.objectID.uriRepresentation().absoluteString,

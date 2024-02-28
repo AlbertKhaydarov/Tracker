@@ -15,7 +15,7 @@ final class CategoriesTypeViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.register(CategoriesTypeTableViewCell.self, forCellReuseIdentifier: CategoriesTypeTableViewCell.reuseIdentifier)
         tableView.backgroundColor = .ypWhite
-        tableView.isScrollEnabled = false
+        tableView.isScrollEnabled = true
         tableView.dataSource = self
         tableView.delegate = self
         return tableView
@@ -59,11 +59,9 @@ final class CategoriesTypeViewController: UIViewController {
         return vStackView
     }()
     
-    weak var delegate: NewTrackerVCViewModelDelegate?
+    weak var delegate: NewTrackerVCViewModelCategoryTypeDelegate?
     private var viewModel: CategoryTypeVCViewModel?
     private var viewRouter: RouterProtocol?
-//    private var indexPathForSelectedCategoryType: IndexPath?
-//    var completionHandlerSelectedCategoryType: ((_ indexPathForSelectedCategoryType: IndexPath?) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -208,25 +206,18 @@ extension CategoriesTypeViewController: UITableViewDelegate {
         
         if let cell = tableView.cellForRow(at: indexPath) {
             cell.accessoryType = .checkmark
-            handleCategoryTypeSelection(at: indexPath)
+            guard let viewModel = viewModel?.categoryType[indexPath.row] else {return}
+            handleCategoryTypeSelection(categoryTypeCellViewModel: viewModel)
+            tableView.deselectRow(at: indexPath, animated: true)
+            dismiss(animated: true)
         }
-        tableView.deselectRow(at: indexPath, animated: true)
-        dismiss(animated: true)
     }
     
     //MARK: - Handle selection Category Type
-    private func handleCategoryTypeSelection(at indexPath: IndexPath) {
-        guard let categoryTypeCellViewModel = viewModel?.categoryType[indexPath.row] else {return}
-
-        let newTrackerVCViewModel = NewTrackerVCViewModel(selectedCategory: "")
-        viewModel?.delegate = newTrackerVCViewModel
-        viewModel?.addSelectedCategoryType(categoryTypeCellViewModel)
-        dismiss(animated: true)
-    }
-    
-    private func clearSelection(for cell: UITableViewCell, at indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    private func handleCategoryTypeSelection(categoryTypeCellViewModel: CategoryTypeCellViewModel) {
+        categoryTypeCellViewModel.categoryTitleBinding = {[weak self] category in
+                          guard let self = self else {return}
+            self.delegate?.getSelectedCategoryType(category)
+        }
     }
 }
-
-
