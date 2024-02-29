@@ -17,10 +17,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         if UserDefaultsStorage.shared.isFirstLaunch {
             window?.rootViewController = OnboardingViewController()
-            UserDefaultsStorage.shared.isFirstLaunch = false
         } else {
             window?.rootViewController = TabBarController()   
         }
+        
         window?.makeKeyAndVisible()
     }
     

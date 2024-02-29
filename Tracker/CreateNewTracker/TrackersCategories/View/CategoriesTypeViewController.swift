@@ -67,7 +67,6 @@ final class CategoriesTypeViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
         
-        viewModel = CategoryTypeVCViewModel()
         if let viewModel = viewModel {
             bind(viewModel: viewModel)
         }
@@ -80,6 +79,16 @@ final class CategoriesTypeViewController: UIViewController {
         updateLayout(with: self.view.frame.size)
         showNotCreatedStub()
     }
+    
+    init(viewModel: CategoryTypeVCViewModel) {
+            self.viewModel = viewModel
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    
     
     //MARK: - add binding
     private func bind(viewModel: CategoryTypeVCViewModel) {

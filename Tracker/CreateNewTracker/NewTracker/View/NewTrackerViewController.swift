@@ -160,6 +160,15 @@ final class NewTrackerViewController: UIViewController {
     
     var viewModel: NewTrackerVCViewModel?
     
+    init(viewModel: NewTrackerVCViewModel) {
+            self.viewModel = viewModel
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+ 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -168,8 +177,7 @@ final class NewTrackerViewController: UIViewController {
         setupLayout()
         setupTableViewAndCollectionViewHeight()
         self.viewRouter = ViewRouter(viewController: self)
-        
-        viewModel = NewTrackerVCViewModel()
+
         if let viewModel = viewModel {
             bind(viewModel: viewModel)
         }
@@ -492,7 +500,8 @@ extension NewTrackerViewController: UITableViewDataSource {
         dismissKeyboard()
         
         if indexPath.section == 0{
-            let viewController = CategoriesTypeViewController()
+            let categoryTypeVCViewModel = CategoryTypeVCViewModel()
+            let viewController = CategoriesTypeViewController(viewModel: categoryTypeVCViewModel)
             if let viewRouter = viewRouter {
                 viewRouter.switchToViewController(to: viewController, title: "Категория")
                 viewController.delegate = viewModel

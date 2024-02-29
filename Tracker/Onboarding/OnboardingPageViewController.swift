@@ -67,6 +67,7 @@ final class OnboardingPageViewController: UIViewController {
     
     @objc private func buttonTapped () {
         delegate?.switchToMainPage()
+        UserDefaultsStorage.shared.isFirstLaunch = false
     }
     
     private func style() {

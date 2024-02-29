@@ -53,7 +53,8 @@ final class EventTypeViewController: UIViewController {
     }
     
     @objc private func creatNewHabit(_ sender: UIButton) {
-        let newHabitViewController = NewTrackerViewController()
+        let viewModel = NewTrackerVCViewModel()
+        let newHabitViewController = NewTrackerViewController(viewModel: viewModel)
         newHabitViewController.completionHandlerOnCreateButtonTapped = { [weak self] tracker, category in
             guard let self = self else {return}
             self.delegate?.getNewTracker(tracker, categoryName: category)

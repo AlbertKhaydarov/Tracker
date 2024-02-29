@@ -16,8 +16,12 @@ final class UserDefaultsStorage: UserDefaultsStorageProtocol {
     static let shared =  UserDefaultsStorage()
     private let storage = UserDefaults.standard
     
-    private init() {}
-    
+    private init() {
+            if storage.object(forKey: StorageKeys.isFirstLaunchKey.rawValue) == nil {
+                storage.set(true, forKey: StorageKeys.isFirstLaunchKey.rawValue)
+            }
+        }
+
     var timeSheetStorage: [Int]? {
         get {
             storage.array(forKey: StorageKeys.timeSheetStorageKey.rawValue) as? [Int]
