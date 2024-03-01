@@ -10,6 +10,7 @@ import UIKit
 final class OnboardingPageViewController: UIViewController {
     
     weak var delegate: OnboardingPageViewControllerDelegate?
+    var currentPageIndex: Int = 0
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()

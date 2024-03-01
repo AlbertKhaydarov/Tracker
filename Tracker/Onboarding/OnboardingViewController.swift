@@ -9,17 +9,13 @@ import UIKit
 
 final class OnboardingViewController: UIPageViewController {
     
-    private lazy var pages: [UIViewController] = {
-        var page1 = OnboardingPageViewController(imageName: "page1", titleText: "Отслеживайте только\nто, что хотите")
-        page1.delegate = self
-        var page2 = OnboardingPageViewController(imageName: "page2", titleText: "Даже если это\nне литры воды и йога")
-        page2.delegate = self
-        return [page1, page2]
-    }()
+    private let totalPages = 2
+    private var imageNames: [String] = []
+    private var titles: [String] = []
     
     private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
-        pageControl.numberOfPages = pages.count
+        pageControl.numberOfPages = totalPages
         pageControl.currentPage = 0
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.pageIndicatorTintColor = .black.withAlphaComponent(0.3)
@@ -31,9 +27,15 @@ final class OnboardingViewController: UIPageViewController {
         super.init(transitionStyle: .scroll, navigationOrientation: navigationOrientation, options: options)
         dataSource = self
         delegate = self
-        if let first = pages.first {
-            setViewControllers([first], direction: .forward, animated: false, completion: nil)
-        }
+
+        imageNames = ["page1", "page2"]
+        titles = ["Отслеживайте только\nто, что хотите", "Даже если это\nне литры воды и йога"]
+        
+        setViewControllers([creatPageViewController(at: 0)],
+                           direction: .forward,
+                           animated: true,
+                           completion: nil)
+        
         view.addSubview(pageControl)
         NSLayoutConstraint.activate([
             pageControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -134),
@@ -44,42 +46,47 @@ final class OnboardingViewController: UIPageViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    private func creatPageViewController(at index: Int) -> OnboardingPageViewController {
+        var newViewController: OnboardingPageViewController
+        if index == 0 {
+            newViewController = OnboardingPageViewController(imageName: imageNames[index], titleText: titles[index])
+        } else {
+            newViewController = OnboardingPageViewController(imageName: imageNames[index], titleText: titles[index])
+        }
+        newViewController.currentPageIndex = index
+        newViewController.delegate = self
+        return newViewController
+    }
 }
 
 extension OnboardingViewController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        
-        guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
-            return nil
-        }
-        var previousIndex = viewControllerIndex - 1
+        guard let pageContent: OnboardingPageViewController = viewController as? OnboardingPageViewController else {return nil}
+        var previousIndex = pageContent.currentPageIndex - 1
         if previousIndex < 0 {
-            previousIndex = pages.count - 1
+            previousIndex = totalPages - 1
         }
-        return pages[previousIndex]
+        return creatPageViewController(at: previousIndex)
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        
-        guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
-            return nil
-        }
-        var nextIndex = viewControllerIndex + 1
-        if nextIndex == pages.count   {
+        guard let pageContent: OnboardingPageViewController = viewController as? OnboardingPageViewController else {return nil}
+        var nextIndex = pageContent.currentPageIndex + 1
+        if nextIndex > totalPages - 1  {
             nextIndex = 0
         }
-        return pages[nextIndex]
+        return creatPageViewController(at: nextIndex)
     }
 }
 
 // MARK: - UIPageViewControllerDelegate
 extension OnboardingViewController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        
-        if let currentViewController = pageViewController.viewControllers?.first,
-           let currentIndex = pages.firstIndex(of: currentViewController) {
-            pageControl.currentPage = currentIndex
-        }
+        guard let currentViewController = viewControllers?[0] as? OnboardingPageViewController
+        else { return }
+        let currentIndex = currentViewController.currentPageIndex
+        pageControl.currentPage = currentIndex
     }
 }
 
