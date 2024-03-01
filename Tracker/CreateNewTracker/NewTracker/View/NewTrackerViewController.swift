@@ -8,9 +8,7 @@
 import UIKit
 
 final class NewTrackerViewController: UIViewController {
-    private let colorSelection: [UIColor] = UIColor.colorSelection
-//    private let emojiesCollection: [String] = String.emojiesCollection
-    private var categoryTitle: String = "здесь будут выбранные категории"
+    
     private let titlesButtons: [String] = ["Категория", "Расписание"]
     
     private let scrollView: UIScrollView = {
@@ -147,28 +145,19 @@ final class NewTrackerViewController: UIViewController {
     
     var completionHandlerOnCreateButtonTapped: ((_ newTracker: TrackerModel, _ nameCategory: String?) -> Void)?
     
-//    private var indexPathForSelectedEmoji: IndexPath?
-//    private var indexPathForSelectedColor: IndexPath?
-//    
-//    private var nameTracker = false
-//    private var timeSheetIsEnable = false
-//    private var categoryIsEnable = false
-//    private var emojiSelectedIsEnable = false
-//    private var colorSelectedIsEnable = false
-    
     private var viewRouter: RouterProtocol?
     
     var viewModel: NewTrackerVCViewModel?
     
     init(viewModel: NewTrackerVCViewModel) {
-            self.viewModel = viewModel
-            super.init(nibName: nil, bundle: nil)
-        }
-
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
- 
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
@@ -177,10 +166,11 @@ final class NewTrackerViewController: UIViewController {
         setupLayout()
         setupTableViewAndCollectionViewHeight()
         self.viewRouter = ViewRouter(viewController: self)
-
+        
         if let viewModel = viewModel {
             bind(viewModel: viewModel)
         }
+        nameInputTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
     //MARK: - add binding
@@ -201,7 +191,7 @@ final class NewTrackerViewController: UIViewController {
         else { return }
         
         var newTracker: TrackerModel
-        if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
+        if let typeEvent = viewModel?.typeEvent {
             guard let emoji = viewModel?.selectedEmoji.value?.selectedEmoji,
                   let color = viewModel?.selectedColor.value?.selectedColors
             else {return}
@@ -254,11 +244,13 @@ final class NewTrackerViewController: UIViewController {
         if let selectedIndexPath = viewModel?.indexPathForSelectedEmoji, let cell = collectionView.cellForItem(at: selectedIndexPath) {
             clearSelection(for: cell, at: selectedIndexPath)
         }
-        guard let cell = collectionView.cellForItem(at: indexPath) else { return }
-        viewModel?.handleEmojiSelection(at: indexPath)
+        guard let cell = collectionView.cellForItem(at: indexPath),
+              let viewModel = viewModel
+        else { return }
+        viewModel.handleEmojiSelection(at: indexPath)
         selectCell(cell, at: indexPath,
-                     withColor: .ypLightGray,
-                     cornerRadius: 16)
+                   withColor: .ypLightGray,
+                   cornerRadius: 16)
         createButtonIsEnabled()
     }
     
@@ -266,12 +258,14 @@ final class NewTrackerViewController: UIViewController {
         if let selectedIndexPath = viewModel?.indexPathForSelectedColor, let cell = collectionView.cellForItem(at: selectedIndexPath) {
             clearSelection(for: cell, at: selectedIndexPath)
         }
-        guard let cell = collectionView.cellForItem(at: indexPath) else { return }
-        viewModel?.handleColorSelection(at: indexPath)
+        guard let cell = collectionView.cellForItem(at: indexPath),
+              let viewModel = viewModel
+        else { return }
+        viewModel.handleColorSelection(at: indexPath)
         selectCell(cell, at: indexPath,
-                     withColor: colorSelection[indexPath.row].withAlphaComponent(0.3),
-                     cornerRadius: 8,
-                     borderWidth: 3)
+                   withColor:  viewModel.colorSelection[indexPath.row].withAlphaComponent(0.3),
+                   cornerRadius: 8,
+                   borderWidth: 3)
         createButtonIsEnabled()
     }
     
@@ -354,6 +348,14 @@ final class NewTrackerViewController: UIViewController {
             lengthLimitationLabel.centerXAnchor.constraint(equalTo: textFieldStackView.centerXAnchor)
         ])
     }
+    
+    //MARK: - check if the text field is empty after entering each character
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        if let text = textField.text {
+            text.count == 0 ? (viewModel?.isTrackerNameEmpty = false) : (viewModel?.isTrackerNameEmpty = true)
+            createButtonIsEnabled()
+        }
+    }
 }
 
 // MARK: - UIScrollViewDelegate
@@ -375,6 +377,8 @@ extension NewTrackerViewController: UITextFieldDelegate {
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
         lengthLimitationLabel.isHidden = true
         setupLayout()
+        viewModel?.isTrackerNameEmpty = false
+        createButtonIsEnabled()
         return true
     }
     
@@ -391,10 +395,7 @@ extension NewTrackerViewController: UITextFieldDelegate {
             lengthLimitationLabel.isHidden = true
             setupLayout()
         }
-        if updatedText.count != 0 {
-            viewModel?.isTrackerNameEmpty = true
-        }
-        createButtonIsEnabled()
+        
         return updatedText.count <= maxLength
     }
 }
@@ -407,7 +408,7 @@ extension NewTrackerViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var rowsInSection = 0
-        if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
+        if let typeEvent = viewModel?.typeEvent  {
             switch typeEvent {
             case .habitType:
                 if section == 0 {
@@ -438,7 +439,7 @@ extension NewTrackerViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let typeEvent = TypeEvents(rawValue: self.title ?? "") {
+        if let typeEvent = viewModel?.typeEvent {
             switch typeEvent {
             case .habitType:
                 if indexPath.section == 0 {
@@ -541,7 +542,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             ) as? ColorsCollectionViewCell else { return UICollectionViewCell()}
             
             cell.sizeToFit()
-            cell.colorItemView.backgroundColor = colorSelection[indexPath.row]
+            cell.colorItemView.backgroundColor = viewModel?.colorSelection[indexPath.row]
             
             return cell
         }
@@ -549,7 +550,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: UICollectionViewDelegateFlowLayout
+// MARK: - UICollectionViewDelegateFlowLayout
 extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 52, height: 52)

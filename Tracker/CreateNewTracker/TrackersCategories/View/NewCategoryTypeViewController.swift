@@ -16,7 +16,7 @@ final class NewCategoryTypeViewController: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 30))
         textField.leftViewMode = .always
         textField.placeholder = "Введите название категории"
-        textField.backgroundColor = .gray
+        textField.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         textField.layer.cornerRadius = 16
         textField.clearButtonMode = .whileEditing
         textField.clipsToBounds = true
@@ -42,6 +42,7 @@ final class NewCategoryTypeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        inputNewCategoryTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
     @objc
@@ -49,6 +50,22 @@ final class NewCategoryTypeViewController: UIViewController {
         guard let newCategoryTypeText = inputNewCategoryTextField.text, !newCategoryTypeText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
         delegate?.addNewCategoryType(with: newCategoryTypeText)
         dismiss(animated: true)
+    }
+    
+    //MARK: - check if the text field is empty after entering each character
+    @objc
+    private func textFieldDidChange(_ textField: UITextField) {
+        if let newCategoryType = textField.text {
+            if newCategoryType.count == 0 || newCategoryType.first == " " {
+                creatButton.backgroundColor = .gray
+                creatButton.setTitleColor(.white, for: .normal)
+                creatButton.isEnabled = false
+            } else {
+                creatButton.backgroundColor = .black
+                creatButton.setTitleColor(.white, for: .normal)
+                creatButton.isEnabled = true
+            }
+        }
     }
     
     private func setupViews() {
@@ -73,25 +90,6 @@ final class NewCategoryTypeViewController: UIViewController {
 extension NewCategoryTypeViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        return true
-    }
-    
-    func textField(
-        _ textField: UITextField,
-        shouldChangeCharactersIn range: NSRange,
-        replacementString string: String
-    ) -> Bool {
-        let newCategoryType = (inputNewCategoryTextField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? ""
-        if newCategoryType.isEmpty || newCategoryType.first == " " {
-            creatButton.backgroundColor = .gray
-            creatButton.setTitleColor(.white, for: .normal)
-            creatButton.isEnabled = false
-            return newCategoryType != " "
-        } else {
-            creatButton.backgroundColor = .black
-            creatButton.setTitleColor(.white, for: .normal)
-            creatButton.isEnabled = true
-        }
         return true
     }
     

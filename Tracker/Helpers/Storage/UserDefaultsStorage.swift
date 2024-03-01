@@ -10,6 +10,7 @@ import Foundation
 enum StorageKeys: String {
     case timeSheetStorageKey
     case isFirstLaunchKey
+    case lastSelectedcategory
 }
 
 final class UserDefaultsStorage: UserDefaultsStorageProtocol {
@@ -39,5 +40,14 @@ final class UserDefaultsStorage: UserDefaultsStorageProtocol {
               storage.set(newValue, forKey: StorageKeys.isFirstLaunchKey.rawValue)
           }
       }
+    
+    var lastSelectedcategory: Int {
+        get {
+            return storage.integer(forKey: StorageKeys.lastSelectedcategory.rawValue)
+        }
+        set {
+            storage.set(newValue, forKey: StorageKeys.lastSelectedcategory.rawValue)
+        }
+    }
 }
 

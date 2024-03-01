@@ -26,6 +26,8 @@ final class NewTrackerVCViewModel {
     let colorSelection: [UIColor] = UIColor.colorSelection
     let emojiesCollection: [String] = String.emojiesCollection
     
+    var typeEvent: TypeEvents?
+    
     init() {
         selectedCategory = NewTrackerObservable(value: CategoryNewTrackerViewCellViewModel(selectedCategory: ""))
         weekDays = NewTrackerObservable(value: TimeSheetNewTrackerViewCellViewModel(timeSheetDays: "", weekdays: []))

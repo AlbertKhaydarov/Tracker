@@ -32,6 +32,11 @@ final class CategoriesTypeViewController: UIViewController {
         return button
     }()
     
+    private (set) var lastSelectedcategory: Int? {
+        get { return UserDefaultsStorage.shared.lastSelectedcategory}
+        set {UserDefaultsStorage.shared.lastSelectedcategory = newValue ?? 0}
+    }
+    
     //MARK: - add Stub Scene Logo
     private lazy var errorTrackersLogo: UIImageView = {
         let imageView = UIImageView()
@@ -81,13 +86,13 @@ final class CategoriesTypeViewController: UIViewController {
     }
     
     init(viewModel: CategoryTypeVCViewModel) {
-            self.viewModel = viewModel
-            super.init(nibName: nil, bundle: nil)
-        }
-
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     
     //MARK: - add binding
@@ -195,6 +200,13 @@ extension CategoriesTypeViewController: UITableViewDataSource {
             cell.layer.cornerRadius = 16
             
         }
+        
+        if let lastSelectedcategory = lastSelectedcategory, indexPath.row == lastSelectedcategory {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
+        
         return cell
     }
 }
@@ -209,6 +221,7 @@ extension CategoriesTypeViewController: UITableViewDelegate {
         for row in 0..<tableView.numberOfRows(inSection: indexPath.section) {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: indexPath.section)) {
                 cell.accessoryType = .none
+                lastSelectedcategory = indexPath.row
             }
         }
         
