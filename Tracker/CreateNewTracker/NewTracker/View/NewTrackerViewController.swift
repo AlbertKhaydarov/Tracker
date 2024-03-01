@@ -9,7 +9,7 @@ import UIKit
 
 final class NewTrackerViewController: UIViewController {
     private let colorSelection: [UIColor] = UIColor.colorSelection
-    private let emojiesCollection: [String] = String.emojiesCollection
+//    private let emojiesCollection: [String] = String.emojiesCollection
     private var categoryTitle: String = "здесь будут выбранные категории"
     private let titlesButtons: [String] = ["Категория", "Расписание"]
     
@@ -147,14 +147,14 @@ final class NewTrackerViewController: UIViewController {
     
     var completionHandlerOnCreateButtonTapped: ((_ newTracker: TrackerModel, _ nameCategory: String?) -> Void)?
     
-    private var indexPathForSelectedEmoji: IndexPath?
-    private var indexPathForSelectedColor: IndexPath?
-    
-    private var nameTracker = false
-    private var timeSheetIsEnable = false
-    private var categoryIsEnable = false
-    private var emojiSelectedIsEnable = false
-    private var colorSelectedIsEnable = false
+//    private var indexPathForSelectedEmoji: IndexPath?
+//    private var indexPathForSelectedColor: IndexPath?
+//    
+//    private var nameTracker = false
+//    private var timeSheetIsEnable = false
+//    private var categoryIsEnable = false
+//    private var emojiSelectedIsEnable = false
+//    private var colorSelectedIsEnable = false
     
     private var viewRouter: RouterProtocol?
     
@@ -235,7 +235,8 @@ final class NewTrackerViewController: UIViewController {
     
     //MARK: - add others check up
     private func createButtonIsEnabled() {
-        if nameTracker && timeSheetIsEnable && categoryIsEnable && emojiSelectedIsEnable && colorSelectedIsEnable {
+        guard let viewModel = viewModel else {return}
+        if viewModel.isTrackerNameEmpty && viewModel.timeSheetIsEnable && viewModel.categoryIsEnable && viewModel.emojiSelectedIsEnable && viewModel.colorSelectedIsEnable {
             createButton.isEnabled = true
             createButton.backgroundColor = .ypBlack
         } else {
@@ -250,32 +251,24 @@ final class NewTrackerViewController: UIViewController {
     
     //MARK: - Handle selection in CollectionView
     private func handleEmojiSelection(at indexPath: IndexPath) {
-        if let selectedIndexPath = indexPathForSelectedEmoji, let cell = collectionView.cellForItem(at: selectedIndexPath) {
+        if let selectedIndexPath = viewModel?.indexPathForSelectedEmoji, let cell = collectionView.cellForItem(at: selectedIndexPath) {
             clearSelection(for: cell, at: selectedIndexPath)
         }
         guard let cell = collectionView.cellForItem(at: indexPath) else { return }
-        indexPathForSelectedEmoji = indexPath
-        let selectedEmoji = emojiesCollection[indexPath.row]
-        viewModel?.selectedEmoji.value?.selectedEmoji = selectedEmoji
-        
-        emojiSelectedIsEnable = true
-        selectedCell(cell, at: indexPath,
+        viewModel?.handleEmojiSelection(at: indexPath)
+        selectCell(cell, at: indexPath,
                      withColor: .ypLightGray,
                      cornerRadius: 16)
         createButtonIsEnabled()
     }
     
     private func handleColorSelection(at indexPath: IndexPath) {
-        if let selectedIndexPath = indexPathForSelectedColor, let cell = collectionView.cellForItem(at: selectedIndexPath) {
+        if let selectedIndexPath = viewModel?.indexPathForSelectedColor, let cell = collectionView.cellForItem(at: selectedIndexPath) {
             clearSelection(for: cell, at: selectedIndexPath)
         }
         guard let cell = collectionView.cellForItem(at: indexPath) else { return }
-        indexPathForSelectedColor = indexPath
-        let selectedColor = colorSelection[indexPath.row]
-        viewModel?.selectedColor.value?.selectedColors = selectedColor
-        
-        colorSelectedIsEnable = true
-        selectedCell(cell, at: indexPath,
+        viewModel?.handleColorSelection(at: indexPath)
+        selectCell(cell, at: indexPath,
                      withColor: colorSelection[indexPath.row].withAlphaComponent(0.3),
                      cornerRadius: 8,
                      borderWidth: 3)
@@ -288,7 +281,7 @@ final class NewTrackerViewController: UIViewController {
         collectionView.deselectItem(at: indexPath, animated: true)
     }
     
-    private func selectedCell(_ cell: UICollectionViewCell, at indexPath: IndexPath, withColor color: UIColor, cornerRadius: CGFloat, borderWidth: CGFloat = 0) {
+    private func selectCell(_ cell: UICollectionViewCell, at indexPath: IndexPath, withColor color: UIColor, cornerRadius: CGFloat, borderWidth: CGFloat = 0) {
         cell.backgroundColor = color
         cell.layer.cornerRadius = cornerRadius
         cell.layer.masksToBounds = true
@@ -374,7 +367,7 @@ extension NewTrackerViewController: UIScrollViewDelegate {
 extension NewTrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        nameTracker = true
+        viewModel?.isTrackerNameEmpty = true
         createButtonIsEnabled()
         return true
     }
@@ -399,7 +392,7 @@ extension NewTrackerViewController: UITextFieldDelegate {
             setupLayout()
         }
         if updatedText.count != 0 {
-            nameTracker = true
+            viewModel?.isTrackerNameEmpty = true
         }
         createButtonIsEnabled()
         return updatedText.count <= maxLength
@@ -426,7 +419,7 @@ extension NewTrackerViewController: UITableViewDataSource {
             case .oneTimeType:
                 rowsInSection = 1
                 tableViewHeightConstraint.constant = 75
-                timeSheetIsEnable = true
+                viewModel?.timeSheetIsEnable = true
                 tableView.separatorStyle = .none
                 createButtonIsEnabled()
             }
@@ -455,7 +448,7 @@ extension NewTrackerViewController: UITableViewDataSource {
                         let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
                         cell.detailTextLabel?.text = selectedCategory
                     }
-                    categoryIsEnable = true
+                    viewModel?.categoryIsEnable = true
                     createButtonIsEnabled()
                     return cell
                 } else if indexPath.section == 1 {
@@ -470,13 +463,13 @@ extension NewTrackerViewController: UITableViewDataSource {
                             cell.detailTextLabel?.text = viewModel?.weekDays.value?.timeSheetDays
                         }
                         if timeSheetDays.isEmpty {
-                            timeSheetIsEnable = false
+                            viewModel?.timeSheetIsEnable = false
                         } else {
-                            timeSheetIsEnable = true
+                            viewModel?.timeSheetIsEnable = true
                         }
                     }
                     cell.configureSeparator(with: true)
-                    categoryIsEnable = true
+                    viewModel?.categoryIsEnable = true
                     createButtonIsEnabled()
                     return cell
                 }
@@ -487,7 +480,7 @@ extension NewTrackerViewController: UITableViewDataSource {
                     let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
                     cell.detailTextLabel?.text = selectedCategory
                 }
-                categoryIsEnable = true
+                viewModel?.categoryIsEnable = true
                 createButtonIsEnabled()
                 return cell
             }
@@ -530,7 +523,8 @@ extension NewTrackerViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return section == 0 ? emojiesCollection.count : colorSelection.count
+        guard let viewModel = viewModel else {return 0}
+        return section == 0 ? viewModel.emojiesCollection.count :  viewModel.colorSelection.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -538,7 +532,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.emojiCollectionViewCellIdentifier, for: indexPath
             ) as? EmojiCollectionViewCell else { return UICollectionViewCell()}
             
-            cell.titleLabel.text = emojiesCollection[indexPath.row]
+            cell.titleLabel.text =  viewModel?.emojiesCollection[indexPath.row]
             cell.backgroundColor = cell.isSelected ? .ypBackground : .clear
             
             return cell
