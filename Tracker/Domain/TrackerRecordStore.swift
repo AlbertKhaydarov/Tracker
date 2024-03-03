@@ -35,7 +35,7 @@ final class TrackerRecordStore: NSObject {
         self.context = context
         super.init()
         //TODO: - удалить после отладки
-//                        deleteAllData()
+        //                        deleteAllData()
     }
     
     //TODO: - удалить после отладки

@@ -8,13 +8,21 @@
 import UIKit
 
 final class CategoriesTypeTableViewCell: UITableViewCell {
-    static let reuseIdentifier = "ImagesListCell"
+    static let reuseIdentifier = "CategoriesTypeCell"
     
     private lazy var customSeparatorView: UIView = {
         let view = UIView()
         view.backgroundColor = .ypGray
         return view
     }()
+    
+    var viewModel: CategoryTypeCellViewModel! {
+        didSet {
+            viewModel.categoryTitleBinding = { [weak self] category in
+                self?.textLabel?.text = category
+            }
+        }
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
@@ -44,6 +52,7 @@ final class CategoriesTypeTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         self.accessoryType = .none
+        viewModel?.categoryTitleBinding = nil
     }
 }
 
