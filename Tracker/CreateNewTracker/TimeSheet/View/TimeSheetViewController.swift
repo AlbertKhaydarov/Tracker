@@ -64,7 +64,7 @@ final class TimeSheetViewController: UIViewController {
             cell.delegate = self
             
             self.storageTimeSheet?.forEach{ dayNumber in
-                if dayNumber == "".shortDays(for: day.rawValue) {
+                if dayNumber == "".shortDays(for: day.localizedString()) {
                     cell.weekDayToogle.isOn = true
                     self.getSwitchDay(for: dayNumber, toogleIsOn: true)
                 }

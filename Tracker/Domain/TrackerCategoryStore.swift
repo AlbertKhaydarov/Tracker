@@ -44,6 +44,11 @@ final class TrackerCategoryStore: NSObject {
     init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
+        let paths = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
+        //TODO: - удалить после отладки
+//        if let libraryPath = paths.first {
+//            print("Library path: \(libraryPath)")
+//        }
     }
     
     var categoryTypes: [TrackerCategoryCoreData] {

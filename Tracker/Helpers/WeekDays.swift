@@ -19,13 +19,13 @@ import Foundation
 //}
 
 enum WeekDays: String, CaseIterable {
-    case monday = "weekDay2"
-    case tuesday = "weekDay3"
-    case wednesday = "weekDay4"
-    case thursday = "weekDay5"
-    case friday = "weekDay6"
-    case saturday = "weekDay7"
-    case sunday = "weekDay1"
+    case monday //= "weekDay2"
+    case tuesday //= "weekDay3"
+    case wednesday //= "weekDay4"
+    case thursday //= //"weekDay5"
+    case friday //= //"weekDay6"
+    case saturday //= //"weekDay7"
+    case sunday //= //"weekDay1"
     
     static let allDaysCount = WeekDays.allCases.count
     

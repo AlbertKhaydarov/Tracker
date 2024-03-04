@@ -7,10 +7,12 @@
 
 import Foundation
 
-enum TypeEvents: String {
-    case habitType = "Новая привычка"
-    case oneTimeType = "Новое нерегулярное событие"
-    
+enum TypeEvents {
+    case habitType
+    case oneTimeType
+}
+
+extension TypeEvents {
     func localizedString() -> String {
         switch self {
         case .habitType:

@@ -86,7 +86,8 @@ final class TrackersViewController: UIViewController {
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
-        datePicker.locale = Locale(identifier: "ru_RU")
+//        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.locale = Locale.current
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
@@ -137,7 +138,8 @@ final class TrackersViewController: UIViewController {
             .foregroundColor: UIColor.ypBlack,
         ]
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
-        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "Отмена"
+        let searchBarButtonTitle = NSLocalizedString("searchBarButton.title", comment: "")
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = searchBarButtonTitle
     }
     
     private func showNotCreatedStub() {
@@ -251,7 +253,8 @@ final class TrackersViewController: UIViewController {
     @objc private func addButtonTapped() {
         let eventTypeViewController = EventTypeViewController()
         eventTypeViewController.delegate = self
-        eventTypeViewController.title = "Создание трекера"
+        let addButtonTappedTitle = NSLocalizedString("addButtonTappedTitle.title", comment: "")
+        eventTypeViewController.title = addButtonTappedTitle
         let navigationController = UINavigationController(rootViewController: eventTypeViewController)
         present(navigationController, animated: true)
     }
@@ -291,19 +294,23 @@ final class TrackersViewController: UIViewController {
     
     //MARK: - custom format datePicker label like Figma design
     private func setupCustomDatePickerView(with date: Date) {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yy"
-        currentDate = dateFormatter.string(from: date)
-        
-        if let dateLabel = datePicker.viewWithTag(100) as? UILabel {
-            dateLabel.text = currentDate
-        } else {
-            datePicker.addCustomLabel(text: currentDate, width: 100, height: 44)
-        }
-        
-        if let dateLabel = findAndModifyDatePickerLabel(in: datePicker.subviews) {
-            dateLabel.isHidden = true
-        }
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "dd.MM.yy"
+            currentDate = dateFormatter.string(from: date)
+            
+            if let dateLabel = datePicker.viewWithTag(100) as? UILabel {
+                dateLabel.text = currentDate
+            } else {
+                datePicker.addCustomLabel(text: currentDate, width: 100, height: 44)
+            }
+            
+            if let dateLabel = findAndModifyDatePickerLabel(in: datePicker.subviews) {
+                dateLabel.isHidden = true
+                dateLabel.font = .ypRegular17
+                NSLayoutConstraint.activate([
+                    dateLabel.widthAnchor.constraint(equalToConstant: 100)
+                ])
+            }
     }
     
     private func findAndModifyDatePickerLabel(in views: [UIView]) -> UILabel? {
