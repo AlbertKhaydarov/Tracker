@@ -84,7 +84,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         emojiLabel.text = trackerItem.emoji
         setQuantityButton.backgroundColor = trackerItem.color
         trackerBackgroundView.backgroundColor = trackerItem.color
-        quantityLabel.text = "\(completedDays) \(setupTextEnd(completedDays))"
+        quantityLabel.text = "\(setupTextEnd(completedDays))"
         self.isTrackerCompleted = isTrackerCompleted
         self.trackerId = trackerItem.idTracker
         self.indexPath = indexPath
@@ -102,21 +102,12 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupTextEnd(_ quantity: Int) -> String   {
-        if (quantity == 0) { return " дней" }
-        
-        if (quantity % 10 == 1 && quantity % 100 != 11) {
-            return String.init(format: "день", quantity)
-        }
-        else if ((quantity % 10 >= 2 && quantity % 10 <= 4) &&
-                 !(quantity % 100 >= 12 && quantity % 100 <= 14)) {
-            return String.init(format:  "дня", quantity)
-        }
-        else if (quantity % 10 == 0 ||
-                 (quantity % 10 >= 5 && quantity % 10 <= 9) ||
-                 (quantity % 100 >= 11 && quantity % 100 <= 14)) {
-            return String.init(format: "дней", quantity)
-        }
-        return "Oops!"
+//MARK: - add Localizable Dict
+        let tasksString = String.localizedStringWithFormat(
+            NSLocalizedString("numberOfCompletedTrackers",
+                              comment: "Number of remaining tasks"),
+            quantity)
+        return tasksString
     }
     
     private func quantityButtonSetImage(isTrackerCompleted: Bool) {
