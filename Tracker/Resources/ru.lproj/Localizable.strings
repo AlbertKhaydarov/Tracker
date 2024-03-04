@@ -1,0 +1,52 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Альберт Хайдаров on 04.03.2024.
+  
+*/
+
+"trackers.tabBarItem.title" = "Трекеры";
+"statistics.tabBarItem.title" = "Статистика";
+"onboargingPage1.title" = "Отслеживайте только\nто, что хотите";
+"onboargingPage2.title" = "Даже если это\nне литры воды и йога";
+"onboargingButton.title" = "Вот это технологии!";
+"errorTrackersLabel.titleText" = "Что будем отслеживать?";
+"notFoundTrackersLabelText" = "Ничего не найдено";
+"trackersVCTitleText" = "Трекеры";
+"titlesCategory" = "Категория";
+"titlesTimeSheet" = "Расписание";
+"nameInputTextFieldText" = "Введите название трекера";
+"lengthLimitationLabelText" = "Ограничение 38 символов";
+"cancelButton.title" = "Отменить";
+"createButton.title" = "Создать";
+"timeSheetDaysText" = "Каждый день";
+"collectionViewTitleText" = "Цвет";
+"habitTypeButton.title" = "Привычка";
+"oneTimeTypeButton.title" = "Нерегулярное событие";
+"addCategoryButton.title" = "Добавить категорию";
+"errorTrackersLabel.title" = "Привычки и события можно\nобъединить по смыслу";
+"categoriesVC.title" = "Категория";
+"newCategoryTypeVC.title" = "Новая категория";
+"inputNewCategoryTextFieldPlaceholder" = "Введите название категории";
+"creatButton.title" = "Готово";
+"readyButton.title" = "Готово";
+"timeSheetVC.title" = "Расписание";
+"sortedDaysText" = "Каждый день";
+"orderDay1" = "Пн";
+"orderDay2" = "Вт";
+"orderDay3" = "Ср";
+"orderDay4" =" Чт";
+"orderDay5" = "Пт";
+"orderDay6" = "Сб";
+"orderDay7" = "Вс";
+"allWeekDays" = "Неделя"; // "Weekday"
+"weekDay1" = "Воскресенье";
+"weekDay2" = "Понедельник";
+"weekDay3" = "Вторник";
+"weekDay4" = "Среда";
+"weekDay5" = "Четверг";
+"weekDay6" = "Пятница";
+"weekDay7" = "Суббота";
+
+

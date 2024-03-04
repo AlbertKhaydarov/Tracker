@@ -8,8 +8,9 @@
 import UIKit
 
 final class NewTrackerViewController: UIViewController {
-    
-    private let titlesButtons: [String] = ["Категория", "Расписание"]
+    let titlesCategory = NSLocalizedString("titlesButtonCategory", comment: "")
+    let titlesTimeSheet = NSLocalizedString("titlesButtonTimeSheet", comment: "")
+    private var titlesButtons: [String] = []
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -31,7 +32,8 @@ final class NewTrackerViewController: UIViewController {
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 75))
         textField.leftViewMode = .always
-        textField.placeholder = "Введите название трекера"
+        let nameInputTextFieldText = NSLocalizedString("nameInputTextFieldText", comment: "")
+        textField.placeholder = nameInputTextFieldText
         textField.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         textField.layer.cornerRadius = 16
         textField.clearButtonMode = .whileEditing
@@ -44,7 +46,8 @@ final class NewTrackerViewController: UIViewController {
     private let lengthLimitationLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Ограничение 38 символов"
+        let lengthLimitationLabelText = NSLocalizedString("lengthLimitationLabelText", comment: "")
+        label.text = lengthLimitationLabelText
         label.font = UIFont.systemFont(ofSize: 17)
         label.textColor = .ypRed
         label.numberOfLines = 1
@@ -120,7 +123,8 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Отменить", for: .normal)
+        let cancelButtonTitle = NSLocalizedString("cancelButton.title", comment: "")
+        button.setTitle(cancelButtonTitle, for: .normal)
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.ypRed.cgColor
         button.setTitleColor(.ypRed, for: .normal)
@@ -133,7 +137,8 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var createButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Создать", for: .normal)
+        let createButtonTitle = NSLocalizedString("createButton.title", comment: "")
+        button.setTitle(createButtonTitle, for: .normal)
         button.tintColor = .white
         button.backgroundColor = .ypGray
         button.layer.cornerRadius = 16
@@ -151,6 +156,7 @@ final class NewTrackerViewController: UIViewController {
     
     init(viewModel: NewTrackerVCViewModel) {
         self.viewModel = viewModel
+        titlesButtons = [titlesCategory, titlesTimeSheet]
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -213,7 +219,7 @@ final class NewTrackerViewController: UIViewController {
                 completionHandlerOnCreateButtonTapped?(newTracker, category)
             }
         } else {
-            print("Ошибка создания трекера")
+            assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
             return
         }
         self.view.window?.rootViewController?.dismiss(animated: true)
@@ -459,7 +465,8 @@ extension NewTrackerViewController: UITableViewDataSource {
                     if let timeSheetDays = viewModel?.weekDays.value?.weekdays
                     {
                         if timeSheetDays.count == 7 {
-                            cell.detailTextLabel?.text = "Каждый день"
+                            let timeSheetDaysText = NSLocalizedString("timeSheetDaysText", comment: "")
+                            cell.detailTextLabel?.text = timeSheetDaysText
                         } else {
                             cell.detailTextLabel?.text = viewModel?.weekDays.value?.timeSheetDays
                         }
@@ -497,13 +504,13 @@ extension NewTrackerViewController: UITableViewDataSource {
             let categoryTypeVCViewModel = CategoryTypeVCViewModel()
             let viewController = CategoriesTypeViewController(viewModel: categoryTypeVCViewModel)
             if let viewRouter = viewRouter {
-                viewRouter.switchToViewController(to: viewController, title: "Категория")
+                viewRouter.switchToViewController(to: viewController, title: titlesCategory)
                 viewController.delegate = viewModel
             }
         } else {
             let viewController = TimeSheetViewController()
             if let viewRouter = viewRouter {
-                viewRouter.switchToViewController(to: viewController, title: "Расписание")
+                viewRouter.switchToViewController(to: viewController, title: titlesTimeSheet)
                 viewController.delegate = viewModel
             }
         }
@@ -580,8 +587,8 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
         guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else {
             return UICollectionReusableView()
         }
-        
-        view.titleLabel.text = indexPath.section == 0 ? "Emoji" : "Цвет"
+        let collectionViewTitleText = NSLocalizedString("collectionViewTitleText", comment: "")
+        view.titleLabel.text = indexPath.section == 0 ? "Emoji" : collectionViewTitleText
         return view
     }
     

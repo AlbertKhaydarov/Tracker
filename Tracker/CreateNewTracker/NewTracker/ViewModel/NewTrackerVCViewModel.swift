@@ -25,7 +25,7 @@ final class NewTrackerVCViewModel {
     
     let colorSelection: [UIColor] = UIColor.colorSelection
     let emojiesCollection: [String] = String.emojiesCollection
-    
+  
     var typeEvent: TypeEvents?
     
     init() {

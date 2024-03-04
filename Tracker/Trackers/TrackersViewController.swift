@@ -34,7 +34,8 @@ final class TrackersViewController: UIViewController {
     private lazy var errorTrackersLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Что будем отслеживать?"
+        let errorTrackersLabelText = NSLocalizedString("errorTrackersLabel.titleText", comment: "")
+        label.text = errorTrackersLabelText
         label.font = .ypMedium12
         return label
     }()
@@ -58,7 +59,8 @@ final class TrackersViewController: UIViewController {
     private lazy var notFoundTrackersLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Ничего не найдено"
+        let notFoundTrackersLabelText = NSLocalizedString("notFoundTrackersLabelText", comment: "")
+        label.text = notFoundTrackersLabelText
         label.font = .ypMedium12
         return label
     }()
@@ -98,7 +100,8 @@ final class TrackersViewController: UIViewController {
         collectionView.delegate = self
         
         view.backgroundColor = .ypWhite
-        title = "Трекеры"
+        let trackersVCTitleText = NSLocalizedString("trackersVCTitleText", comment: "")
+        title = trackersVCTitleText
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .always
         

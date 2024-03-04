@@ -39,21 +39,6 @@ final class TrackerStore: NSObject {
         super.init()
     }
     
-    //TODO: - удалить после отладки
-    func deleteAllData() {
-        guard let managedContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
-            fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")
-        }
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TrackerCoreData")
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
-        do {
-            try managedContext.execute(batchDeleteRequest)
-        } catch {
-            print("Failed to delete all data: \(error)")
-        }
-    }
-    
     func getTracker(from trackerCoreData: TrackerCoreData) throws -> TrackerModel {
         guard
             let idTrackerCoreData = trackerCoreData.idTracker,

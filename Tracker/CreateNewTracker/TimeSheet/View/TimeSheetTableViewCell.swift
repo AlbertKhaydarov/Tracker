@@ -34,7 +34,7 @@ final class TimeSheetTableViewCell: UITableViewCell {
     }
     
     func configure(with day: WeekDays, indexPath: IndexPath) {
-        textLabel?.text = day.rawValue
+        textLabel?.text = day.localizedString() /*day.rawValue*/
         accessoryView = weekDayToogle
     }
     

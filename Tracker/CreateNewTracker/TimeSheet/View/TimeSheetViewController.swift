@@ -33,7 +33,8 @@ final class TimeSheetViewController: UIViewController {
     private lazy var readyButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Готово", for: .normal)
+        let readyButtonTitle = NSLocalizedString("readyButton.title", comment: "")
+        button.setTitle(readyButtonTitle, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -46,7 +47,8 @@ final class TimeSheetViewController: UIViewController {
         view.backgroundColor = .white
         view.addSubview(tableView)
         view.addSubview(readyButton)
-        navigationItem.title  = "Расписание"
+        let timeSheetVCTitle = NSLocalizedString("timeSheetVC.title", comment: "")
+        navigationItem.title  = timeSheetVCTitle
         setup()
         setupViews()
     }
@@ -118,7 +120,8 @@ func getTimeSheetShortString(timeSheet: [Int]?) -> String {
     }) {
         let sortedDays = sortShortWeekdays(timeSheetShortString: timeSheetShortString)
         if sortedDays.count == 7 {
-            text =  "Каждый день"
+            let sortedDaysText = NSLocalizedString("sortedDaysText", comment: "")
+            text = sortedDaysText
         } else {
             text = sortedDays.joined(separator: ", ")
         }
@@ -128,7 +131,21 @@ func getTimeSheetShortString(timeSheet: [Int]?) -> String {
 
 //MARK: - sort short weekdays
 private func sortShortWeekdays(timeSheetShortString: [String]) -> [String] {
-    let order = ["Пн": 0, "Вт": 1, "Ср": 2, "Чт": 3, "Пт": 4, "Сб": 5, "Вс": 6]
+    let orderDay1 = NSLocalizedString("orderDay1", comment: "")
+    let orderDay2 = NSLocalizedString("orderDay2", comment: "")
+    let orderDay3 = NSLocalizedString("orderDay3", comment: "")
+    let orderDay4 = NSLocalizedString("orderDay4", comment: "")
+    let orderDay5 = NSLocalizedString("orderDay5", comment: "")
+    let orderDay6 = NSLocalizedString("orderDay6", comment: "")
+    let orderDay7 = NSLocalizedString("orderDay7", comment: "")
+   
+    let order =  [orderDay1: 0,
+                  orderDay2: 1,
+                  orderDay3: 2,
+                  orderDay4: 3,
+                  orderDay5: 4,
+                  orderDay6: 5,
+                  orderDay7: 6]
     let sortedDaysOfWeek = timeSheetShortString.sorted {
         guard let index1 = order[$0], let index2 = order[$1] else { return false }
         return index1 < index2

@@ -24,7 +24,8 @@ final class CategoriesTypeViewController: UIViewController {
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Добавить категорию", for: .normal)
+        let addCategoryButtonTitle = NSLocalizedString("addCategoryButton.title", comment: "")
+        button.setTitle(addCategoryButtonTitle, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
@@ -49,7 +50,8 @@ final class CategoriesTypeViewController: UIViewController {
     private lazy var errorTrackersLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Привычки и события можно\nобъединить по смыслу"
+        let errorTrackersLabelTitle = NSLocalizedString("errorTrackersLabel.title", comment: "")
+        label.text = errorTrackersLabelTitle
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.numberOfLines = 2
         label.textAlignment = .center
@@ -77,8 +79,8 @@ final class CategoriesTypeViewController: UIViewController {
         }
         
         self.viewRouter = ViewRouter(viewController: self)
-        
-        title = "Категория"
+        let categoriesVCTitle = NSLocalizedString("categoriesVC.title", comment: "")
+        title = categoriesVCTitle
         setupViews()
         setuplayout()
         updateLayout(with: self.view.frame.size)
@@ -131,7 +133,8 @@ final class CategoriesTypeViewController: UIViewController {
         let newCategoryTypeViewController = NewCategoryTypeViewController()
         newCategoryTypeViewController.delegate = viewModel
         if let viewRouter = viewRouter {
-            viewRouter.switchToViewController(to: newCategoryTypeViewController, title: "Новая категория")
+            let newCategoryTypeVCTitle = NSLocalizedString("newCategoryTypeVC.title", comment: "")
+            viewRouter.switchToViewController(to: newCategoryTypeViewController, title: newCategoryTypeVCTitle)
         }
     }
     

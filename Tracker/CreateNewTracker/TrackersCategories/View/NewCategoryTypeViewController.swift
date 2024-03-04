@@ -15,7 +15,8 @@ final class NewCategoryTypeViewController: UIViewController {
         let textField = UITextField()
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 30))
         textField.leftViewMode = .always
-        textField.placeholder = "Введите название категории"
+        let inputNewCategoryTextFieldPlaceholder = NSLocalizedString("inputNewCategoryTextFieldPlaceholder", comment: "")
+        textField.placeholder = inputNewCategoryTextFieldPlaceholder
         textField.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         textField.layer.cornerRadius = 16
         textField.clearButtonMode = .whileEditing
@@ -29,7 +30,8 @@ final class NewCategoryTypeViewController: UIViewController {
     
     private lazy var creatButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
+        let creatButtonTitle = NSLocalizedString("creatButton.title", comment: "")
+        button.setTitle(creatButtonTitle, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .gray
         button.layer.cornerRadius = 16

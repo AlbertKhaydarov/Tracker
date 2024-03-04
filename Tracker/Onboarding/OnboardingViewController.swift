@@ -29,7 +29,9 @@ final class OnboardingViewController: UIPageViewController {
         delegate = self
 
         imageNames = ["page1", "page2"]
-        titles = ["Отслеживайте только\nто, что хотите", "Даже если это\nне литры воды и йога"]
+        let onboargingPage1title = NSLocalizedString("onboargingPage1.title", comment: "")
+        let onboargingPage2title = NSLocalizedString("onboargingPage2.title", comment: "")
+        titles = [onboargingPage1title, onboargingPage2title]
         
         setViewControllers([creatPageViewController(at: 0)],
                            direction: .forward,
