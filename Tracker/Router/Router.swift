@@ -22,5 +22,12 @@ final class ViewRouter: RouterProtocol  {
         let navigationController = UINavigationController(rootViewController: destimationVC)
         fromViewController.present(navigationController, animated: true)
     }
+    
+    func presentViewController(to destimationVC: UIViewController, title: String) {
+        guard let fromViewController = self.viewController else {return}
+        destimationVC.title = title
+        fromViewController.present(destimationVC, animated: true)
+    }
+    
 }
 

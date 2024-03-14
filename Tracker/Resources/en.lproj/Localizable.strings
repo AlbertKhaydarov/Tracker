@@ -19,8 +19,12 @@
 "titlesButtonTimeSheet" = "Schedule";
 "nameInputTextFieldText" = "Enter the name of the tracker";
 "lengthLimitationLabelText" = "38 characters limit";
-"CancelButton.title" = "Cancel";
+"сancelButton.title" = "Cancel";
 "createButton.title" = "Create";
+"saveButton.title" = "Save";
+"alertController.title" = "Are you sure you want to delete the tracker?";
+"alertControllerCategoryTypeDeleteConfirm.title" = "Are you sure you don't need this category?";
+"deleteButton.title" = "Delete";
 "timeSheetDaysText" = "Every day";
 "collectionViewTitleText" = "Color";
 "habitTypeButton.title" = "Habit";
@@ -29,6 +33,7 @@
 "errorTrackersLabel.title" = "Habits and events can be combined in meaning";
 "categoriesVC.title" = "Category";
 "newCategoryTypeVC.title" = "New category";
+"edit Category Type.title" = "Edit category";
 "inputNewCategoryTextFieldPlaceholder" = "Enter the category name";
 "creatButton.title" = "Done";
 "readyButton.title" = "Done";
@@ -51,3 +56,9 @@
 "weekDay7" = "Saturday";
 "habitTypeEvents" = "New habit";
 "oneTimeTypeEvents" = "New irregular event";
+"existingTypeEvents" = "Editing a habit";
+"pinCategory.title" = "Pinned";
+"pinAction.title" = "Pin";
+"unPinAction.title" = "Unpin";
+"editAction.title" = "Edit";
+"deleteAction.title" = "Delete";

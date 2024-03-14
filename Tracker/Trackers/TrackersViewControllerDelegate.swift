@@ -9,4 +9,7 @@ import Foundation
 
 protocol TrackersViewControllerDelegate: AnyObject {
     func getNewTracker(_ newTracker: TrackerModel?, categoryName: String?)
+    func deleteTracker(trackerId: UUID)
 }
+
+

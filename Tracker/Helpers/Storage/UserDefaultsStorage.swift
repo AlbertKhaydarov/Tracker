@@ -11,6 +11,7 @@ enum StorageKeys: String {
     case timeSheetStorageKey
     case isFirstLaunchKey
     case lastSelectedcategory
+    case lastPinState
 }
 
 final class UserDefaultsStorage: UserDefaultsStorageProtocol {

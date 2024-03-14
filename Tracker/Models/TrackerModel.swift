@@ -13,4 +13,5 @@ struct TrackerModel {
     let color: UIColor
     let emoji: String
     let timesheet: [Int]?
+    let isPinned: Bool
 }

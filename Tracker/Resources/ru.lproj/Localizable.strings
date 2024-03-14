@@ -30,9 +30,14 @@
 "errorTrackersLabel.title" = "Привычки и события можно\nобъединить по смыслу";
 "categoriesVC.title" = "Категория";
 "newCategoryTypeVC.title" = "Новая категория";
+"editCategoryType.title" = "Редактирование категории";
 "inputNewCategoryTextFieldPlaceholder" = "Введите название категории";
 "creatButton.title" = "Готово";
+"saveButton.title" = "Сохранить";
 "readyButton.title" = "Готово";
+"alertController.title" = "Уверены что хотите удалить трекер?";
+"alertControllerCategoryTypeDeleteConfirm.title" = "Эта категория точно не нужна?";
+"deleteButton.title" = "Удалить";
 "timeSheetVC.title" = "Расписание";
 "sortedDaysText" = "Каждый день";
 "orderDay1" = "Пн";
@@ -52,3 +57,9 @@
 "weekDay7" = "Суббота";
 "habitTypeEvents" = "Новая привычка";
 "oneTimeTypeEvents" = "Новое нерегулярное событие";
+"existingTypeEvents" = "Редактирование привычки";
+"pinCategory.title" = "Закрепленные";
+"pinAction.title" = "Закрепить";
+"unPinAction.title" = "Открепить";
+"editAction.title" = "Редактировать";
+"deleteAction.title" = "Удалить";

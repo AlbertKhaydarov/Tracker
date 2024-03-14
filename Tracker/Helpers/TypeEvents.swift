@@ -10,6 +10,7 @@ import Foundation
 enum TypeEvents {
     case habitType
     case oneTimeType
+    case existingTtype
 }
 
 extension TypeEvents {
@@ -19,6 +20,8 @@ extension TypeEvents {
             return NSLocalizedString("habitTypeEvents", comment: "")
         case .oneTimeType:
             return NSLocalizedString("oneTimeTypeEvents", comment: "")
+        case .existingTtype:
+            return NSLocalizedString("existingTypeEvents", comment: "")
         }
     }
 }

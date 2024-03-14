@@ -107,50 +107,62 @@ final class TimeSheetViewController: UIViewController {
     }
     
     @objc private func readyButtonTapped() {
-        let timeSheetShortString = getTimeSheetShortString(timeSheet: timeSheet)
+        let timeSheetShortString = getTimeSheetString(timeSheet: timeSheet)
         delegate?.addTimeSheet(timeSheetShortString, timeSheet)
         dismiss(animated: true)
     }
-}
-
-func getTimeSheetShortString(timeSheet: [Int]?) -> String {
-    var text: String = ""
-    if let timeSheetShortString: [String] = timeSheet?.compactMap({ dayNumber in
-        return "".weekdayFromInt(dayNumber)
-    }) {
-        let sortedDays = sortShortWeekdays(timeSheetShortString: timeSheetShortString)
-        if sortedDays.count == 7 {
-            let sortedDaysText = NSLocalizedString("sortedDaysText", comment: "")
-            text = sortedDaysText
-        } else {
-            text = sortedDays.joined(separator: ", ")
+    
+    private func getTimeSheetShortString(timeSheet: [Int]?) -> String {
+        var text: String = ""
+        if let timeSheetShortString: [String] = timeSheet?.compactMap({ dayNumber in
+            return "".weekdayFromInt(dayNumber)
+        }) {
+            let sortedDays = sortShortWeekdays(timeSheetShortString: timeSheetShortString)
+            if sortedDays.count == 7 {
+                let sortedDaysText = NSLocalizedString("sortedDaysText", comment: "")
+                text = sortedDaysText
+            } else {
+                text = sortedDays.joined(separator: ", ")
+            }
         }
+        return text
     }
-    return text
+    
+    //MARK: - sort short weekdays
+    private func sortShortWeekdays(timeSheetShortString: [String]) -> [String] {
+        let orderDay1 = NSLocalizedString("orderDay1", comment: "")
+        let orderDay2 = NSLocalizedString("orderDay2", comment: "")
+        let orderDay3 = NSLocalizedString("orderDay3", comment: "")
+        let orderDay4 = NSLocalizedString("orderDay4", comment: "")
+        let orderDay5 = NSLocalizedString("orderDay5", comment: "")
+        let orderDay6 = NSLocalizedString("orderDay6", comment: "")
+        let orderDay7 = NSLocalizedString("orderDay7", comment: "")
+        
+        let order =  [orderDay1: 0,
+                      orderDay2: 1,
+                      orderDay3: 2,
+                      orderDay4: 3,
+                      orderDay5: 4,
+                      orderDay6: 5,
+                      orderDay7: 6]
+        let sortedDaysOfWeek = timeSheetShortString.sorted {
+            guard let index1 = order[$0], let index2 = order[$1] else { return false }
+            return index1 < index2
+        }
+        return sortedDaysOfWeek
+    }
 }
 
-//MARK: - sort short weekdays
-private func sortShortWeekdays(timeSheetShortString: [String]) -> [String] {
-    let orderDay1 = NSLocalizedString("orderDay1", comment: "")
-    let orderDay2 = NSLocalizedString("orderDay2", comment: "")
-    let orderDay3 = NSLocalizedString("orderDay3", comment: "")
-    let orderDay4 = NSLocalizedString("orderDay4", comment: "")
-    let orderDay5 = NSLocalizedString("orderDay5", comment: "")
-    let orderDay6 = NSLocalizedString("orderDay6", comment: "")
-    let orderDay7 = NSLocalizedString("orderDay7", comment: "")
-   
-    let order =  [orderDay1: 0,
-                  orderDay2: 1,
-                  orderDay3: 2,
-                  orderDay4: 3,
-                  orderDay5: 4,
-                  orderDay6: 5,
-                  orderDay7: 6]
-    let sortedDaysOfWeek = timeSheetShortString.sorted {
-        guard let index1 = order[$0], let index2 = order[$1] else { return false }
-        return index1 < index2
+extension TimeSheetViewController: TimeSheetViewControllerProtocol{
+    func getEditTimesheet(timeSheet: [Int]) {
+        self.storageTimeSheet = timeSheet
     }
-    return sortedDaysOfWeek
+}
+
+extension TimeSheetViewController: TimeSheetViewControllerDelegate {
+    func getTimeSheetString(timeSheet: [Int]) -> String  {
+        return getTimeSheetShortString(timeSheet: timeSheet)
+    }
 }
 
 extension TimeSheetViewController: TimeSheetCellDelegate {

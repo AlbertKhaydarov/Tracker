@@ -11,6 +11,8 @@ final class NewCategoryTypeViewController: UIViewController {
     
     weak var delegate: NewCategoryTypeViewControllerDelegate?
     
+    private var newCategoryType: String?
+    
     private lazy var inputNewCategoryTextField: UITextField = {
         let textField = UITextField()
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 30))
@@ -21,6 +23,7 @@ final class NewCategoryTypeViewController: UIViewController {
         textField.layer.cornerRadius = 16
         textField.clearButtonMode = .whileEditing
         textField.clipsToBounds = true
+        textField.text = newCategoryType
         textField.becomeFirstResponder()
         textField.returnKeyType = .done
         textField.delegate = self
@@ -47,10 +50,24 @@ final class NewCategoryTypeViewController: UIViewController {
         inputNewCategoryTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
+    func edit(categoryType: String) {
+        newCategoryType = categoryType
+        inputNewCategoryTextField.becomeFirstResponder()
+        creatButtonIsEnable()
+    }
+    
+    private func creatButtonIsEnable() {
+        creatButton.backgroundColor = .black
+        creatButton.setTitleColor(.white, for: .normal)
+        creatButton.isEnabled = true
+    }
+    
     @objc
     private func creatButtonTapped() {
-        guard let newCategoryTypeText = inputNewCategoryTextField.text, !newCategoryTypeText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-        delegate?.addNewCategoryType(with: newCategoryTypeText)
+        guard let newCategory = inputNewCategoryTextField.text,
+        !newCategory.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        delegate?.addNewCategoryType(with: newCategory)
+        newCategoryType = newCategory
         dismiss(animated: true)
     }
     
@@ -63,9 +80,7 @@ final class NewCategoryTypeViewController: UIViewController {
                 creatButton.setTitleColor(.white, for: .normal)
                 creatButton.isEnabled = false
             } else {
-                creatButton.backgroundColor = .black
-                creatButton.setTitleColor(.white, for: .normal)
-                creatButton.isEnabled = true
+                creatButtonIsEnable()
             }
         }
     }

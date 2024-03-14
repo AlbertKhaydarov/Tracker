@@ -46,9 +46,9 @@ final class TrackerCategoryStore: NSObject {
         super.init()
         let paths = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
         //TODO: - удалить после отладки
-//        if let libraryPath = paths.first {
-//            print("Library path: \(libraryPath)")
-//        }
+        if let libraryPath = paths.first {
+            print("Library path: \(libraryPath)")
+        }
     }
     
     var categoryTypes: [TrackerCategoryCoreData] {
@@ -95,6 +95,16 @@ final class TrackerCategoryStore: NSObject {
         let categoryTypeCoreData = TrackerCategoryCoreData(context: context)
         categoryTypeCoreData.name = categoryType.name
         categoryTypeCoreData.trackers = []
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save CoreData: \(error), \(error.localizedDescription)")
+        }
+    }
+    
+    func deleteCategory(at indexPath: IndexPath) throws {
+        let categoryTypeCoreData = fetchedResultsController.object(at: indexPath)
+        context.delete(categoryTypeCoreData)
         do {
             try context.save()
         } catch {

@@ -11,7 +11,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     static let trackerCellIdentifier = String(describing: TrackerCollectionViewCell.self)
     weak var delegate: TrackerCollectionViewCellDelegate?
     
-    private lazy var trackerBackgroundView: UIView = {
+    lazy var trackerBackgroundView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 16
@@ -69,6 +69,14 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     private var indexPath: IndexPath?
     private var isTrackerCompleted: Bool?
     
+    private lazy var pinImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "pin")
+        imageView.isHidden = true
+        return imageView
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupCell()
@@ -79,7 +87,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configurationCell(_ trackerItem: TrackerModel, completedDays: Int, indexPath: IndexPath, isTrackerCompleted: Bool?) {
+    func configurationCell(_ trackerItem: TrackerModel, completedDays: Int, indexPath: IndexPath, isTrackerCompleted: Bool?, isPinned: Bool) {
         trackerLabel.text = trackerItem.name
         emojiLabel.text = trackerItem.emoji
         setQuantityButton.backgroundColor = trackerItem.color
@@ -88,7 +96,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         self.isTrackerCompleted = isTrackerCompleted
         self.trackerId = trackerItem.idTracker
         self.indexPath = indexPath
-        
+        pinImageView.isHidden = !isPinned
         guard let isTrackerCompleted else {return}
         quantityButtonSetImage(isTrackerCompleted: isTrackerCompleted)
     }
@@ -121,6 +129,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(trackerBackgroundView)
         trackerBackgroundView.addSubview(emojiBackgroundView)
         trackerBackgroundView.addSubview(trackerLabel)
+        trackerBackgroundView.addSubview(pinImageView)
         emojiBackgroundView.addSubview(emojiLabel)
         contentView.addSubview(quantityLabel)
         contentView.addSubview(setQuantityButton)
@@ -137,6 +146,11 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             emojiBackgroundView.topAnchor.constraint(equalTo: trackerBackgroundView.topAnchor, constant: 12),
             emojiBackgroundView.heightAnchor.constraint(equalToConstant: 24),
             emojiBackgroundView.widthAnchor.constraint(equalToConstant: 24),
+            
+            pinImageView.trailingAnchor.constraint(equalTo: trackerBackgroundView.trailingAnchor, constant: -12),
+            pinImageView.topAnchor.constraint(equalTo: trackerBackgroundView.topAnchor, constant: 12),
+            pinImageView.heightAnchor.constraint(equalToConstant: 24),
+            pinImageView.widthAnchor.constraint(equalToConstant: 24),
             
             emojiLabel.centerXAnchor.constraint(equalTo: emojiBackgroundView.centerXAnchor),
             emojiLabel.centerYAnchor.constraint(equalTo: emojiBackgroundView.centerYAnchor),

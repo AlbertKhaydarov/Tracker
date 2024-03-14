@@ -21,6 +21,10 @@
 "lengthLimitationLabelText" = "Einschränkung mit 38 Zeichen";
 "cancelButton.title" = "Abbrechen";
 "createButton.title" = "Erstellen";
+"saveButton.title" = "Speichern";
+"alertController.title" = "Sind Sie sicher, dass Sie den Tracker entfernen möchten?";
+"alertControllerCategoryTypeDeleteConfirm.title" = "Sind Sie sicher, dass Sie diese Kategorie nicht benötigen?";
+"deleteButton.title" = "Delete";
 "timeSheetDaysText" = "Jeden Tag";
 "collectionViewTitleText" = "Farbe";
 "habitTypeButton.title" = "Gewohnheit";
@@ -29,6 +33,7 @@
 "errorTrackersLabel.title" = "Gewohnheiten und Ereignisse können\nsinngemäß kombiniert werden";
 "categoriesVC.title" = "Kategorie";
 "newCategoryTypeVC.title" = "Neue Kategorie";
+"edit Category Type.title" = "Kategorie bearbeiten";
 "inputNewCategoryTextFieldPlaceholder" = "Geben Sie einen\nKategorienamen ein";
 "creatButton.title" = "Fertig";
 "readyButton.title" = "Fertig";
@@ -51,3 +56,9 @@
 "weekDay7" = "Samstag";
 "habitTypeEvents" = "Neue Gewohnheit";
 "oneTimeTypeEvents" = "Neues unregelmäßiges Ereignis";
+"existingTypeEvents" = "Gewohnheit bearbeiten";
+"pinCategory.title" = "Angeheftete";
+"pinAction.title" = "Befestigen";
+"unPinAction.title" = "Loslösen";
+"editAction.title" = "Bearbeiten";
+"deleteAction.title" = "Löschen";

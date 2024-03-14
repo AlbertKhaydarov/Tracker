@@ -58,7 +58,7 @@ final class EventTypeViewController: UIViewController {
         let viewModel = NewTrackerVCViewModel()
         if sender == habitTypeButton {
             viewModel.typeEvent = TypeEvents.habitType
-
+            
         } else if sender == oneTimeTypeButton {
             viewModel.typeEvent = TypeEvents.oneTimeType
         }
@@ -72,15 +72,14 @@ final class EventTypeViewController: UIViewController {
         guard let viewRouter = viewRouter else {return}
         
         if viewModel.typeEvent == .habitType {
-//            guard let typeEvent = viewModel.typeEvent?.rawValue else {return}
             guard let typeEvent = viewModel.typeEvent?.localizedString() else {return}
             viewRouter.switchToViewController(to: newHabitViewController, title: typeEvent)
             storage?.timeSheetStorage = []
         } else if viewModel.typeEvent == .oneTimeType {
             guard let typeEvent = viewModel.typeEvent?.localizedString() else {return}
             viewRouter.switchToViewController(to: newHabitViewController, title: typeEvent)
-            print(typeEvent)
-        } else {
+        }
+        else {
             return
         }
     }
