@@ -108,22 +108,6 @@ final class TrackerStore: NSObject {
         try context.save()
     }
     
-//    func deleteTracker(tracker: TrackerModel) {
-//        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-//        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.idTracker), tracker.idTracker.uuidString)
-//        guard let items = try? context.fetch(request) else {
-//            assertionFailure("Failed to fetch \(String(describing: CoreDataErrors.fetchError))", file: #file, line: #line)
-//            return
-//        }
-//        guard let deleteItem = items.first else {return}
-//        context.delete(deleteItem)
-//        do {
-//            try context.save()
-//        } catch {
-//           assertionFailure("Failed to save \(String(describing: CoreDataErrors.saveError(error)))", file: #file, line: #line)
-//        }
-//    }
-    
     func deleteTracker(trackerId: UUID) {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.idTracker), trackerId.uuidString)
@@ -139,15 +123,4 @@ final class TrackerStore: NSObject {
            assertionFailure("Failed to save \(String(describing: CoreDataErrors.saveError(error)))", file: #file, line: #line)
         }
     }
-//    func numberOfSections() -> Int {
-//        return fetchedResultsController.sections?.count ?? 0
-//    }
-//
-//    func numberOfItemsInSection(_ section: Int) -> Int {
-//        fetchedResultsController.sections?[section].numberOfObjects ?? 0
-//    }
-//    
-//    func title(of section: Int) -> String? {
-//        fetchedResultsController.sections?[section].name
-//    }
 }

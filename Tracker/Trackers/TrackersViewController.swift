@@ -18,11 +18,9 @@ final class TrackersViewController: UIViewController {
     private let trackerStore = TrackerStore()
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
-    
     private var searchController: UISearchController?
     private var currentDate: String = ""
     private var isCompleted: Bool = false
-    
     
     //MARK: - add Stub Scene Logo
     private lazy var errorTrackersLogo: UIImageView = {
@@ -88,13 +86,29 @@ final class TrackersViewController: UIViewController {
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
-        //        datePicker.locale = Locale(identifier: "ru_RU")
         datePicker.locale = Locale.current
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         return datePicker
     }()
+    
+    private lazy var filterButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let filtersButtonTitle = NSLocalizedString("filtersButton.title", comment: "")
+        button.setTitle(filtersButtonTitle, for: .normal)
+        button.titleLabel?.font = .ypRegular17
+        button.setTitleColor(.ypWhite, for: .normal)
+        button.backgroundColor = .ypBlue
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        button.isHidden = false
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private var selectedFiltersType: FiltersTypes?
     
     private var viewRouter: RouterProtocol?
     
@@ -128,6 +142,28 @@ final class TrackersViewController: UIViewController {
             completedTrackers = try trackerRecordStore.getTrackersRecords()
         } catch {
             assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
+        }
+    }
+    
+    @objc private func filterButtonTapped() {
+        let filtersTypeVCTitle = NSLocalizedString("filtersTypeVC.title", comment: "")
+        let filtersViewController = FiltersTypesViewController(selectedFiltersTypes: .todayTrackers)
+        filtersViewController.delegate = self
+        viewRouter?.switchToViewController(to: filtersViewController, title: filtersTypeVCTitle)
+    }
+    
+    private func setFilters(currentFilter: FiltersTypes) {
+        selectedFiltersType = currentFilter
+        switch selectedFiltersType {
+            
+        case .todayTrackers:
+            datePicker.date = Date()
+            setupCustomDatePickerView(with: Date())
+            filteredChoosedByDatePickerDate(getSelectedWeekday())
+            notFoundTrackersLogo.isHidden = true
+            
+        default:
+            filteredChoosedByDatePickerDate(getSelectedWeekday())
         }
     }
     
@@ -169,11 +205,17 @@ final class TrackersViewController: UIViewController {
         filteredChoosedByDatePickerDate(getSelectedWeekday())
         
         view.addSubview(collectionView)
+        view.addSubview(filterButton)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: -16),
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
+            filterButton.widthAnchor.constraint(equalToConstant: 114)
         ])
         collectionView.reloadData()
     }
@@ -216,9 +258,23 @@ final class TrackersViewController: UIViewController {
                 let isDisplayed = timesheet.contains { selectedDayNumber in
                     selectedDayNumber == selectedWeekday
                 }
+                let isCompletedTracker = completedTrackers.contains { trackerRecord in
+                    trackerRecord.idExecutedTracker == tracker.idTracker &&
+                    Calendar.current.isDate(trackerRecord.dateExecuted, inSameDayAs: datePicker.date)
+                }
+                
+                if selectedFiltersType == .completedTrackers {
+                    return isCompletedTracker
+                    
+                } else if selectedFiltersType == .uncompletedTrackers {
+                    return isDisplayed && !isCompletedTracker
+                }
+                
                 let idCopletedNonRegular: Bool = timesheet.isEmpty
+                
                 return isDisplayed || idCopletedNonRegular
             }
+            
             if trackers.isEmpty {
                 return nil
             }
@@ -226,8 +282,10 @@ final class TrackersViewController: UIViewController {
         }
         if displayedTrackers.isEmpty {
             showNotCreatedStub()
+            filterButton.isHidden = true
         } else {
             notCreatedLogoStackView.isHidden = true
+            filterButton.isHidden = false
         }
         collectionView.reloadData()
     }
@@ -245,6 +303,7 @@ final class TrackersViewController: UIViewController {
                 return isFilteredText && isDisplayedByDay
             }
             if trackers.isEmpty {
+                filterButton.isHidden = true
                 return nil
             }
             return TrackerCategory(name: category.name, trackers: trackers)
@@ -346,7 +405,8 @@ final class TrackersViewController: UIViewController {
             self.deleteTracker(trackerId: trackerItem.idTracker)
         }
 
-        let cancelAction = UIAlertAction(title: NSLocalizedString("cancelButton.title", comment: ""), style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: NSLocalizedString("cancelButton.title", comment: ""),
+                                         style: .cancel, handler: nil)
         
         alertController.addAction(deleteAction)
         alertController.addAction(cancelAction)
@@ -468,9 +528,11 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
     private func configurationHighlightTargetedPreview(indexPath: IndexPath) -> UITargetedPreview {
         guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
         else { return UITargetedPreview(view: UIView(), parameters: UIPreviewParameters())}
+       
         let view = cell.trackerBackgroundView
         let parameters = UIPreviewParameters()
-        parameters.backgroundColor = .clear
+        parameters.backgroundColor = .ypBackContextMenu
+      
         return UITargetedPreview(view: view,
                                  parameters: parameters)
     }
@@ -619,6 +681,12 @@ extension TrackersViewController: TrackersViewControllerDelegate {
         trackerStore.deleteTracker(trackerId: trackerId)
          updateCategories()
      }
-
 }
 
+// MARK: - FiltersTypesViewControllerDelegate
+
+extension TrackersViewController: FiltersTypesViewControllerDelegate {
+    func getFiltersType(_ controller: FiltersTypesViewController, selectedFilter: FiltersTypes){
+        setFilters(currentFilter: selectedFilter)
+    }
+}

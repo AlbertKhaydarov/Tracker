@@ -15,6 +15,8 @@
 "errorTrackersLabel.titleText" = "What are you going to track?";
 "notFoundTrackersLabelText" = "Nothing found";
 "trackersVCTitleText" = "Trackers";
+"filtersTypeVC.title" = "Filters";
+"filtersButton.title" = "Filters";
 "titlesButtonCategory" = "Category";
 "titlesButtonTimeSheet" = "Schedule";
 "nameInputTextFieldText" = "Enter the name of the tracker";
@@ -62,3 +64,7 @@
 "unPinAction.title" = "Unpin";
 "editAction.title" = "Edit";
 "deleteAction.title" = "Delete";
+"allTrackers.filter" = "All trackers";
+"todayTracker.filter" = "Trackers for today";
+"completedTrackers.filter" = "Completed";
+"uncompletedTrackers.filter" = "Not completed";

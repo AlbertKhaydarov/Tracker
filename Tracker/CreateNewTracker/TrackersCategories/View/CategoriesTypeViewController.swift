@@ -96,7 +96,6 @@ final class CategoriesTypeViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     //MARK: - add binding
     private func bind(viewModel: CategoryTypeVCViewModel) {
         viewModel.categotyTypesBinding = { [weak self] _ in
@@ -105,21 +104,21 @@ final class CategoriesTypeViewController: UIViewController {
         }
         viewModel.categoryForEditObservable.bind { [weak self] categoryType in
             guard let self = self,
-            let categoryType = categoryType
+                  let categoryType = categoryType
             else {return}
             self.edit(categoryType: categoryType)
         }
     }
     
     private func edit(categoryType: String) {
-       
+        
         let editCategoryTypeViewController = NewCategoryTypeViewController()
         editCategoryTypeViewController.edit(categoryType: categoryType)
         editCategoryTypeViewController.delegate = viewModel
         let editCategoryTypeTitle = NSLocalizedString("editCategoryType.title", comment: "")
         if let viewRouter = viewRouter {
-                viewRouter.switchToViewController(to: editCategoryTypeViewController, title: editCategoryTypeTitle)
-            }
+            viewRouter.switchToViewController(to: editCategoryTypeViewController, title: editCategoryTypeTitle)
+        }
     }
     
     private func showNotCreatedStub() {
@@ -149,19 +148,7 @@ final class CategoriesTypeViewController: UIViewController {
         if let viewRouter = viewRouter {
             viewRouter.switchToViewController(to: newCategoryTypeViewController, title: newCategoryTypeVCTitle)
         }
-        
-//        switchToNewCategoryTypeViewController(categoryTitle: newCategoryTypeVCTitle)
     }
-    
-//    private func switchToNewCategoryTypeViewController(categoryTitle: String?){
-//        let newCategoryTypeViewController = NewCategoryTypeViewController()
-//        newCategoryTypeViewController.delegate = viewModel
-//        if let viewRouter = viewRouter {
-//            guard let categoryTitle = categoryTitle else {return}
-//            viewRouter.switchToViewController(to: newCategoryTypeViewController, title: categoryTitle)
-//        }
-//    }
-    
     
     private func updateLayout(with size: CGSize) {
         self.tableView.frame = CGRect(origin: .zero, size: size)
@@ -188,12 +175,12 @@ final class CategoriesTypeViewController: UIViewController {
 }
 
 extension CategoriesTypeViewController: CategoriesTypeViewControllerProtocol {
-func getEditCategory(category: String) -> IndexPath? {
-    if let selectedCategoryTypeIndex = viewModel?.categoryType.firstIndex(where: { $0.categoryTitle == category }) {
-        return IndexPath(row: selectedCategoryTypeIndex, section: 0)
+    func getEditCategory(category: String) -> IndexPath? {
+        if let selectedCategoryTypeIndex = viewModel?.categoryType.firstIndex(where: { $0.categoryTitle == category }) {
+            return IndexPath(row: selectedCategoryTypeIndex, section: 0)
+        }
+        return nil
     }
-    return nil
-}
 }
 
 extension CategoriesTypeViewController: UITableViewDataSource {
@@ -235,7 +222,6 @@ extension CategoriesTypeViewController: UITableViewDataSource {
             cell.configure(with: false)
             cell.layer.masksToBounds = true
             cell.layer.cornerRadius = 16
-            
         }
         
         if let lastSelectedcategory = lastSelectedcategory, indexPath.row == lastSelectedcategory {
@@ -253,7 +239,6 @@ extension CategoriesTypeViewController: UITableViewDelegate {
         return 75
     }
     
-    //MARK: - move the element to the first row after selected
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         for row in 0..<tableView.numberOfRows(inSection: indexPath.section) {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: indexPath.section)) {
@@ -281,7 +266,6 @@ extension CategoriesTypeViewController: UITableViewDelegate {
     //MARK: - Context Menu
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
-       
         return UIContextMenuConfiguration(actionProvider: { [weak self] actions in
             let editAction = NSLocalizedString("editAction.title", comment: "")
             let deleteAction = NSLocalizedString("deleteAction.title", comment: "")
@@ -293,7 +277,6 @@ extension CategoriesTypeViewController: UITableViewDelegate {
                 UIAction(title: deleteAction, attributes: .destructive) { _ in
                     guard let self else { return }
                     self.showDeleteAlert(with: indexPath)
-                   
                 }
             ])
         })
@@ -320,7 +303,7 @@ extension CategoriesTypeViewController: UITableViewDelegate {
             guard let self else { return }
             self.viewModel?.deleteCategorytype(with: indexPath)
         }
-
+        
         let cancelAction = UIAlertAction(title: NSLocalizedString("cancelButton.title", comment: ""), style: .cancel, handler: nil)
         
         alertController.addAction(deleteAction)

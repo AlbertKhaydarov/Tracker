@@ -16,6 +16,8 @@
 "errorTrackersLabel.titleText" = "Что будем отслеживать?";
 "notFoundTrackersLabelText" = "Ничего не найдено";
 "trackersVCTitleText" = "Трекеры";
+"filtersTypeVC.title" = "Фильтры";
+"filtersButton.title" = "Фильтры";
 "titlesButtonCategory" = "Категория";
 "titlesButtonTimeSheet" = "Расписание";
 "nameInputTextFieldText" = "Введите название трекера";
@@ -63,3 +65,7 @@
 "unPinAction.title" = "Открепить";
 "editAction.title" = "Редактировать";
 "deleteAction.title" = "Удалить";
+"allTrackers.filter" = "Все трекеры";
+"todayTrackers.filter" = "Трекеры на сегодня";
+"completedTrackers.filter" = "Завершенные";
+"uncompletedTrackers.filter" = "Не завершенные";

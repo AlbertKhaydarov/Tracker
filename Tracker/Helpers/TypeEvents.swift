@@ -14,7 +14,7 @@ enum TypeEvents {
 }
 
 extension TypeEvents {
-    func localizedString() -> String {
+    func localizedString() -> String  {
         switch self {
         case .habitType:
             return NSLocalizedString("habitTypeEvents", comment: "")

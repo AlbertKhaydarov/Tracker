@@ -25,9 +25,7 @@ final class CategoryTypeVCViewModel{
     var categoryForEditObservable: PropertyWrapper<String?> { $editCategoryType }
     
     weak var delegate: NewTrackerVCViewModelCategoryTypeDelegate?
-    
-    var typeCategories: TypeCategories?
-    
+  
     convenience init() {
         let trackerCategoryStore = TrackerCategoryStore(
             context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
