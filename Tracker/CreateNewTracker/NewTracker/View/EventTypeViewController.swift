@@ -18,7 +18,7 @@ final class EventTypeViewController: UIViewController {
         button.setTitle(habitTypeButtonTitle, for: .normal)
         button.titleLabel?.font = .ypMedium16
         button.backgroundColor = .ypBlack
-        button.tintColor = .ypWhite
+        button.setTitleColor(.ypWhite, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(creatNewHabit(_:)), for: .touchUpInside)
@@ -32,7 +32,7 @@ final class EventTypeViewController: UIViewController {
         button.setTitle(oneTimeTypeButtonTitle, for: .normal)
         button.backgroundColor = .ypBlack
         button.titleLabel?.font = .ypMedium16
-        button.tintColor = .ypWhite
+        button.setTitleColor(.ypWhite, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(creatNewHabit(_:)), for: .touchUpInside)

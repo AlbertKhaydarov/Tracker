@@ -8,7 +8,7 @@
 import UIKit
 
 final class NewTrackerViewController: UIViewController {
-    
+    private let yandexMetrica = YandexMetricaService.shared
     private var titlesButtons: [String] = []
     
     private let scrollView: UIScrollView = {
@@ -22,7 +22,7 @@ final class NewTrackerViewController: UIViewController {
     private let contentViewForScrollView: UIView = {
         let contentView = UIView()
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .ypWhite
         return contentView
     }()
     
@@ -132,7 +132,7 @@ final class NewTrackerViewController: UIViewController {
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.ypRed.cgColor
         button.setTitleColor(.ypRed, for: .normal)
-        button.backgroundColor = .white
+        button.backgroundColor = .ypWhite
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(cancelButtontapped), for: .touchUpInside)
@@ -150,7 +150,7 @@ final class NewTrackerViewController: UIViewController {
             button.backgroundColor = .ypGray
             button.isEnabled = false
         }
-        button.tintColor = .white
+        button.tintColor = .ypTextWhite
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
@@ -276,13 +276,16 @@ final class NewTrackerViewController: UIViewController {
         if viewModel.typeEvent == .existingTtype {
             createButton.isEnabled = true
             createButton.backgroundColor = .ypBlack
+            createButton.setTitleColor(.ypWhite, for: .normal)
         } else {
             if viewModel.isTrackerNameEmpty && viewModel.timeSheetIsEnable && viewModel.categoryIsEnable && viewModel.emojiSelectedIsEnable && viewModel.colorSelectedIsEnable {
                 createButton.isEnabled = true
                 createButton.backgroundColor = .ypBlack
+                createButton.setTitleColor(.ypWhite, for: .normal)
             } else {
                 createButton.isEnabled = false
                 createButton.backgroundColor = .ypGray
+                createButton.tintColor = .ypTextWhite
             }
         }
     }
@@ -670,6 +673,7 @@ extension NewTrackerViewController: UITableViewDataSource {
         dismissKeyboard()
         
         if indexPath.section == 0{
+            yandexMetrica.sendReport(about: AnalyticsModel.Events.open, and: nil, on: AnalyticsModel.Screens.category)
             let categoryTypeVCViewModel = CategoryTypeVCViewModel()
             let viewController: CategoriesTypeViewControllerProtocol = CategoriesTypeViewController(viewModel: categoryTypeVCViewModel)
             if let viewRouter = viewRouter,
@@ -684,6 +688,7 @@ extension NewTrackerViewController: UITableViewDataSource {
                 }
             }
         } else {
+            yandexMetrica.sendReport(about: AnalyticsModel.Events.open, and: nil, on: AnalyticsModel.Screens.schedule)
             let viewController: TimeSheetViewControllerProtocol = TimeSheetViewController()
             if let viewRouter = viewRouter,
                let timeSheet = viewModel?.weekDays.value?.weekdays{

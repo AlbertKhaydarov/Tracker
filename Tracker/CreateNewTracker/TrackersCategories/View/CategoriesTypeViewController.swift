@@ -8,7 +8,7 @@
 import UIKit
 
 final class CategoriesTypeViewController: UIViewController {
-    
+    private let yandexMetrica = YandexMetricaService.shared
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -26,7 +26,7 @@ final class CategoriesTypeViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         let addCategoryButtonTitle = NSLocalizedString("addCategoryButton.title", comment: "")
         button.setTitle(addCategoryButtonTitle, for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
@@ -272,10 +272,12 @@ extension CategoriesTypeViewController: UITableViewDelegate {
             return UIMenu(children: [
                 UIAction(title: editAction) { [weak self] _ in
                     guard let self else { return }
+                    yandexMetrica.sendReport(about: AnalyticsModel.Events.click, and: AnalyticsModel.Items.edit, on: AnalyticsModel.Screens.category)
                     self.editCategoryType(indexPath: indexPath)
                 },
                 UIAction(title: deleteAction, attributes: .destructive) { _ in
                     guard let self else { return }
+                    self.yandexMetrica.sendReport(about: AnalyticsModel.Events.click, and: AnalyticsModel.Items.delete, on: AnalyticsModel.Screens.category)
                     self.showDeleteAlert(with: indexPath)
                 }
             ])

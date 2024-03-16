@@ -10,6 +10,7 @@ import CoreData
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    private let yandexMetrica = YandexMetricaService.shared
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         return true
@@ -39,5 +40,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        
         return container
     }()
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        yandexMetrica.sendReport(about: AnalyticsModel.Events.close, and: nil, on: AnalyticsModel.Screens.appDelegate)
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        yandexMetrica.sendReport(about: AnalyticsModel.Events.open, and: nil, on: AnalyticsModel.Screens.appDelegate)
+    }
 }
 

@@ -44,7 +44,7 @@ final class TimeSheetViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         view.addSubview(tableView)
         view.addSubview(readyButton)
         let timeSheetVCTitle = NSLocalizedString("timeSheetVC.title", comment: "")

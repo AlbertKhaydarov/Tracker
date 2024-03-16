@@ -185,7 +185,7 @@ final class StatisticsViewController: UIViewController {
         
         bestPeriodView.addSubview(bestPeriodCounter)
         bestPeriodView.addSubview(bestPeriodLabel)
-        
+
         idealDaysView.addSubview(idealDaysCounter)
         idealDaysView.addSubview(idealDaysLabel)
         

@@ -13,6 +13,7 @@ final class TrackersViewController: UIViewController {
     private var completedTrackers: [TrackerRecord] = []
     private var displayedTrackers: [TrackerCategory] = []
     private var pinnedTrackers: [TrackerModel] = []
+    private let yandexMetrica = YandexMetricaService.shared
     
     //MARK: - add CoreData Stores
     private let trackerStore = TrackerStore()
@@ -79,6 +80,7 @@ final class TrackersViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.trackerCellIdentifier)
+        collection.backgroundColor = .ypWhite
         collection.dataSource = self
         collection.delegate = self
         return collection
@@ -100,6 +102,7 @@ final class TrackersViewController: UIViewController {
         button.setTitle(filtersButtonTitle, for: .normal)
         button.titleLabel?.font = .ypRegular17
         button.backgroundColor = .ypBlue
+        button.setTitleColor(.ypTextWhite, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.isHidden = false
@@ -113,6 +116,7 @@ final class TrackersViewController: UIViewController {
         let filtersButtonTitle = NSLocalizedString("resetFilterButton.title", comment: "")
         button.setTitle(filtersButtonTitle, for: .normal)
         button.titleLabel?.font = .ypRegular17
+        button.setTitleColor(.ypTextWhite, for: .normal)
         button.backgroundColor = .ypBlue
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -126,6 +130,10 @@ final class TrackersViewController: UIViewController {
     private var viewRouter: RouterProtocol?
     
     weak var delegate: TimeSheetViewControllerDelegate?
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -145,7 +153,7 @@ final class TrackersViewController: UIViewController {
         if selectedFiltersType != .allTrackers {
             filterButton.setTitleColor(.ypRed, for: .normal)
         } else {
-            filterButton.setTitleColor(.ypWhite, for: .normal)
+            filterButton.setTitleColor(.ypTextWhite, for: .normal)
         }
        
         getCompletedTrackers()
@@ -158,15 +166,14 @@ final class TrackersViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-      
-        if var selectedFiltersType = selectedFiltersType {
+
+        if let selectedFiltersType = selectedFiltersType {
             showStub(with: selectedFiltersType)
         }
     }
     
     private func getCompletedTrackers() {
         do {
-//            completedTrackers = try trackerRecordStore.getTrackersRecords()
             completedTrackers = try trackerRecordStore.getTrackersRecords()
         } catch {
             assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
@@ -174,6 +181,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func filterButtonTapped() {
+        yandexMetrica.sendReport(about: AnalyticsModel.Events.click, and: AnalyticsModel.Items.filter, on: AnalyticsModel.Screens.mainScreen)
         let filtersTypeVCTitle = NSLocalizedString("filtersTypeVC.title", comment: "")
         let type = UserDefaultsStorage.shared.lastSelectedFilter
         let filtersViewController = FiltersTypesViewController(selectedFiltersTypes: FiltersTypes.allCases[type])
@@ -186,6 +194,7 @@ final class TrackersViewController: UIViewController {
         UserDefaultsStorage.shared.lastSelectedFilter = 0
         notFoundLogoStackView.isHidden = true
         resetFilterButton.isHidden = true
+        filterButton.setTitleColor(.ypTextWhite, for: .normal)
         filterButton.isHidden = false
         filteredChoosedByDatePickerDate(getSelectedWeekday())
     }
@@ -209,7 +218,7 @@ final class TrackersViewController: UIViewController {
         if type != .allTrackers {
             filterButton.setTitleColor(.ypRed, for: .normal)
         } else {
-            filterButton.setTitleColor(.ypWhite, for: .normal)
+            filterButton.setTitleColor(.ypTextWhite, for: .normal)
         }
     }
     
@@ -399,6 +408,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func addButtonTapped() {
+        yandexMetrica.sendReport(about: AnalyticsModel.Events.click, and: AnalyticsModel.Items.addTracker, on: AnalyticsModel.Screens.mainScreen)
         let eventTypeViewController = EventTypeViewController()
         eventTypeViewController.delegate = self
         let addButtonTappedTitle = NSLocalizedString("addButtonTappedTitle.title", comment: "")
@@ -442,6 +452,7 @@ final class TrackersViewController: UIViewController {
     
     //MARK: - custom format datePicker label like Figma design
     private func setupCustomDatePickerView(with date: Date) {
+
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yy"
         currentDate = dateFormatter.string(from: date)
@@ -449,25 +460,22 @@ final class TrackersViewController: UIViewController {
         if let dateLabel = datePicker.viewWithTag(100) as? UILabel {
             dateLabel.text = currentDate
         } else {
-            datePicker.addCustomLabel(text: currentDate, width: 80, height: 44)
+            datePicker.addCustomLabel(text: currentDate, width: 80, height: 34, textColor: .ypTextBlack, backgrounColor: .ypDataPickerBackground)
         }
         
         if let dateLabel = findAndModifyDatePickerLabel(in: datePicker.subviews) {
             dateLabel.isHidden = true
-            dateLabel.font = .ypRegular17
         }
     }
     
     private func findAndModifyDatePickerLabel(in views: [UIView]) -> UILabel? {
-        for view in views {
-            if view is UILabel {
-                let dateLabel = view as! UILabel
-                return dateLabel
-                break
-            } else if let foundLabel = findAndModifyDatePickerLabel(in: view.subviews) {
-                return foundLabel
-            }
-        }
+            for view in views {
+                   if let label = view as? UILabel {
+                       return label
+                   } else if let foundLabel = findAndModifyDatePickerLabel(in: view.subviews) {
+                       return foundLabel
+                   }
+               }
         return nil
     }
 
@@ -484,6 +492,7 @@ final class TrackersViewController: UIViewController {
             style: .destructive
         ) { [weak self] _ in
             guard let self else { return }
+            yandexMetrica.sendReport(about: AnalyticsModel.Events.click, and: AnalyticsModel.Items.delete, on: AnalyticsModel.Screens.mainScreen)
             self.deleteTracker(trackerId: trackerItem.idTracker)
         }
 
@@ -633,6 +642,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
             return UIMenu(children: [
                 UIAction(title: trackerItem.isPinned ? unPinActionTitle : pinActionTitle) { [weak self] _ in
                     guard let self = self else { return }
+                    yandexMetrica.sendReport(about: AnalyticsModel.Events.click, and: AnalyticsModel.Items.edit, on: AnalyticsModel.Screens.mainScreen)
                     self.configurationPinTracker(with: trackerItem)
                 },
                 UIAction(title: editAction) { [weak self] _ in
@@ -655,7 +665,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
          let tracker = displayedTrackers[indexPath.section].trackers[indexPath.row]
          let category = categories[indexPath.section].name
 
-         var completedDay = completedTrackers.filter { $0.idExecutedTracker == tracker.idTracker }.count
+         let completedDay = completedTrackers.filter { $0.idExecutedTracker == tracker.idTracker }.count
          let viewModel = NewTrackerVCViewModel()
          let editHabitViewController = NewTrackerViewController(viewModel: viewModel)
          editHabitViewController.delegate = self
@@ -717,6 +727,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
 //MARK: - TrackerCollectionViewCellDelegate
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func markCompletedTracker(id: UUID, indexPath: IndexPath, isCompleted: Bool) {
+        yandexMetrica.sendReport(about: AnalyticsModel.Events.click, and: AnalyticsModel.Items.trackerCompleted, on: AnalyticsModel.Screens.mainScreen)
         if datePicker.date > Date() {
             self.showAlert("Нельзя отмечать трекеры для будущих дат")
         } else if isCompleted {
