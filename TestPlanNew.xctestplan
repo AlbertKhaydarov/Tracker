@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "790898C3-A938-4457-854C-E36771264C7E",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Tracker.xcodeproj",
+        "identifier" : "7C8487952BA62331009881C2",
+        "name" : "TrackerTests"
+      }
+    }
+  ],
+  "version" : 1
+}
