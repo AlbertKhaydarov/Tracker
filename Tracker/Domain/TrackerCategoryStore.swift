@@ -11,7 +11,6 @@ import UIKit
 final class TrackerCategoryStore: NSObject {
     private let context: NSManagedObjectContext
     private let trackerStore = TrackerStore()
-    
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
@@ -46,9 +45,9 @@ final class TrackerCategoryStore: NSObject {
         super.init()
         let paths = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
         //TODO: - удалить после отладки
-        if let libraryPath = paths.first {
-            print("Library path: \(libraryPath)")
-        }
+        //        if let libraryPath = paths.first {
+        //            print("Library path: \(libraryPath)")
+        //        }
     }
     
     var categoryTypes: [TrackerCategoryCoreData] {

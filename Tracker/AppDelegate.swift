@@ -31,20 +31,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //MARK: - CoreData
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TrackerCoreDataModel")
-       
+        
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(CoreDataErrors.persistentStoreError(error)), \(error.userInfo)")
             }
         })
-       
+        
         return container
     }()
     
     func applicationDidEnterBackground(_ application: UIApplication) {
         yandexMetrica.sendReport(about: AnalyticsModel.Events.close, and: nil, on: AnalyticsModel.Screens.appDelegate)
     }
-
+    
     func applicationDidBecomeActive(_ application: UIApplication) {
         yandexMetrica.sendReport(about: AnalyticsModel.Events.open, and: nil, on: AnalyticsModel.Screens.appDelegate)
     }

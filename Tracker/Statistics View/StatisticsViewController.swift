@@ -177,15 +177,13 @@ final class StatisticsViewController: UIViewController {
     }
     
     private func setupViews() {
-        
         view.addSubview(stubImageView)
         view.addSubview(stubTextTitleLabel)
-        
         view.addSubview(stackView)
         
         bestPeriodView.addSubview(bestPeriodCounter)
         bestPeriodView.addSubview(bestPeriodLabel)
-
+        
         idealDaysView.addSubview(idealDaysCounter)
         idealDaysView.addSubview(idealDaysLabel)
         
@@ -194,12 +192,10 @@ final class StatisticsViewController: UIViewController {
         
         averageValueView.addSubview(averageValueCounter)
         averageValueView.addSubview(averageValueLabel)
-        
     }
     
     private func setupLayouts() {
         NSLayoutConstraint.activate([
-            
             stubImageView.heightAnchor.constraint(equalToConstant: 80),
             stubImageView.widthAnchor.constraint(equalToConstant: 80),
             stubImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 193),
@@ -370,12 +366,15 @@ final class StatisticsViewController: UIViewController {
         
         for date in completedDict.keys {
             let plannedTrackers = trackerPlan.filter { tracker in
-                if let timesheet = tracker.timesheet {
-                    return timesheet.contains(Calendar.current.component(.weekday, from: date))
-                } else {
+                
+                if tracker.timesheet?.count == 0 {
                     return true
+                } else {
+                    let timesheetContains = tracker.timesheet?.contains(Calendar.current.component(.weekday, from: date))
+                    return timesheetContains ?? false
                 }
             }
+            print(plannedTrackers)
             let plannedTrackersIds = Set(plannedTrackers.map { $0.idTracker })
             let completedTrackersIds = completedDict[date]
             if plannedTrackersIds.count == completedTrackersIds?.count {

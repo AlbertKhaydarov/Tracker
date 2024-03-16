@@ -65,7 +65,7 @@ final class NewCategoryTypeViewController: UIViewController {
     @objc
     private func creatButtonTapped() {
         guard let newCategory = inputNewCategoryTextField.text,
-        !newCategory.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+              !newCategory.trimmingCharacters(in: .whitespaces).isEmpty else { return }
         delegate?.addNewCategoryType(with: newCategory)
         newCategoryType = newCategory
         dismiss(animated: true)

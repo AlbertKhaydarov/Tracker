@@ -17,11 +17,9 @@ final class TabBarController: UITabBarController {
     }
     
     private func setupBorder() {
-        //        let border = CALayer()
         let border = UIView()
         border.backgroundColor = UIColor.ypLine
         border.frame = CGRect(x: 0, y: 0, width: tabBar.frame.size.width, height: 1)
-        //        tabBar.layer.addSublayer(border)
         tabBar.addSubview(border)
         tabBar.clipsToBounds = true
     }

@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIView {
-
+    
     func setGradientBorder() {
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height)

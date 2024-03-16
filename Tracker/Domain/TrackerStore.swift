@@ -78,8 +78,7 @@ final class TrackerStore: NSObject {
         return trackerCoreData
     }
     
-    let titlePinCategory = NSLocalizedString("pinCategory.title", comment: "")
-    
+    private let titlePinCategory = NSLocalizedString("pinCategory.title", comment: "")
     func isTrackerPinned(with indexPath: IndexPath) -> Bool {
         let trackerCoreData = fetchedResultsController.object(at: indexPath)
         return trackerCoreData.trackerCategory?.name == titlePinCategory ? true : false
@@ -130,6 +129,5 @@ final class TrackerStore: NSObject {
         } catch {
             assertionFailure("Failed to delete record \(String(describing: CoreDataErrors.deleteError(error)))", file: #file, line: #line)
         }
-        
     }
 }

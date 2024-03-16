@@ -13,17 +13,17 @@ struct AnalyticsModel {
         static let close = "close"
         static let click = "click"
     }
-
+    
     struct Screens {
         static let mainScreen = "Main"
         static let appDelegate = "AppDelegate"
         static let category = "CategoriesScreen"
         static let schedule = "ScheduleScreen"
     }
-
+    
     struct Items {
-        static let addTracker = "addTracker"
-        static let trackerCompleted = "trackerCompleted"
+        static let addTracker = "add_track"
+        static let trackerCompleted = "track"
         static let filter = "filter"
         static let edit = "edit"
         static let delete = "delete"

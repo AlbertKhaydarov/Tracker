@@ -111,7 +111,6 @@ final class CategoriesTypeViewController: UIViewController {
     }
     
     private func edit(categoryType: String) {
-        
         let editCategoryTypeViewController = NewCategoryTypeViewController()
         editCategoryTypeViewController.edit(categoryType: categoryType)
         editCategoryTypeViewController.delegate = viewModel

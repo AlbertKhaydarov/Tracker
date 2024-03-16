@@ -34,10 +34,8 @@ final class NewTrackerViewController: UIViewController {
         if viewModel?.typeEvent == .existingTtype {
             textField.text = viewModel?.name.value
         }
-        
         let nameInputTextFieldText = NSLocalizedString("nameInputTextFieldText", comment: "")
         textField.placeholder = nameInputTextFieldText
-        
         textField.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         textField.layer.cornerRadius = 16
         textField.clearButtonMode = .whileEditing
@@ -202,8 +200,6 @@ final class NewTrackerViewController: UIViewController {
         }
         nameInputTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
-    
-    
     
     //MARK: - add binding
     private func bind(viewModel: NewTrackerVCViewModel) {
@@ -513,7 +509,6 @@ extension NewTrackerViewController: UITextFieldDelegate {
             lengthLimitationLabel.isHidden = true
             setupLayout()
         }
-        
         return updatedText.count <= maxLength
     }
 }

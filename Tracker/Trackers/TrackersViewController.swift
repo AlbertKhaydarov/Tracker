@@ -155,7 +155,7 @@ final class TrackersViewController: UIViewController {
         } else {
             filterButton.setTitleColor(.ypTextWhite, for: .normal)
         }
-       
+        
         getCompletedTrackers()
         
         setupCustomDatePickerView(with: Date())
@@ -166,7 +166,7 @@ final class TrackersViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        
         if let selectedFiltersType = selectedFiltersType {
             showStub(with: selectedFiltersType)
         }
@@ -356,16 +356,16 @@ final class TrackersViewController: UIViewController {
     }
     
     private func showStub(with filterType: FiltersTypes) {
-
+        
         if filterType == .allTrackers || selectedFiltersType == .todayTrackers {
             if displayedTrackers.isEmpty {
                 showNotCreatedStub()
                 filterButton.isHidden = true
-      
+                
             } else {
                 notCreatedLogoStackView.isHidden = true
                 filterButton.isHidden = false
-
+                
             }
         } else {
             if displayedTrackers.isEmpty {
@@ -452,7 +452,7 @@ final class TrackersViewController: UIViewController {
     
     //MARK: - custom format datePicker label like Figma design
     private func setupCustomDatePickerView(with date: Date) {
-
+        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yy"
         currentDate = dateFormatter.string(from: date)
@@ -469,16 +469,16 @@ final class TrackersViewController: UIViewController {
     }
     
     private func findAndModifyDatePickerLabel(in views: [UIView]) -> UILabel? {
-            for view in views {
-                   if let label = view as? UILabel {
-                       return label
-                   } else if let foundLabel = findAndModifyDatePickerLabel(in: view.subviews) {
-                       return foundLabel
-                   }
-               }
+        for view in views {
+            if let label = view as? UILabel {
+                return label
+            } else if let foundLabel = findAndModifyDatePickerLabel(in: view.subviews) {
+                return foundLabel
+            }
+        }
         return nil
     }
-
+    
     // MARK: - Alert Controller
     private func showDeleteAlert(with trackerItem: TrackerModel) {
         let alertController = UIAlertController(
@@ -495,7 +495,7 @@ final class TrackersViewController: UIViewController {
             yandexMetrica.sendReport(about: AnalyticsModel.Events.click, and: AnalyticsModel.Items.delete, on: AnalyticsModel.Screens.mainScreen)
             self.deleteTracker(trackerId: trackerItem.idTracker)
         }
-
+        
         let cancelAction = UIAlertAction(title: NSLocalizedString("cancelButton.title", comment: ""),
                                          style: .cancel, handler: nil)
         
@@ -535,12 +535,12 @@ extension TrackersViewController: UISearchBarDelegate  {
 extension TrackersViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-            return displayedTrackers.count
+        return displayedTrackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-
-            return displayedTrackers[section].trackers.count
+        
+        return displayedTrackers[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -564,7 +564,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! TrackerHeaderView
-            view.titleLabel.text = displayedTrackers[indexPath.section].name
+        view.titleLabel.text = displayedTrackers[indexPath.section].name
         return view
     }
 }
@@ -619,11 +619,11 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
     private func configurationHighlightTargetedPreview(indexPath: IndexPath) -> UITargetedPreview {
         guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
         else { return UITargetedPreview(view: UIView(), parameters: UIPreviewParameters())}
-       
+        
         let view = cell.trackerBackgroundView
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .ypBackContextMenu
-      
+        
         return UITargetedPreview(view: view,
                                  parameters: parameters)
     }
@@ -631,13 +631,13 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
         guard indexPaths.count > 0 else { return nil }
         let indexPath = indexPaths[0]
-
+        
         let trackerItem = self.displayedTrackers[indexPath.section].trackers[indexPath.row]
         let pinActionTitle = NSLocalizedString("pinAction.title", comment: "")
         let unPinActionTitle = NSLocalizedString("unPinAction.title", comment: "")
         let editAction = NSLocalizedString("editAction.title", comment: "")
         let deleteAction = NSLocalizedString("deleteAction.title", comment: "")
-       
+        
         return UIContextMenuConfiguration(actionProvider: { actions in
             return UIMenu(children: [
                 UIAction(title: trackerItem.isPinned ? unPinActionTitle : pinActionTitle) { [weak self] _ in
@@ -660,42 +660,42 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
     }
     
     //MARK: -  context menu functions
-     
-     private func editTracker(indexPath: IndexPath) {
-         let tracker = displayedTrackers[indexPath.section].trackers[indexPath.row]
-         let category = categories[indexPath.section].name
-
-         let completedDay = completedTrackers.filter { $0.idExecutedTracker == tracker.idTracker }.count
-         let viewModel = NewTrackerVCViewModel()
-         let editHabitViewController = NewTrackerViewController(viewModel: viewModel)
-         editHabitViewController.delegate = self
-         viewModel.typeEvent = .existingTtype
-         
-         viewModel.idTracker.value = tracker.idTracker
-         viewModel.name.value = tracker.name
-         viewModel.isPinned.value = tracker.isPinned
-         viewModel.selectedCategory.value?.selectedCategory = category
-
-         if let timesheet = tracker.timesheet,
-                let timeSheetString = delegate?.getTimeSheetString(timeSheet: timesheet) {
-             viewModel.addTimeSheet(timeSheetString, timesheet)
-         }
-         viewModel.selectedEmoji.value?.selectedEmoji = tracker.emoji
-         viewModel.selectedColor.value?.selectedColors = tracker.color
-
-         viewModel.daysCount.value = completedDay
-
-         guard let typeEvent = viewModel.typeEvent?.localizedString() else {return}
-         
-         viewRouter?.switchToViewController(to: editHabitViewController, title: typeEvent)
-     }
+    
+    private func editTracker(indexPath: IndexPath) {
+        let tracker = displayedTrackers[indexPath.section].trackers[indexPath.row]
+        let category = categories[indexPath.section].name
+        
+        let completedDay = completedTrackers.filter { $0.idExecutedTracker == tracker.idTracker }.count
+        let viewModel = NewTrackerVCViewModel()
+        let editHabitViewController = NewTrackerViewController(viewModel: viewModel)
+        editHabitViewController.delegate = self
+        viewModel.typeEvent = .existingTtype
+        
+        viewModel.idTracker.value = tracker.idTracker
+        viewModel.name.value = tracker.name
+        viewModel.isPinned.value = tracker.isPinned
+        viewModel.selectedCategory.value?.selectedCategory = category
+        
+        if let timesheet = tracker.timesheet,
+           let timeSheetString = delegate?.getTimeSheetString(timeSheet: timesheet) {
+            viewModel.addTimeSheet(timeSheetString, timesheet)
+        }
+        viewModel.selectedEmoji.value?.selectedEmoji = tracker.emoji
+        viewModel.selectedColor.value?.selectedColors = tracker.color
+        
+        viewModel.daysCount.value = completedDay
+        
+        guard let typeEvent = viewModel.typeEvent?.localizedString() else {return}
+        
+        viewRouter?.switchToViewController(to: editHabitViewController, title: typeEvent)
+    }
     
     private func configurationPinTracker(with tracker: TrackerModel) {
         let trackerID = tracker.idTracker
         do {
             try trackerStore.setTrackerPinState(with: trackerID)
             updateCategories()
-
+            
         } catch {
             assertionFailure("Enabled to set pinned state \(CoreDataErrors.validationError(error))")
         }
@@ -705,7 +705,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
         categories = []
         var pinnedTrackers: [TrackerModel] = []
         let categoryCoreData = trackerCategoryStore.getTrackersCategory()
-
+        
         categoryCoreData.forEach { item in
             let trackerCoreData = item.trackers
             let pinTrackers = trackerCoreData.filter {$0.isPinned}
@@ -717,7 +717,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout & UICollect
             }
         }
         if pinnedTrackers.count > 0 {
-        let title = NSLocalizedString("pinCategory.title", comment: "")
+            let title = NSLocalizedString("pinCategory.title", comment: "")
             categories.insert(TrackerCategory(name: title, trackers: pinnedTrackers), at: 0)
         }
         filteredChoosedByDatePickerDate(getSelectedWeekday())
@@ -772,8 +772,8 @@ extension TrackersViewController: TrackersViewControllerDelegate {
     
     func deleteTracker(trackerId: UUID) {
         trackerStore.deleteTracker(trackerId: trackerId)
-         updateCategories()
-     }
+        updateCategories()
+    }
 }
 
 // MARK: - FiltersTypesViewControllerDelegate

@@ -24,7 +24,7 @@ final class FiltersTypesViewController: UIViewController {
         get { return UserDefaultsStorage.shared.lastSelectedFilter}
         set {UserDefaultsStorage.shared.lastSelectedFilter = newValue ?? 0}
     }
-
+    
     private var selectedFiltersTypes: FiltersTypes?
     
     weak var delegate: FiltersTypesViewControllerDelegate?
@@ -63,46 +63,46 @@ final class FiltersTypesViewController: UIViewController {
         self.tableView.frame = CGRect(origin: .zero, size: size)
     }
 }
+
+extension FiltersTypesViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return FiltersTypes.allCases.count
+    }
     
-    extension FiltersTypesViewController: UITableViewDataSource {
-        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return FiltersTypes.allCases.count
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: FiltersTypesTableViewCell.reuseIdentifier, for: indexPath) as? FiltersTypesTableViewCell else {return UITableViewCell()}
+        
+        cell.textLabel?.text = FiltersTypes.allCases[indexPath.row].localizedString()
+        cell.textLabel?.textColor = .ypBlack
+        cell.textLabel?.font = .ypRegular17
+        cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
+        
+        //MARK: - Set custom separator behavio
+        
+        if indexPath.row == 0 {
+            cell.configure(with: true)
+            cell.layer.masksToBounds = true
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        } else if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+            cell.configure(with: false)
+            cell.layer.masksToBounds = true
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else {
+            cell.configure(with: true)
+            cell.layer.cornerRadius = 0
+            cell.layer.masksToBounds = true
         }
         
-        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: FiltersTypesTableViewCell.reuseIdentifier, for: indexPath) as? FiltersTypesTableViewCell else {return UITableViewCell()}
-       
-            cell.textLabel?.text = FiltersTypes.allCases[indexPath.row].localizedString()
-            cell.textLabel?.textColor = .ypBlack
-            cell.textLabel?.font = .ypRegular17
-            cell.backgroundColor = .ypBackground.withAlphaComponent(0.3)
-            
-            //MARK: - Set custom separator behavio
-   
-                if indexPath.row == 0 {
-                    cell.configure(with: true)
-                    cell.layer.masksToBounds = true
-                    cell.layer.cornerRadius = 16
-                    cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-                } else if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
-                    cell.configure(with: false)
-                    cell.layer.masksToBounds = true
-                    cell.layer.cornerRadius = 16
-                    cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-                } else {
-                    cell.configure(with: true)
-                    cell.layer.cornerRadius = 0
-                    cell.layer.masksToBounds = true
-                }
-            
-            if let lastSelectedFilter = lastSelectedFilter, indexPath.row == lastSelectedFilter {
-                cell.accessoryType = .checkmark
-            } else {
-                cell.accessoryType = .none
-            }
-            
-            return cell
+        if let lastSelectedFilter = lastSelectedFilter, indexPath.row == lastSelectedFilter {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
         }
+        
+        return cell
+    }
 }
 
 extension FiltersTypesViewController: UITableViewDelegate {
