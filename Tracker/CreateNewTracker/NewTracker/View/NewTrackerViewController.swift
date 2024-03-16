@@ -675,7 +675,9 @@ extension NewTrackerViewController: UITableViewDataSource {
             if let viewRouter = viewRouter,
                let selectedCategory = viewModel?.selectedCategory.value?.selectedCategory {
                 let lastSelectedcategory = viewController.getEditCategory(category: selectedCategory)?.row
-                UserDefaultsStorage.shared.lastSelectedcategory = lastSelectedcategory ?? 0
+                if let lastSelectedcategory = lastSelectedcategory {
+                    UserDefaultsStorage.shared.lastSelectedcategory = lastSelectedcategory
+                }
                 if  let viewController = viewController as? CategoriesTypeViewController {
                     viewRouter.switchToViewController(to: viewController, title: titlesCategory)
                     viewController.delegate = viewModel

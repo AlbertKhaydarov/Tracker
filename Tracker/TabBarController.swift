@@ -18,20 +18,21 @@ final class TabBarController: UITabBarController {
         tabBar.layer.addSublayer(border)
         
         let trackersViewCotroller = TrackersViewController()
-        let navigationController = UINavigationController(rootViewController: trackersViewCotroller)
+        let trackersViewCotrollerNavigationController = UINavigationController(rootViewController: trackersViewCotroller)
         
         let titleTrackersText = NSLocalizedString("trackers.tabBarItem.title", comment: "")
-        navigationController.tabBarItem = UITabBarItem(title: titleTrackersText,
+        trackersViewCotrollerNavigationController.tabBarItem = UITabBarItem(title: titleTrackersText,
                                                        image: UIImage(named: "trackersVCIcon"),
                                                        selectedImage: nil)
        
         let titleStatisticsText = NSLocalizedString("statistics.tabBarItem.title", comment: "")
         let statisticsViewCotroller = StatisticsViewController()
-        statisticsViewCotroller.tabBarItem = UITabBarItem(title: titleStatisticsText,
+        let statisticsViewCotrollerNavigationController = UINavigationController(rootViewController: statisticsViewCotroller)
+        statisticsViewCotrollerNavigationController.tabBarItem = UITabBarItem(title: titleStatisticsText,
                                                           image: UIImage(named: "statisticsVCIcon"),
                                                           selectedImage: nil)
         
-        self.viewControllers = [navigationController, statisticsViewCotroller]
+        self.viewControllers = [trackersViewCotrollerNavigationController, statisticsViewCotrollerNavigationController]
     }
 }
 

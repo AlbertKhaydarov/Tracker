@@ -12,6 +12,8 @@ final class TrackerStore: NSObject {
     private let uiColorMarshalling = UIColorMarshalling()
     private let arrayMarshalling = ArrayMarshalling()
     
+    private let trackerRecordStore = TrackerRecordStore()
+    
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = TrackerCoreData.fetchRequest()
         fetchRequest.resultType = .managedObjectResultType
@@ -77,7 +79,7 @@ final class TrackerStore: NSObject {
     }
     
     let titlePinCategory = NSLocalizedString("pinCategory.title", comment: "")
-   
+    
     func isTrackerPinned(with indexPath: IndexPath) -> Bool {
         let trackerCoreData = fetchedResultsController.object(at: indexPath)
         return trackerCoreData.trackerCategory?.name == titlePinCategory ? true : false
@@ -120,7 +122,14 @@ final class TrackerStore: NSObject {
         do {
             try context.save()
         } catch {
-           assertionFailure("Failed to save \(String(describing: CoreDataErrors.saveError(error)))", file: #file, line: #line)
+            assertionFailure("Failed to save \(String(describing: CoreDataErrors.saveError(error)))", file: #file, line: #line)
         }
+        
+        do {
+            try trackerRecordStore.deleteTrackerRecord(withID: trackerId)
+        } catch {
+            assertionFailure("Failed to delete record \(String(describing: CoreDataErrors.deleteError(error)))", file: #file, line: #line)
+        }
+        
     }
 }

@@ -69,3 +69,10 @@
 "todayTrackers.filter" = "Трекеры на сегодня";
 "completedTrackers.filter" = "Завершенные";
 "uncompletedTrackers.filter" = "Не завершенные";
+"resetFilterButton.title" = "Сбросить";
+"statistics.title" = "Статистика";
+"stubTextTitleLabel.text" = "Анализировать пока нечего";
+"completedTrackerTitleLabel.title" = "Трекеров завершено";
+"bestPeriodLabel.title" = "Лучший период";
+"idealDaysLabel.title" = "Идеальные дни";
+"averageValueLabel.title" = "Среднее значение";

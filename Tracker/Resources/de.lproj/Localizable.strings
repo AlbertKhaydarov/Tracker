@@ -68,3 +68,7 @@
 "todayTracker.filter" = "Tracker für heute";
 "completedTrackers.filter" = "Abgeschlossen";
 "uncompletedTrackers.filter" = "Nicht abgeschlossen";
+"resetFilterButton.title" = "Abwerfen";
+"statistics.title" = "Statistik";
+"stub Text Title Label.text" = " Es gibt noch nichts zu analysieren";
+"completedTrackerTitleLabel.title" = "Tracker abgeschlossen";

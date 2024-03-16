@@ -99,12 +99,25 @@ final class TrackersViewController: UIViewController {
         let filtersButtonTitle = NSLocalizedString("filtersButton.title", comment: "")
         button.setTitle(filtersButtonTitle, for: .normal)
         button.titleLabel?.font = .ypRegular17
-        button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypBlue
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.isHidden = false
         button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var resetFilterButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let filtersButtonTitle = NSLocalizedString("resetFilterButton.title", comment: "")
+        button.setTitle(filtersButtonTitle, for: .normal)
+        button.titleLabel?.font = .ypRegular17
+        button.backgroundColor = .ypBlue
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        button.isHidden = true
+        button.addTarget(self, action: #selector(resetFilterButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -128,17 +141,32 @@ final class TrackersViewController: UIViewController {
         
         self.viewRouter = ViewRouter(viewController: self)
         
+        selectedFiltersType = FiltersTypes.allCases[UserDefaultsStorage.shared.lastSelectedFilter]
+        if selectedFiltersType != .allTrackers {
+            filterButton.setTitleColor(.ypRed, for: .normal)
+        } else {
+            filterButton.setTitleColor(.ypWhite, for: .normal)
+        }
+       
         getCompletedTrackers()
         
         setupCustomDatePickerView(with: Date())
         addNavButton()
         setup()
         setupSearchController()
-        showNotCreatedStub()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+      
+        if var selectedFiltersType = selectedFiltersType {
+            showStub(with: selectedFiltersType)
+        }
     }
     
     private func getCompletedTrackers() {
         do {
+//            completedTrackers = try trackerRecordStore.getTrackersRecords()
             completedTrackers = try trackerRecordStore.getTrackersRecords()
         } catch {
             assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
@@ -147,23 +175,41 @@ final class TrackersViewController: UIViewController {
     
     @objc private func filterButtonTapped() {
         let filtersTypeVCTitle = NSLocalizedString("filtersTypeVC.title", comment: "")
-        let filtersViewController = FiltersTypesViewController(selectedFiltersTypes: .todayTrackers)
+        let type = UserDefaultsStorage.shared.lastSelectedFilter
+        let filtersViewController = FiltersTypesViewController(selectedFiltersTypes: FiltersTypes.allCases[type])
         filtersViewController.delegate = self
         viewRouter?.switchToViewController(to: filtersViewController, title: filtersTypeVCTitle)
     }
     
+    @objc private func resetFilterButtonTapped() {
+        selectedFiltersType = .allTrackers
+        UserDefaultsStorage.shared.lastSelectedFilter = 0
+        notFoundLogoStackView.isHidden = true
+        resetFilterButton.isHidden = true
+        filterButton.isHidden = false
+        filteredChoosedByDatePickerDate(getSelectedWeekday())
+    }
+    
     private func setFilters(currentFilter: FiltersTypes) {
         selectedFiltersType = currentFilter
+        guard let selectedFiltersType = selectedFiltersType else {return}
+        setTitleButton(with: selectedFiltersType)
         switch selectedFiltersType {
             
         case .todayTrackers:
             datePicker.date = Date()
             setupCustomDatePickerView(with: Date())
             filteredChoosedByDatePickerDate(getSelectedWeekday())
-            notFoundTrackersLogo.isHidden = true
-            
         default:
             filteredChoosedByDatePickerDate(getSelectedWeekday())
+        }
+    }
+    
+    private func setTitleButton(with type: FiltersTypes) {
+        if type != .allTrackers {
+            filterButton.setTitleColor(.ypRed, for: .normal)
+        } else {
+            filterButton.setTitleColor(.ypWhite, for: .normal)
         }
     }
     
@@ -206,6 +252,7 @@ final class TrackersViewController: UIViewController {
         
         view.addSubview(collectionView)
         view.addSubview(filterButton)
+        view.addSubview(resetFilterButton)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -215,7 +262,12 @@ final class TrackersViewController: UIViewController {
             filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             filterButton.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: -16),
             filterButton.heightAnchor.constraint(equalToConstant: 50),
-            filterButton.widthAnchor.constraint(equalToConstant: 114)
+            filterButton.widthAnchor.constraint(equalToConstant: 114),
+            
+            resetFilterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            resetFilterButton.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: -16),
+            resetFilterButton.heightAnchor.constraint(equalToConstant: 50),
+            resetFilterButton.widthAnchor.constraint(equalToConstant: 114)
         ])
         collectionView.reloadData()
     }
@@ -233,6 +285,13 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func datePickerValueChanged(_ datePicker: UIDatePicker) {
+        selectedFiltersType = FiltersTypes.allCases[UserDefaultsStorage.shared.lastSelectedFilter]
+        if selectedFiltersType == .todayTrackers {
+            selectedFiltersType = .allTrackers
+            UserDefaultsStorage.shared.lastSelectedFilter = 0
+            guard let selectedFiltersType = selectedFiltersType else {return}
+            setTitleButton(with: selectedFiltersType)
+        }
         let selectedDate = datePicker.date
         setupCustomDatePickerView(with: selectedDate)
         filteredChoosedByDatePickerDate(getSelectedWeekday())
@@ -267,7 +326,7 @@ final class TrackersViewController: UIViewController {
                     return isCompletedTracker
                     
                 } else if selectedFiltersType == .uncompletedTrackers {
-                    return isDisplayed && !isCompletedTracker
+                    return !isCompletedTracker
                 }
                 
                 let idCopletedNonRegular: Bool = timesheet.isEmpty
@@ -280,14 +339,37 @@ final class TrackersViewController: UIViewController {
             }
             return TrackerCategory(name: category.name, trackers: trackers)
         }
-        if displayedTrackers.isEmpty {
-            showNotCreatedStub()
-            filterButton.isHidden = true
-        } else {
-            notCreatedLogoStackView.isHidden = true
-            filterButton.isHidden = false
+        
+        if let selectedFiltersType = selectedFiltersType {
+            showStub(with: selectedFiltersType)
         }
         collectionView.reloadData()
+    }
+    
+    private func showStub(with filterType: FiltersTypes) {
+
+        if filterType == .allTrackers || selectedFiltersType == .todayTrackers {
+            if displayedTrackers.isEmpty {
+                showNotCreatedStub()
+                filterButton.isHidden = true
+      
+            } else {
+                notCreatedLogoStackView.isHidden = true
+                filterButton.isHidden = false
+
+            }
+        } else {
+            if displayedTrackers.isEmpty {
+                showNotFoundStub()
+                filterButton.isHidden = true
+                resetFilterButton.isHidden = false
+            } else {
+                notFoundLogoStackView.isHidden = true
+                filterButton.isHidden = false
+                resetFilterButton.isHidden = true
+            }
+            
+        }
     }
     
     private func filteredByText(_ filteredText: String?) {
