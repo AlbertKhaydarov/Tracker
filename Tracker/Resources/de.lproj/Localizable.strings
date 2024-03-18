@@ -72,3 +72,6 @@
 "statistics.title" = "Statistik";
 "stub Text Title Label.text" = " Es gibt noch nichts zu analysieren";
 "completedTrackerTitleLabel.title" = "Tracker abgeschlossen";
+"best Period Label.title" = "Beste Periode";
+"ideal Days Label.title" = "Perfekte Tage";
+"average Value Label.title" = "Mittelwert";

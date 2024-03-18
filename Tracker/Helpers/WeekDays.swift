@@ -7,25 +7,14 @@
 
 import Foundation
 
-// enum WeekDays: String, CaseIterable {
-//    case monday = "Понедельник"
-//    case tuesday = "Вторник"
-//    case wednesday = "Среда"
-//    case thursday = "Четверг"
-//    case friday = "Пятница"
-//    case saturday = "Суббота"
-//    case sunday = "Воскресенье"
-//    static let allDaysCount = WeekDays.allCases.count
-//}
-
 enum WeekDays: String, CaseIterable {
-    case monday //= "weekDay2"
-    case tuesday //= "weekDay3"
-    case wednesday //= "weekDay4"
-    case thursday //= //"weekDay5"
-    case friday //= //"weekDay6"
-    case saturday //= //"weekDay7"
-    case sunday //= //"weekDay1"
+    case monday
+    case tuesday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+    case sunday
     
     static let allDaysCount = WeekDays.allCases.count
     

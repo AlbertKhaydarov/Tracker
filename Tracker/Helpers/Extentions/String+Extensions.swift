@@ -40,7 +40,6 @@ extension String {
         let orderDay5 = NSLocalizedString("orderDay5", comment: "")
         let orderDay6 = NSLocalizedString("orderDay6", comment: "")
         let orderDay7 = NSLocalizedString("orderDay7", comment: "")
-//        let allWeekDays = NSLocalizedString("allWeekDays", comment: "")
        
         switch weekDay {
         case 1: return orderDay7

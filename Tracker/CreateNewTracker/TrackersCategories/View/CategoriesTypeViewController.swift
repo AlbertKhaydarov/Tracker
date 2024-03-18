@@ -173,6 +173,7 @@ final class CategoriesTypeViewController: UIViewController {
     }
 }
 
+// MARK: - CategoriesTypeViewControllerProtocol
 extension CategoriesTypeViewController: CategoriesTypeViewControllerProtocol {
     func getEditCategory(category: String) -> IndexPath? {
         if let selectedCategoryTypeIndex = viewModel?.categoryType.firstIndex(where: { $0.categoryTitle == category }) {
@@ -182,6 +183,7 @@ extension CategoriesTypeViewController: CategoriesTypeViewControllerProtocol {
     }
 }
 
+// MARK: - TableViewDataSource
 extension CategoriesTypeViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel?.categoryType.count ?? 0
@@ -233,6 +235,7 @@ extension CategoriesTypeViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - TableViewDelegate
 extension CategoriesTypeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
