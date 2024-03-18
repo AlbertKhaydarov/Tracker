@@ -33,28 +33,44 @@ extension String {
     ]
     
     func weekdayFromInt(_ weekDay: Int) -> String {
+        let orderDay1 = NSLocalizedString("orderDay1", comment: "")
+        let orderDay2 = NSLocalizedString("orderDay2", comment: "")
+        let orderDay3 = NSLocalizedString("orderDay3", comment: "")
+        let orderDay4 = NSLocalizedString("orderDay4", comment: "")
+        let orderDay5 = NSLocalizedString("orderDay5", comment: "")
+        let orderDay6 = NSLocalizedString("orderDay6", comment: "")
+        let orderDay7 = NSLocalizedString("orderDay7", comment: "")
+       
         switch weekDay {
-        case 1: return "Вс"
-        case 2: return "Пн"
-        case 3: return "Вт"
-        case 4: return "Ср"
-        case 5: return "Чт"
-        case 6: return "Пт"
-        case 7: return "Сб"
+        case 1: return orderDay7
+        case 2: return orderDay1
+        case 3: return orderDay2
+        case 4: return orderDay3
+        case 5: return orderDay4
+        case 6: return orderDay5
+        case 7: return orderDay6
         default: break
         }
         return "Weekday"
     }
     
     func shortDays(for weekDay: String) -> Int {
+        let weekDay1 = NSLocalizedString("weekDay1", comment: "")
+        let weekDay2 = NSLocalizedString("weekDay2", comment: "")
+        let weekDay3 = NSLocalizedString("weekDay3", comment: "")
+        let weekDay4 = NSLocalizedString("weekDay4", comment: "")
+        let weekDay5 = NSLocalizedString("weekDay5", comment: "")
+        let weekDay6 = NSLocalizedString("weekDay6", comment: "")
+        let weekDay7 = NSLocalizedString("weekDay7", comment: "")
+        
         switch weekDay {
-        case "Воскресенье": return 1
-        case "Понедельник": return 2
-        case "Вторник": return 3
-        case "Среда": return 4
-        case "Четверг": return 5
-        case "Пятница": return 6
-        case "Суббота": return 7
+        case weekDay1: return 1
+        case weekDay2: return 2
+        case weekDay3: return 3
+        case weekDay4: return 4
+        case weekDay5: return 5
+        case weekDay6: return 6
+        case weekDay7: return 7
         default: return 100
         }
     }

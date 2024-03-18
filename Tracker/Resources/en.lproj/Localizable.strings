@@ -1,0 +1,77 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Альберт Хайдаров on 04.03.2024.
+  
+*/
+"trackers.TabBarItem.title" = "Trackers";
+"statistics.TabBarItem.title" = "Statistics";
+"addButtonTappedTitle.title" = "Creating a tracker";
+"searchBarButton.title" = "Cancel";
+"onboargingPage1.title" = "Track only what you want";
+"onboargingPage2.title" = "Even if it's not liters of water and yoga";
+"onboargingButton.title" = "These are technologies!";
+"errorTrackersLabel.titleText" = "What are you going to track?";
+"notFoundTrackersLabelText" = "Nothing found";
+"trackersVCTitleText" = "Trackers";
+"filtersTypeVC.title" = "Filters";
+"filtersButton.title" = "Filters";
+"titlesButtonCategory" = "Category";
+"titlesButtonTimeSheet" = "Schedule";
+"nameInputTextFieldText" = "Enter the name of the tracker";
+"lengthLimitationLabelText" = "38 characters limit";
+"сancelButton.title" = "Cancel";
+"createButton.title" = "Create";
+"saveButton.title" = "Save";
+"alertController.title" = "Are you sure you want to delete the tracker?";
+"alertControllerCategoryTypeDeleteConfirm.title" = "Are you sure you don't need this category?";
+"deleteButton.title" = "Delete";
+"timeSheetDaysText" = "Every day";
+"collectionViewTitleText" = "Color";
+"habitTypeButton.title" = "Habit";
+"oneTimeTypeButton.title" = "Irregular event";
+"addCategoryButton.title" = "Add Category";
+"errorTrackersLabel.title" = "Habits and events can be combined in meaning";
+"categoriesVC.title" = "Category";
+"newCategoryTypeVC.title" = "New category";
+"edit Category Type.title" = "Edit category";
+"inputNewCategoryTextFieldPlaceholder" = "Enter the category name";
+"creatButton.title" = "Done";
+"readyButton.title" = "Done";
+"timeSheetVC.title" = "Schedule";
+"sortedDaysText" = "Every day";
+"orderDay1" = "Mo";
+"orderDay2" = "Tu";
+"orderDay3" = "We";
+"orderDay4" ="Th";
+"orderDay5" = "Fr";
+"orderDay6" = "Sa";
+"orderDay7" = "Su";
+"allWeekDays" = "Week"; 
+"weekDay1" = "Sunday";
+"weekDay2" = "Monday";
+"weekDay3" = "Tuesday";
+"weekDay4" = "Wednesday";
+"weekDay5" = "Thursday";
+"weekDay6" = "Friday";
+"weekDay7" = "Saturday";
+"habitTypeEvents" = "New habit";
+"oneTimeTypeEvents" = "New irregular event";
+"existingTypeEvents" = "Editing a habit";
+"pinCategory.title" = "Pinned";
+"pinAction.title" = "Pin";
+"unPinAction.title" = "Unpin";
+"editAction.title" = "Edit";
+"deleteAction.title" = "Delete";
+"allTrackers.filter" = "All trackers";
+"todayTracker.filter" = "Trackers for today";
+"completedTrackers.filter" = "Completed";
+"uncompletedTrackers.filter" = "Not completed";
+"resetFilterButton.title" = "Reset";
+"statistics.title" = "Statistics";
+"stub Text Title Label.text" = "There is nothing to analyze yet";
+"completedTrackerTitleLabel.title" = "Trackers completed";
+"best Period Label.title" = "Best period";
+"ideal Days Label.title" = "Ideal days";
+"average Value Label.title" = "Average value";

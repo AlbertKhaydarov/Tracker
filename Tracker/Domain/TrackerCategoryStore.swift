@@ -11,7 +11,6 @@ import UIKit
 final class TrackerCategoryStore: NSObject {
     private let context: NSManagedObjectContext
     private let trackerStore = TrackerStore()
-    
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
@@ -44,25 +43,11 @@ final class TrackerCategoryStore: NSObject {
     init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
+        let paths = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
         //TODO: - удалить после отладки
-        //                deleteAllData()
-        //        print( FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask))
-        
-    }
-    
-    //TODO: - удалить после отладки
-    private func deleteAllData() {
-        trackerStore.deleteAllData()
-        guard let managedContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
-            fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")
-        }
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TrackerCategoryCoreData")
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        do {
-            try managedContext.execute(batchDeleteRequest)
-        } catch {
-            print("Failed to delete all data: \(error)")
-        }
+        //        if let libraryPath = paths.first {
+        //            print("Library path: \(libraryPath)")
+        //        }
     }
     
     var categoryTypes: [TrackerCategoryCoreData] {
@@ -112,7 +97,17 @@ final class TrackerCategoryStore: NSObject {
         do {
             try context.save()
         } catch {
-            print("Ошибка сохранения CoreData: \(error), \(error.localizedDescription)")
+            print("Failed to save CoreData: \(error), \(error.localizedDescription)")
+        }
+    }
+    
+    func deleteCategory(at indexPath: IndexPath) throws {
+        let categoryTypeCoreData = fetchedResultsController.object(at: indexPath)
+        context.delete(categoryTypeCoreData)
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save CoreData: \(error), \(error.localizedDescription)")
         }
     }
     
@@ -129,7 +124,7 @@ final class TrackerCategoryStore: NSObject {
         do {
             try context.save()
         } catch {
-            print("Ошибка сохранения CoreData: \(error), \(error.localizedDescription)")
+            print("Failed to save CoreData: \(error), \(error.localizedDescription)")
         }
     }
     

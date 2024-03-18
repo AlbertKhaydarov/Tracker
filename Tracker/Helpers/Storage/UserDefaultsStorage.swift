@@ -11,6 +11,7 @@ enum StorageKeys: String {
     case timeSheetStorageKey
     case isFirstLaunchKey
     case lastSelectedcategory
+    case lastSelectedFilter
 }
 
 final class UserDefaultsStorage: UserDefaultsStorageProtocol {
@@ -47,6 +48,15 @@ final class UserDefaultsStorage: UserDefaultsStorageProtocol {
         }
         set {
             storage.set(newValue, forKey: StorageKeys.lastSelectedcategory.rawValue)
+        }
+    }
+    
+    var lastSelectedFilter: Int {
+        get {
+            return storage.integer(forKey: StorageKeys.lastSelectedFilter.rawValue)
+        }
+        set {
+            storage.set(newValue, forKey: StorageKeys.lastSelectedFilter.rawValue)
         }
     }
 }

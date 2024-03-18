@@ -33,7 +33,8 @@ final class OnboardingPageViewController: UIViewController {
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.setTitle("Вот это технологии!", for: .normal)
+        let onboargingButtonTitle = NSLocalizedString("onboargingButton.title", comment: "")
+        button.setTitle(onboargingButtonTitle, for: .normal)
         button.setTitleColor( .ypWhite, for: .normal)
         button.titleLabel?.font = .ypMedium16
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)

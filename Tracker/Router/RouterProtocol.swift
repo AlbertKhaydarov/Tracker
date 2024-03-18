@@ -9,4 +9,5 @@ import UIKit
 
 protocol RouterProtocol {
     func switchToViewController(to destimationVC:UIViewController, title: String) 
+    func presentViewController(to destimationVC:UIViewController, title: String)
 }

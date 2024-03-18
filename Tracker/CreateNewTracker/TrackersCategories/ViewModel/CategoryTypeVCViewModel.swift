@@ -9,6 +9,9 @@ import UIKit
 
 final class CategoryTypeVCViewModel{
     
+    @PropertyWrapper
+    private var editCategoryType: String?
+    
     var categotyTypesBinding:  Binding<[CategoryTypeCellViewModel]>?
     
     private var trackerCategoryStore: TrackerCategoryStore
@@ -19,9 +22,10 @@ final class CategoryTypeVCViewModel{
         }
     }
     
-    weak var delegate: NewTrackerVCViewModelCategoryTypeDelegate?
-    var delegateViewModel = NewTrackerVCViewModel()
+    var categoryForEditObservable: PropertyWrapper<String?> { $editCategoryType }
     
+    weak var delegate: NewTrackerVCViewModelCategoryTypeDelegate?
+  
     convenience init() {
         let trackerCategoryStore = TrackerCategoryStore(
             context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -35,13 +39,24 @@ final class CategoryTypeVCViewModel{
         categoryType = getСategoryTypeFromStore()
     }
     
-    
     private func getСategoryTypeFromStore() -> [CategoryTypeCellViewModel]{
         let сategoryTypeCellViewModel = trackerCategoryStore.categoryTypes.map({ item in
             return CategoryTypeCellViewModel(id: item.objectID.uriRepresentation().absoluteString,
                                              categoryTitle: item.name ?? "")
         })
         return сategoryTypeCellViewModel
+    }
+    
+    func edit(categoryType: String) {
+        editCategoryType = categoryType
+    }
+    
+    func deleteCategorytype(with indexPath: IndexPath){
+        do {
+            try trackerCategoryStore.deleteCategory(at: indexPath)
+        } catch {
+            assertionFailure("Failed to delete \(String(describing: CoreDataErrors.deleteError(error)))", file: #file, line: #line)
+        }
     }
 }
 

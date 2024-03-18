@@ -8,8 +8,8 @@
 import UIKit
 
 final class NewTrackerViewController: UIViewController {
-    
-    private let titlesButtons: [String] = ["Категория", "Расписание"]
+    private let yandexMetrica = YandexMetricaService.shared
+    private var titlesButtons: [String] = []
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -22,7 +22,7 @@ final class NewTrackerViewController: UIViewController {
     private let contentViewForScrollView: UIView = {
         let contentView = UIView()
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .ypWhite
         return contentView
     }()
     
@@ -31,7 +31,11 @@ final class NewTrackerViewController: UIViewController {
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 75))
         textField.leftViewMode = .always
-        textField.placeholder = "Введите название трекера"
+        if viewModel?.typeEvent == .existingTtype {
+            textField.text = viewModel?.name.value
+        }
+        let nameInputTextFieldText = NSLocalizedString("nameInputTextFieldText", comment: "")
+        textField.placeholder = nameInputTextFieldText
         textField.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         textField.layer.cornerRadius = 16
         textField.clearButtonMode = .whileEditing
@@ -44,7 +48,8 @@ final class NewTrackerViewController: UIViewController {
     private let lengthLimitationLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Ограничение 38 символов"
+        let lengthLimitationLabelText = NSLocalizedString("lengthLimitationLabelText", comment: "")
+        label.text = lengthLimitationLabelText
         label.font = UIFont.systemFont(ofSize: 17)
         label.textColor = .ypRed
         label.numberOfLines = 1
@@ -120,11 +125,12 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Отменить", for: .normal)
+        let cancelButtonTitle = NSLocalizedString("cancelButton.title", comment: "")
+        button.setTitle(cancelButtonTitle, for: .normal)
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.ypRed.cgColor
         button.setTitleColor(.ypRed, for: .normal)
-        button.backgroundColor = .white
+        button.backgroundColor = .ypWhite
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(cancelButtontapped), for: .touchUpInside)
@@ -133,24 +139,46 @@ final class NewTrackerViewController: UIViewController {
     
     private lazy var createButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Создать", for: .normal)
-        button.tintColor = .white
-        button.backgroundColor = .ypGray
+        if viewModel?.typeEvent == .existingTtype {
+            let saveButtonTitle = NSLocalizedString("saveButton.title", comment: "")
+            button.setTitle(saveButtonTitle, for: .normal)
+        } else {
+            let createButtonTitle = NSLocalizedString("createButton.title", comment: "")
+            button.setTitle(createButtonTitle, for: .normal)
+            button.backgroundColor = .ypGray
+            button.isEnabled = false
+        }
+        button.tintColor = .ypTextWhite
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
-        button.isEnabled = false
+        
         return button
     }()
     
-    var completionHandlerOnCreateButtonTapped: ((_ newTracker: TrackerModel, _ nameCategory: String?) -> Void)?
+    private let countDaysLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .ypBold32
+        label.textColor = .ypBlack
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
     
     private var viewRouter: RouterProtocol?
     
+    var completionHandlerOnCreateButtonTapped: ((_ newTracker: TrackerModel, _ nameCategory: String?) -> Void)?
+    let titlesCategory = NSLocalizedString("titlesButtonCategory", comment: "")
+    let titlesTimeSheet = NSLocalizedString("titlesButtonTimeSheet", comment: "")
+    
     var viewModel: NewTrackerVCViewModel?
+    
+    weak var delegate: TrackersViewControllerDelegate?
     
     init(viewModel: NewTrackerVCViewModel) {
         self.viewModel = viewModel
+        titlesButtons = [titlesCategory, titlesTimeSheet]
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -186,6 +214,7 @@ final class NewTrackerViewController: UIViewController {
     }
     
     @objc private func createButtonTapped() {
+        
         guard let text = nameInputTextField.text,
               let category = viewModel?.selectedCategory.value?.selectedCategory
         else { return }
@@ -202,18 +231,32 @@ final class NewTrackerViewController: UIViewController {
                                           name: text,
                                           color: color,
                                           emoji: emoji,
-                                          timesheet: timeSheet)
+                                          timesheet: timeSheet,
+                                          isPinned: false)
                 self.completionHandlerOnCreateButtonTapped?(newTracker, category)
             case .oneTimeType:
                 newTracker = TrackerModel(idTracker: UUID(),
                                           name: text,
                                           color: color,
                                           emoji: emoji,
-                                          timesheet: [])
+                                          timesheet: [],
+                                          isPinned: false)
                 completionHandlerOnCreateButtonTapped?(newTracker, category)
+            case .existingTtype:
+                let timeSheet = viewModel?.weekDays.value?.weekdays
+                if let idTracker = viewModel?.idTracker.value {
+                    delegate?.deleteTracker(trackerId: idTracker)
+                    newTracker = TrackerModel(idTracker: idTracker,
+                                              name: text,
+                                              color: color,
+                                              emoji: emoji,
+                                              timesheet: timeSheet,
+                                              isPinned: viewModel?.isPinned.value ?? false)
+                    self.delegate?.getNewTracker(newTracker, categoryName: category)
+                }
             }
         } else {
-            print("Ошибка создания трекера")
+            assertionFailure("Failed to create \(String(describing: CoreDataErrors.creatError))", file: #file, line: #line)
             return
         }
         self.view.window?.rootViewController?.dismiss(animated: true)
@@ -226,12 +269,20 @@ final class NewTrackerViewController: UIViewController {
     //MARK: - add others check up
     private func createButtonIsEnabled() {
         guard let viewModel = viewModel else {return}
-        if viewModel.isTrackerNameEmpty && viewModel.timeSheetIsEnable && viewModel.categoryIsEnable && viewModel.emojiSelectedIsEnable && viewModel.colorSelectedIsEnable {
+        if viewModel.typeEvent == .existingTtype {
             createButton.isEnabled = true
             createButton.backgroundColor = .ypBlack
+            createButton.setTitleColor(.ypWhite, for: .normal)
         } else {
-            createButton.isEnabled = false
-            createButton.backgroundColor = .ypGray
+            if viewModel.isTrackerNameEmpty && viewModel.timeSheetIsEnable && viewModel.categoryIsEnable && viewModel.emojiSelectedIsEnable && viewModel.colorSelectedIsEnable {
+                createButton.isEnabled = true
+                createButton.backgroundColor = .ypBlack
+                createButton.setTitleColor(.ypWhite, for: .normal)
+            } else {
+                createButton.isEnabled = false
+                createButton.backgroundColor = .ypGray
+                createButton.tintColor = .ypTextWhite
+            }
         }
     }
     
@@ -283,11 +334,56 @@ final class NewTrackerViewController: UIViewController {
         cell.layer.borderColor = color.cgColor
     }
     
+    private func prepareEditType() {
+        if let selectedEmoji = viewModel?.selectedEmoji.value?.selectedEmoji,
+           let selectedEmojiIndex = viewModel?.emojiesCollection.firstIndex(of: selectedEmoji ){
+            let indexPath = IndexPath(row: selectedEmojiIndex, section: 0)
+            guard let cell = collectionView.cellForItem(at: indexPath),
+                  let viewModel = viewModel
+            else { return }
+            
+            viewModel.handleEmojiSelection(at: indexPath)
+            selectCell(cell, at: indexPath,
+                       withColor: .ypLightGray,
+                       cornerRadius: 16)
+        }
+        
+        if let selectedColor = viewModel?.selectedColor.value?.selectedColors,
+           let selectedColorIndex = viewModel?.colorSelection.firstIndex(where: {$0.cgColor.components == selectedColor.cgColor.components} ) {
+            let indexPath = IndexPath(row: selectedColorIndex, section: 1)
+            guard let cell = collectionView.cellForItem(at: indexPath),
+                  let viewModel = viewModel
+            else { return }
+            
+            viewModel.handleColorSelection(at: indexPath)
+            selectCell(cell, at: indexPath,
+                       withColor: viewModel.colorSelection[indexPath.row].withAlphaComponent(0.3),
+                       cornerRadius: 8,
+                       borderWidth: 3)
+        }
+    }
+    
     //MARK: - setup Views and Layouts
     private func setupViews() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentViewForScrollView)
         contentViewForScrollView.addSubview(textFieldStackView)
+        contentViewForScrollView.addSubview(countDaysLabel)
+        if let typeEvent = viewModel?.typeEvent  {
+            switch typeEvent {
+            case .habitType:
+                countDaysLabel.isHidden = true
+            case .oneTimeType:
+                countDaysLabel.isHidden = true
+            case .existingTtype:
+                countDaysLabel.isHidden = false
+                if let days = viewModel?.daysCount.value {
+                    countDaysLabel.text = String.localizedStringWithFormat(NSLocalizedString("numberOfCompletedTrackers",
+                                                                                             comment: "Number of remaining tasks"),days)
+                }
+                createButton.isEnabled = true
+            }
+        }
         contentViewForScrollView.addSubview(tableView)
         contentViewForScrollView.addSubview(collectionView)
         contentViewForScrollView.addSubview(buttonsStackView)
@@ -296,6 +392,21 @@ final class NewTrackerViewController: UIViewController {
     }
     
     private func setupLayout() {
+        
+        if viewModel?.typeEvent == .existingTtype {
+            NSLayoutConstraint.activate([
+                countDaysLabel.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor, constant: 24),
+                countDaysLabel.leadingAnchor.constraint(equalTo: contentViewForScrollView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+                countDaysLabel.trailingAnchor.constraint(equalTo: contentViewForScrollView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+                textFieldStackView.topAnchor.constraint(equalTo: countDaysLabel.bottomAnchor, constant: 40),
+                tableView.topAnchor.constraint(equalTo: textFieldStackView.bottomAnchor, constant: 24),
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                textFieldStackView.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor, constant: 24)
+            ])
+        }
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -308,7 +419,6 @@ final class NewTrackerViewController: UIViewController {
             contentViewForScrollView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentViewForScrollView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             
-            textFieldStackView.topAnchor.constraint(equalTo: contentViewForScrollView.topAnchor, constant: 24),
             textFieldStackView.leadingAnchor.constraint(equalTo: contentViewForScrollView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             textFieldStackView.trailingAnchor.constraint(equalTo: contentViewForScrollView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             
@@ -351,9 +461,13 @@ final class NewTrackerViewController: UIViewController {
     
     //MARK: - check if the text field is empty after entering each character
     @objc private func textFieldDidChange(_ textField: UITextField) {
-        if let text = textField.text {
-            text.count == 0 ? (viewModel?.isTrackerNameEmpty = false) : (viewModel?.isTrackerNameEmpty = true)
-            createButtonIsEnabled()
+        if viewModel?.typeEvent == .existingTtype {
+            createButton.isEnabled = true
+        } else {
+            if let text = textField.text {
+                text.count == 0 ? (viewModel?.isTrackerNameEmpty = false) : (viewModel?.isTrackerNameEmpty = true)
+                createButtonIsEnabled()
+            }
         }
     }
 }
@@ -395,7 +509,6 @@ extension NewTrackerViewController: UITextFieldDelegate {
             lengthLimitationLabel.isHidden = true
             setupLayout()
         }
-        
         return updatedText.count <= maxLength
     }
 }
@@ -410,7 +523,7 @@ extension NewTrackerViewController: UITableViewDataSource {
         var rowsInSection = 0
         if let typeEvent = viewModel?.typeEvent  {
             switch typeEvent {
-            case .habitType:
+            case .habitType :
                 if section == 0 {
                     rowsInSection = 1
                 } else if section == 1 {
@@ -423,6 +536,19 @@ extension NewTrackerViewController: UITableViewDataSource {
                 viewModel?.timeSheetIsEnable = true
                 tableView.separatorStyle = .none
                 createButtonIsEnabled()
+            case .existingTtype:
+                if let timeSheet = viewModel?.weekDays.value?.weekdays.count, timeSheet > 0 {
+                    if section == 0 {
+                        rowsInSection = 1
+                    } else if section == 1 {
+                        rowsInSection = 1
+                    }
+                    tableViewHeightConstraint.constant = 150
+                } else {
+                    rowsInSection = 1
+                    tableViewHeightConstraint.constant = 75
+                    viewModel?.timeSheetIsEnable = true
+                }
             }
         }
         return rowsInSection
@@ -456,10 +582,10 @@ extension NewTrackerViewController: UITableViewDataSource {
                     guard let cell = tableView.dequeueReusableCell(withIdentifier: "timeSheetCellReuseIdentifier", for: indexPath) as? TimeSheetNewTrackerViewCell else {return UITableViewCell()}
                     configureCell(cell: cell, indexPath: indexPath)
                     
-                    if let timeSheetDays = viewModel?.weekDays.value?.weekdays
-                    {
+                    if let timeSheetDays = viewModel?.weekDays.value?.weekdays {
                         if timeSheetDays.count == 7 {
-                            cell.detailTextLabel?.text = "Каждый день"
+                            let timeSheetDaysText = NSLocalizedString("timeSheetDaysText", comment: "")
+                            cell.detailTextLabel?.text = timeSheetDaysText
                         } else {
                             cell.detailTextLabel?.text = viewModel?.weekDays.value?.timeSheetDays
                         }
@@ -484,6 +610,54 @@ extension NewTrackerViewController: UITableViewDataSource {
                 viewModel?.categoryIsEnable = true
                 createButtonIsEnabled()
                 return cell
+                
+            case.existingTtype:
+                if viewModel?.weekDays.value?.weekdays.count ?? 0 > 0 {
+                    if indexPath.section == 0 {
+                        guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCellReuseIdentifier", for: indexPath) as? CategoryNewTrackerViewCell else {return UITableViewCell()}
+                        configureCell(cell: cell, indexPath: indexPath)
+                        if let viewModel = viewModel {
+                            let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
+                            cell.detailTextLabel?.text = selectedCategory
+                        }
+                        viewModel?.categoryIsEnable = true
+                        createButtonIsEnabled()
+                        return cell
+                    } else if indexPath.section == 1 {
+                        guard let cell = tableView.dequeueReusableCell(withIdentifier: "timeSheetCellReuseIdentifier", for: indexPath) as? TimeSheetNewTrackerViewCell else {return UITableViewCell()}
+                        configureCell(cell: cell, indexPath: indexPath)
+                        
+                        if let timeSheetDays = viewModel?.weekDays.value?.weekdays
+                        {
+                            if timeSheetDays.count == 7 {
+                                let timeSheetDaysText = NSLocalizedString("timeSheetDaysText", comment: "")
+                                cell.detailTextLabel?.text = timeSheetDaysText
+                            } else {
+                                cell.detailTextLabel?.text = viewModel?.weekDays.value?.timeSheetDays
+                            }
+                            
+                            if timeSheetDays.isEmpty {
+                                viewModel?.timeSheetIsEnable = false
+                            } else {
+                                viewModel?.timeSheetIsEnable = true
+                            }
+                        }
+                        cell.configureSeparator(with: true)
+                        viewModel?.categoryIsEnable = true
+                        createButtonIsEnabled()
+                        return cell
+                    }
+                }  else {
+                    guard let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCellReuseIdentifier", for: indexPath) as? CategoryNewTrackerViewCell else {return UITableViewCell()}
+                    configureCell(cell: cell, indexPath: indexPath)
+                    if let viewModel = viewModel {
+                        let selectedCategory = viewModel.selectedCategory.value?.selectedCategory
+                        cell.detailTextLabel?.text = selectedCategory
+                    }
+                    viewModel?.categoryIsEnable = true
+                    createButtonIsEnabled()
+                    return cell
+                }
             }
         }
         return UITableViewCell()
@@ -494,17 +668,30 @@ extension NewTrackerViewController: UITableViewDataSource {
         dismissKeyboard()
         
         if indexPath.section == 0{
+            yandexMetrica.sendReport(about: AnalyticsModel.Events.open, and: nil, on: AnalyticsModel.Screens.category)
             let categoryTypeVCViewModel = CategoryTypeVCViewModel()
-            let viewController = CategoriesTypeViewController(viewModel: categoryTypeVCViewModel)
-            if let viewRouter = viewRouter {
-                viewRouter.switchToViewController(to: viewController, title: "Категория")
-                viewController.delegate = viewModel
+            let viewController: CategoriesTypeViewControllerProtocol = CategoriesTypeViewController(viewModel: categoryTypeVCViewModel)
+            if let viewRouter = viewRouter,
+               let selectedCategory = viewModel?.selectedCategory.value?.selectedCategory {
+                let lastSelectedcategory = viewController.getEditCategory(category: selectedCategory)?.row
+                if let lastSelectedcategory = lastSelectedcategory {
+                    UserDefaultsStorage.shared.lastSelectedcategory = lastSelectedcategory
+                }
+                if  let viewController = viewController as? CategoriesTypeViewController {
+                    viewRouter.switchToViewController(to: viewController, title: titlesCategory)
+                    viewController.delegate = viewModel
+                }
             }
         } else {
-            let viewController = TimeSheetViewController()
-            if let viewRouter = viewRouter {
-                viewRouter.switchToViewController(to: viewController, title: "Расписание")
-                viewController.delegate = viewModel
+            yandexMetrica.sendReport(about: AnalyticsModel.Events.open, and: nil, on: AnalyticsModel.Screens.schedule)
+            let viewController: TimeSheetViewControllerProtocol = TimeSheetViewController()
+            if let viewRouter = viewRouter,
+               let timeSheet = viewModel?.weekDays.value?.weekdays{
+                if let viewController = viewController as? TimeSheetViewController {
+                    viewController.getEditTimesheet(timeSheet: timeSheet)
+                    viewRouter.switchToViewController(to: viewController, title: titlesTimeSheet)
+                    viewController.delegate = viewModel
+                }
             }
         }
     }
@@ -533,7 +720,7 @@ extension NewTrackerViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.emojiCollectionViewCellIdentifier, for: indexPath
             ) as? EmojiCollectionViewCell else { return UICollectionViewCell()}
             
-            cell.titleLabel.text =  viewModel?.emojiesCollection[indexPath.row]
+            cell.titleLabel.text = viewModel?.emojiesCollection[indexPath.row]
             cell.backgroundColor = cell.isSelected ? .ypBackground : .clear
             
             return cell
@@ -580,8 +767,8 @@ extension NewTrackerViewController: UICollectionViewDelegateFlowLayout {
         guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? TrackerHeaderView else {
             return UICollectionReusableView()
         }
-        
-        view.titleLabel.text = indexPath.section == 0 ? "Emoji" : "Цвет"
+        let collectionViewTitleText = NSLocalizedString("collectionViewTitleText", comment: "")
+        view.titleLabel.text = indexPath.section == 0 ? "Emoji" : collectionViewTitleText
         return view
     }
     
@@ -605,6 +792,11 @@ extension NewTrackerViewController: UICollectionViewDelegate {
             handleEmojiSelection(at: indexPath)
         } else if indexPath.section == 1 {
             handleColorSelection(at: indexPath)
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if viewModel?.typeEvent == .existingTtype{
+            prepareEditType()
         }
     }
 }

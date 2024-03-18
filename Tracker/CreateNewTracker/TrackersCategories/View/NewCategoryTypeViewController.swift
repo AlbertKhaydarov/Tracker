@@ -11,15 +11,19 @@ final class NewCategoryTypeViewController: UIViewController {
     
     weak var delegate: NewCategoryTypeViewControllerDelegate?
     
+    private var newCategoryType: String?
+    
     private lazy var inputNewCategoryTextField: UITextField = {
         let textField = UITextField()
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 30))
         textField.leftViewMode = .always
-        textField.placeholder = "Введите название категории"
+        let inputNewCategoryTextFieldPlaceholder = NSLocalizedString("inputNewCategoryTextFieldPlaceholder", comment: "")
+        textField.placeholder = inputNewCategoryTextFieldPlaceholder
         textField.backgroundColor = .ypBackground.withAlphaComponent(0.3)
         textField.layer.cornerRadius = 16
         textField.clearButtonMode = .whileEditing
         textField.clipsToBounds = true
+        textField.text = newCategoryType
         textField.becomeFirstResponder()
         textField.returnKeyType = .done
         textField.delegate = self
@@ -29,9 +33,10 @@ final class NewCategoryTypeViewController: UIViewController {
     
     private lazy var creatButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .gray
+        let creatButtonTitle = NSLocalizedString("creatButton.title", comment: "")
+        button.setTitle(creatButtonTitle, for: .normal)
+        button.setTitleColor(.ypTextWhite, for: .normal)
+        button.backgroundColor = .ypGray
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(creatButtonTapped), for: .touchUpInside)
         button.isEnabled = false
@@ -45,10 +50,24 @@ final class NewCategoryTypeViewController: UIViewController {
         inputNewCategoryTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
+    func edit(categoryType: String) {
+        newCategoryType = categoryType
+        inputNewCategoryTextField.becomeFirstResponder()
+        creatButtonIsEnable()
+    }
+    
+    private func creatButtonIsEnable() {
+        creatButton.backgroundColor = .ypBlack
+        creatButton.setTitleColor(.ypWhite, for: .normal)
+        creatButton.isEnabled = true
+    }
+    
     @objc
     private func creatButtonTapped() {
-        guard let newCategoryTypeText = inputNewCategoryTextField.text, !newCategoryTypeText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-        delegate?.addNewCategoryType(with: newCategoryTypeText)
+        guard let newCategory = inputNewCategoryTextField.text,
+              !newCategory.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        delegate?.addNewCategoryType(with: newCategory)
+        newCategoryType = newCategory
         dismiss(animated: true)
     }
     
@@ -57,19 +76,17 @@ final class NewCategoryTypeViewController: UIViewController {
     private func textFieldDidChange(_ textField: UITextField) {
         if let newCategoryType = textField.text {
             if newCategoryType.count == 0 || newCategoryType.first == " " {
-                creatButton.backgroundColor = .gray
-                creatButton.setTitleColor(.white, for: .normal)
+                creatButton.backgroundColor = .ypGray
+                creatButton.setTitleColor(.ypWhite, for: .normal)
                 creatButton.isEnabled = false
             } else {
-                creatButton.backgroundColor = .black
-                creatButton.setTitleColor(.white, for: .normal)
-                creatButton.isEnabled = true
+                creatButtonIsEnable()
             }
         }
     }
     
     private func setupViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         view.addSubview(inputNewCategoryTextField)
         view.addSubview(creatButton)
         
@@ -96,7 +113,7 @@ extension NewCategoryTypeViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
         if textField.text?.isEmpty == true {
             creatButton.backgroundColor = .gray
-            creatButton.setTitleColor(.white, for: .normal)
+            creatButton.setTitleColor(.ypWhite, for: .normal)
         }
     }
 }

@@ -14,10 +14,11 @@ final class EventTypeViewController: UIViewController {
     private lazy var habitTypeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Привычка", for: .normal)
+        let habitTypeButtonTitle = NSLocalizedString("habitTypeButton.title", comment: "")
+        button.setTitle(habitTypeButtonTitle, for: .normal)
         button.titleLabel?.font = .ypMedium16
         button.backgroundColor = .ypBlack
-        button.tintColor = .ypWhite
+        button.setTitleColor(.ypWhite, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(creatNewHabit(_:)), for: .touchUpInside)
@@ -27,10 +28,11 @@ final class EventTypeViewController: UIViewController {
     private lazy var oneTimeTypeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Нерегулярное событие", for: .normal)
+        let oneTimeTypeButtonTitle = NSLocalizedString("oneTimeTypeButton.title", comment: "")
+        button.setTitle(oneTimeTypeButtonTitle, for: .normal)
         button.backgroundColor = .ypBlack
         button.titleLabel?.font = .ypMedium16
-        button.tintColor = .ypWhite
+        button.setTitleColor(.ypWhite, for: .normal)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(creatNewHabit(_:)), for: .touchUpInside)
@@ -55,9 +57,10 @@ final class EventTypeViewController: UIViewController {
     @objc private func creatNewHabit(_ sender: UIButton) {
         let viewModel = NewTrackerVCViewModel()
         if sender == habitTypeButton {
-            viewModel.typeEvent = .habitType
+            viewModel.typeEvent = TypeEvents.habitType
+            
         } else if sender == oneTimeTypeButton {
-            viewModel.typeEvent = .oneTimeType
+            viewModel.typeEvent = TypeEvents.oneTimeType
         }
         
         let newHabitViewController = NewTrackerViewController(viewModel: viewModel)
@@ -69,13 +72,14 @@ final class EventTypeViewController: UIViewController {
         guard let viewRouter = viewRouter else {return}
         
         if viewModel.typeEvent == .habitType {
-            guard let typeEvent = viewModel.typeEvent?.rawValue else {return}
+            guard let typeEvent = viewModel.typeEvent?.localizedString() else {return}
             viewRouter.switchToViewController(to: newHabitViewController, title: typeEvent)
             storage?.timeSheetStorage = []
         } else if viewModel.typeEvent == .oneTimeType {
-            guard let typeEvent = viewModel.typeEvent?.rawValue else {return}
+            guard let typeEvent = viewModel.typeEvent?.localizedString() else {return}
             viewRouter.switchToViewController(to: newHabitViewController, title: typeEvent)
-        } else {
+        }
+        else {
             return
         }
     }

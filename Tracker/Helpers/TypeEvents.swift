@@ -7,7 +7,21 @@
 
 import Foundation
 
-enum TypeEvents: String {
-  case habitType = "Новая привычка"
-  case oneTimeType = "Новое нерегулярное событие"
+enum TypeEvents {
+    case habitType
+    case oneTimeType
+    case existingTtype
+}
+
+extension TypeEvents {
+    func localizedString() -> String  {
+        switch self {
+        case .habitType:
+            return NSLocalizedString("habitTypeEvents", comment: "")
+        case .oneTimeType:
+            return NSLocalizedString("oneTimeTypeEvents", comment: "")
+        case .existingTtype:
+            return NSLocalizedString("existingTypeEvents", comment: "")
+        }
+    }
 }

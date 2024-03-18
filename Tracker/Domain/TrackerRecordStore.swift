@@ -34,52 +34,6 @@ final class TrackerRecordStore: NSObject {
     init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
-        //TODO: - удалить после отладки
-        //                        deleteAllData()
-    }
-    
-    //TODO: - удалить после отладки
-    private func deleteAllData() {
-        guard let managedContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
-            fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")
-        }
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TrackerRecordCoreData")
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
-        do {
-            try managedContext.execute(batchDeleteRequest)
-        } catch {
-            print("Failed to delete all data: \(error)")
-        }
-    }
-    
-    func getTrackersRecords() throws -> [TrackerRecord] {
-        guard let object = self.fetchedResultsController.fetchedObjects else {
-            throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
-        }
-        var records: [TrackerRecord] = []
-        records = object.compactMap({ item in
-            do {
-                let record = try self.getRecord(from: item)
-                
-                return record
-                
-            } catch {
-                assertionFailure("Failed to create \(String(describing: CoreDataErrors.decodingError(error)))", file: #file, line: #line)
-                return nil
-            }
-        })
-        return records
-    }
-    
-    private func getRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
-        guard let idExecuted = trackerRecordCoreData.idExecutedTracker,
-              let dateExecuted = trackerRecordCoreData.dateExecuted
-        else {
-            throw CoreDataErrors.decodingError(NSError(domain: "CoreData", code: 0, userInfo: nil))
-        }
-        return TrackerRecord(idExecutedTracker: idExecuted,
-                             dateExecuted: dateExecuted)
     }
     
     func createTrackerRecordCoreData(from trackerRecord: TrackerRecord) throws {
@@ -113,5 +67,60 @@ final class TrackerRecordStore: NSObject {
                 print("Failed to save: \(CoreDataErrors.saveError(error)), \(error.localizedDescription)")
             }
         }
+    }
+    
+    func deleteTrackerRecord(withID trackerID: UUID) throws {
+        let request = TrackerRecordCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: " %K == %@", #keyPath(TrackerRecordCoreData.idExecutedTracker),trackerID as CVarArg)
+        do {
+            let trackerRecordsCoreData = try context.fetch(request)
+            
+            for record in trackerRecordsCoreData {
+                context.delete(record)
+            }
+            try context.save()
+        } catch {
+            print("Failed to save: \(CoreDataErrors.saveError(error)), \(error.localizedDescription)")
+        }
+    }
+    
+    func getCountCompletedTrackers() throws -> Int {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let trackerRecordsCoreData = try context.fetch(request)
+        var trackerRecords: [TrackerRecord] = []
+        do {
+            trackerRecords = try trackerRecordsCoreData.map { item in
+                guard let iDtracker = item.idExecutedTracker,
+                      let dateTracker = item.dateExecuted
+                else {
+                    throw CoreDataErrors.fetchError(NSError(domain: "CoreData", code: 0, userInfo: nil))
+                    
+                }
+                return TrackerRecord(idExecutedTracker: iDtracker, dateExecuted: dateTracker)
+            }
+        } catch {
+            print("Failed to save: \(CoreDataErrors.fetchError(error)), \(error.localizedDescription)")
+        }
+        return trackerRecords.count
+    }
+    
+    func getTrackersRecords() throws -> [TrackerRecord] {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let trackerRecordsCoreData = try context.fetch(request)
+        var trackerRecords: [TrackerRecord] = []
+        do {
+            trackerRecords = try trackerRecordsCoreData.map { item in
+                guard let iDtracker = item.idExecutedTracker,
+                      let dateTracker = item.dateExecuted
+                else {
+                    throw CoreDataErrors.fetchError(NSError(domain: "CoreData", code: 0, userInfo: nil))
+                    
+                }
+                return TrackerRecord(idExecutedTracker: iDtracker, dateExecuted: dateTracker)
+            }
+        } catch {
+            print("Failed to save: \(CoreDataErrors.fetchError(error)), \(error.localizedDescription)")
+        }
+        return trackerRecords
     }
 }

@@ -8,7 +8,7 @@
 import UIKit
 
 final class CategoriesTypeViewController: UIViewController {
-    
+    private let yandexMetrica = YandexMetricaService.shared
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -24,8 +24,9 @@ final class CategoriesTypeViewController: UIViewController {
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Добавить категорию", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        let addCategoryButtonTitle = NSLocalizedString("addCategoryButton.title", comment: "")
+        button.setTitle(addCategoryButtonTitle, for: .normal)
+        button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypBlack
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
@@ -49,7 +50,8 @@ final class CategoriesTypeViewController: UIViewController {
     private lazy var errorTrackersLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Привычки и события можно\nобъединить по смыслу"
+        let errorTrackersLabelTitle = NSLocalizedString("errorTrackersLabel.title", comment: "")
+        label.text = errorTrackersLabelTitle
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.numberOfLines = 2
         label.textAlignment = .center
@@ -77,8 +79,8 @@ final class CategoriesTypeViewController: UIViewController {
         }
         
         self.viewRouter = ViewRouter(viewController: self)
-        
-        title = "Категория"
+        let categoriesVCTitle = NSLocalizedString("categoriesVC.title", comment: "")
+        title = categoriesVCTitle
         setupViews()
         setuplayout()
         updateLayout(with: self.view.frame.size)
@@ -94,12 +96,27 @@ final class CategoriesTypeViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     //MARK: - add binding
     private func bind(viewModel: CategoryTypeVCViewModel) {
         viewModel.categotyTypesBinding = { [weak self] _ in
             guard let self = self else {return}
             self.tableView.reloadData()
+        }
+        viewModel.categoryForEditObservable.bind { [weak self] categoryType in
+            guard let self = self,
+                  let categoryType = categoryType
+            else {return}
+            self.edit(categoryType: categoryType)
+        }
+    }
+    
+    private func edit(categoryType: String) {
+        let editCategoryTypeViewController = NewCategoryTypeViewController()
+        editCategoryTypeViewController.edit(categoryType: categoryType)
+        editCategoryTypeViewController.delegate = viewModel
+        let editCategoryTypeTitle = NSLocalizedString("editCategoryType.title", comment: "")
+        if let viewRouter = viewRouter {
+            viewRouter.switchToViewController(to: editCategoryTypeViewController, title: editCategoryTypeTitle)
         }
     }
     
@@ -124,14 +141,11 @@ final class CategoriesTypeViewController: UIViewController {
     }
     
     @objc private func addCategoryButtonTapped() {
-        switchToNewCategoryTypeViewController(categoryTitle: "")
-    }
-    
-    private func switchToNewCategoryTypeViewController(categoryTitle: String?){
+        let newCategoryTypeVCTitle = NSLocalizedString("newCategoryTypeVC.title", comment: "")
         let newCategoryTypeViewController = NewCategoryTypeViewController()
         newCategoryTypeViewController.delegate = viewModel
         if let viewRouter = viewRouter {
-            viewRouter.switchToViewController(to: newCategoryTypeViewController, title: "Новая категория")
+            viewRouter.switchToViewController(to: newCategoryTypeViewController, title: newCategoryTypeVCTitle)
         }
     }
     
@@ -159,6 +173,17 @@ final class CategoriesTypeViewController: UIViewController {
     }
 }
 
+// MARK: - CategoriesTypeViewControllerProtocol
+extension CategoriesTypeViewController: CategoriesTypeViewControllerProtocol {
+    func getEditCategory(category: String) -> IndexPath? {
+        if let selectedCategoryTypeIndex = viewModel?.categoryType.firstIndex(where: { $0.categoryTitle == category }) {
+            return IndexPath(row: selectedCategoryTypeIndex, section: 0)
+        }
+        return nil
+    }
+}
+
+// MARK: - TableViewDataSource
 extension CategoriesTypeViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel?.categoryType.count ?? 0
@@ -198,7 +223,6 @@ extension CategoriesTypeViewController: UITableViewDataSource {
             cell.configure(with: false)
             cell.layer.masksToBounds = true
             cell.layer.cornerRadius = 16
-            
         }
         
         if let lastSelectedcategory = lastSelectedcategory, indexPath.row == lastSelectedcategory {
@@ -211,12 +235,12 @@ extension CategoriesTypeViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - TableViewDelegate
 extension CategoriesTypeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
     
-    //MARK: - move the element to the first row after selected
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         for row in 0..<tableView.numberOfRows(inSection: indexPath.section) {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: indexPath.section)) {
@@ -224,7 +248,6 @@ extension CategoriesTypeViewController: UITableViewDelegate {
                 lastSelectedcategory = indexPath.row
             }
         }
-        
         if let cell = tableView.cellForRow(at: indexPath) {
             cell.accessoryType = .checkmark
             guard let viewModel = viewModel?.categoryType[indexPath.row] else {return}
@@ -240,5 +263,56 @@ extension CategoriesTypeViewController: UITableViewDelegate {
             guard let self = self else {return}
             self.delegate?.getSelectedCategoryType(category)
         }
+    }
+    
+    //MARK: - Context Menu
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        return UIContextMenuConfiguration(actionProvider: { [weak self] actions in
+            let editAction = NSLocalizedString("editAction.title", comment: "")
+            let deleteAction = NSLocalizedString("deleteAction.title", comment: "")
+            return UIMenu(children: [
+                UIAction(title: editAction) { [weak self] _ in
+                    guard let self else { return }
+                    yandexMetrica.sendReport(about: AnalyticsModel.Events.click, and: AnalyticsModel.Items.edit, on: AnalyticsModel.Screens.category)
+                    self.editCategoryType(indexPath: indexPath)
+                },
+                UIAction(title: deleteAction, attributes: .destructive) { _ in
+                    guard let self else { return }
+                    self.yandexMetrica.sendReport(about: AnalyticsModel.Events.click, and: AnalyticsModel.Items.delete, on: AnalyticsModel.Screens.category)
+                    self.showDeleteAlert(with: indexPath)
+                }
+            ])
+        })
+    }
+    
+    private func editCategoryType(indexPath: IndexPath) {
+        if let categoryType = viewModel?.categoryType[indexPath.row].categoryTitle {
+            viewModel?.deleteCategorytype(with: indexPath)
+            viewModel?.edit(categoryType: categoryType)
+        }
+    }
+    // MARK: - Alert Controller
+    private func showDeleteAlert(with indexPath: IndexPath) {
+        let alertController = UIAlertController(
+            title: NSLocalizedString("alertControllerCategoryTypeDeleteConfirm.title", comment: ""),
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        
+        let deleteAction = UIAlertAction(
+            title: NSLocalizedString("deleteButton.title", comment: ""),
+            style: .destructive
+        ) { [weak self] _ in
+            guard let self else { return }
+            self.viewModel?.deleteCategorytype(with: indexPath)
+        }
+        
+        let cancelAction = UIAlertAction(title: NSLocalizedString("cancelButton.title", comment: ""), style: .cancel, handler: nil)
+        
+        alertController.addAction(deleteAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
     }
 }

@@ -10,7 +10,7 @@ import Foundation
 final class CategoryTypeCellViewModel: Identifiable {
     let id: String
     
-    private var categoryTitle: String
+    var categoryTitle: String
     
     init (id: String, categoryTitle: String) {
         self.id = id

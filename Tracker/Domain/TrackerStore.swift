@@ -12,6 +12,8 @@ final class TrackerStore: NSObject {
     private let uiColorMarshalling = UIColorMarshalling()
     private let arrayMarshalling = ArrayMarshalling()
     
+    private let trackerRecordStore = TrackerRecordStore()
+    
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = TrackerCoreData.fetchRequest()
         fetchRequest.resultType = .managedObjectResultType
@@ -39,21 +41,6 @@ final class TrackerStore: NSObject {
         super.init()
     }
     
-    //TODO: - удалить после отладки
-    func deleteAllData() {
-        guard let managedContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
-            fatalError("Could not allow access to the application \(String(describing: CoreDataErrors.persistentStoreError))")
-        }
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TrackerCoreData")
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
-        do {
-            try managedContext.execute(batchDeleteRequest)
-        } catch {
-            print("Failed to delete all data: \(error)")
-        }
-    }
-    
     func getTracker(from trackerCoreData: TrackerCoreData) throws -> TrackerModel {
         guard
             let idTrackerCoreData = trackerCoreData.idTracker,
@@ -69,7 +56,8 @@ final class TrackerStore: NSObject {
                             name: nameCoreData,
                             color: uiColorMarshalling.color(from: colorCoreData),
                             emoji: emojiCoreData,
-                            timesheet: timeSheetTransform)
+                            timesheet: timeSheetTransform,
+                            isPinned: trackerCoreData.isPinned)
     }
     
     func createTrackerCoreData(_ tracker: TrackerModel) throws -> TrackerCoreData {
@@ -78,7 +66,7 @@ final class TrackerStore: NSObject {
         trackerCoreData.name = tracker.name
         trackerCoreData.color = uiColorMarshalling.hexString(from: tracker.color)
         trackerCoreData.emoji = tracker.emoji
-        
+        trackerCoreData.isPinned = tracker.isPinned
         let transformedTimesheet = arrayMarshalling.transformedValue(tracker.timesheet!)
         trackerCoreData.timesheet = transformedTimesheet
         
@@ -88,5 +76,58 @@ final class TrackerStore: NSObject {
             assertionFailure("Failed to save \(String(describing: CoreDataErrors.saveError(error)))", file: #file, line: #line)
         }
         return trackerCoreData
+    }
+    
+    private let titlePinCategory = NSLocalizedString("pinCategory.title", comment: "")
+    func isTrackerPinned(with indexPath: IndexPath) -> Bool {
+        let trackerCoreData = fetchedResultsController.object(at: indexPath)
+        return trackerCoreData.trackerCategory?.name == titlePinCategory ? true : false
+    }
+    
+    func fetchTracker(with indexPath: IndexPath) throws -> TrackerModel? {
+        let trackerCoreData = fetchedResultsController.object(at: indexPath)
+        var trackerModel: TrackerModel?
+        do {
+            trackerModel = try getTracker(from: trackerCoreData)
+        } catch {
+            assertionFailure("Failed to fetch \(String(describing: CoreDataErrors.fetchError(error)))", file: #file, line: #line)
+        }
+        return trackerModel
+    }
+    
+    func setTrackerPinState(with iDTracker: UUID) throws {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.idTracker), iDTracker as CVarArg)
+        var trackerCoreData: TrackerCoreData?
+        do {
+            trackerCoreData = try context.fetch(fetchRequest).first
+        } catch {
+            assertionFailure("Failed to save \(String(describing: CoreDataErrors.saveError(error)))", file: #file, line: #line)
+        }
+        
+        trackerCoreData?.isPinned.toggle()
+        try context.save()
+    }
+    
+    func deleteTracker(trackerId: UUID) {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.idTracker), trackerId.uuidString)
+        guard let items = try? context.fetch(request) else {
+            assertionFailure("Failed to fetch \(String(describing: CoreDataErrors.fetchError))", file: #file, line: #line)
+            return
+        }
+        guard let deleteItem = items.first else {return}
+        context.delete(deleteItem)
+        do {
+            try context.save()
+        } catch {
+            assertionFailure("Failed to save \(String(describing: CoreDataErrors.saveError(error)))", file: #file, line: #line)
+        }
+        
+        do {
+            try trackerRecordStore.deleteTrackerRecord(withID: trackerId)
+        } catch {
+            assertionFailure("Failed to delete record \(String(describing: CoreDataErrors.deleteError(error)))", file: #file, line: #line)
+        }
     }
 }

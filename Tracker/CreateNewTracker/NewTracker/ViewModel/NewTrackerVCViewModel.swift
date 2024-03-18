@@ -9,10 +9,14 @@ import UIKit
 
 final class NewTrackerVCViewModel {
     
+    var name: NewTrackerObservable<String>
     var selectedCategory: NewTrackerObservable<CategoryNewTrackerViewCellViewModel>
     var weekDays: NewTrackerObservable<TimeSheetNewTrackerViewCellViewModel>
     var selectedEmoji: NewTrackerObservable<EmojiCollectionViewCellViewModel>
     var selectedColor: NewTrackerObservable<ColorsCollectionViewCellViewModel>
+    var daysCount: NewTrackerObservable<Int>
+    var idTracker: NewTrackerObservable<UUID>
+    var isPinned: NewTrackerObservable<Bool>
     
     var indexPathForSelectedEmoji: IndexPath?
     var indexPathForSelectedColor: IndexPath?
@@ -25,7 +29,6 @@ final class NewTrackerVCViewModel {
     
     let colorSelection: [UIColor] = UIColor.colorSelection
     let emojiesCollection: [String] = String.emojiesCollection
-    
     var typeEvent: TypeEvents?
     
     init() {
@@ -33,6 +36,10 @@ final class NewTrackerVCViewModel {
         weekDays = NewTrackerObservable(value: TimeSheetNewTrackerViewCellViewModel(timeSheetDays: "", weekdays: []))
         selectedEmoji = NewTrackerObservable(value: EmojiCollectionViewCellViewModel(selectedEmoji: ""))
         selectedColor = NewTrackerObservable(value: ColorsCollectionViewCellViewModel(selectedColors: .clear))
+        daysCount = NewTrackerObservable(value: 0)
+        name = NewTrackerObservable(value: "")
+        idTracker = NewTrackerObservable(value: UUID())
+        isPinned = NewTrackerObservable(value: false)
     }
     
     func handleEmojiSelection(at indexPath: IndexPath) {
@@ -60,6 +67,7 @@ extension NewTrackerVCViewModel: NewTrackerVCViewModelTimeSheetDelegate {
     func addTimeSheet(_ timeSheetDays: String, _ weekDays: [Int]) {
         let newElement = TimeSheetNewTrackerViewCellViewModel(timeSheetDays: timeSheetDays, weekdays: weekDays)
         self.weekDays.value? = newElement
+        print(newElement)
     }
 }
 

@@ -1,0 +1,78 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Альберт Хайдаров on 04.03.2024.
+  
+*/
+
+"trackers.tabBarItem.title" = "Трекеры";
+"statistics.tabBarItem.title" = "Статистика";
+"addButtonTappedTitle.title" = "Создание трекера";
+"searchBarButton.title" = "Отмена";
+"onboargingPage1.title" = "Отслеживайте только\nто, что хотите";
+"onboargingPage2.title" = "Даже если это\nне литры воды и йога";
+"onboargingButton.title" = "Вот это технологии!";
+"errorTrackersLabel.titleText" = "Что будем отслеживать?";
+"notFoundTrackersLabelText" = "Ничего не найдено";
+"trackersVCTitleText" = "Трекеры";
+"filtersTypeVC.title" = "Фильтры";
+"filtersButton.title" = "Фильтры";
+"titlesButtonCategory" = "Категория";
+"titlesButtonTimeSheet" = "Расписание";
+"nameInputTextFieldText" = "Введите название трекера";
+"lengthLimitationLabelText" = "Ограничение 38 символов";
+"cancelButton.title" = "Отменить";
+"createButton.title" = "Создать";
+"timeSheetDaysText" = "Каждый день";
+"collectionViewTitleText" = "Цвет";
+"habitTypeButton.title" = "Привычка";
+"oneTimeTypeButton.title" = "Нерегулярное событие";
+"addCategoryButton.title" = "Добавить категорию";
+"errorTrackersLabel.title" = "Привычки и события можно\nобъединить по смыслу";
+"categoriesVC.title" = "Категория";
+"newCategoryTypeVC.title" = "Новая категория";
+"editCategoryType.title" = "Редактирование категории";
+"inputNewCategoryTextFieldPlaceholder" = "Введите название категории";
+"creatButton.title" = "Готово";
+"saveButton.title" = "Сохранить";
+"readyButton.title" = "Готово";
+"alertController.title" = "Уверены что хотите удалить трекер?";
+"alertControllerCategoryTypeDeleteConfirm.title" = "Эта категория точно не нужна?";
+"deleteButton.title" = "Удалить";
+"timeSheetVC.title" = "Расписание";
+"sortedDaysText" = "Каждый день";
+"orderDay1" = "Пн";
+"orderDay2" = "Вт";
+"orderDay3" = "Ср";
+"orderDay4" =" Чт";
+"orderDay5" = "Пт";
+"orderDay6" = "Сб";
+"orderDay7" = "Вс";
+"allWeekDays" = "Неделя";
+"weekDay1" = "Воскресенье";
+"weekDay2" = "Понедельник";
+"weekDay3" = "Вторник";
+"weekDay4" = "Среда";
+"weekDay5" = "Четверг";
+"weekDay6" = "Пятница";
+"weekDay7" = "Суббота";
+"habitTypeEvents" = "Новая привычка";
+"oneTimeTypeEvents" = "Новое нерегулярное событие";
+"existingTypeEvents" = "Редактирование привычки";
+"pinCategory.title" = "Закрепленные";
+"pinAction.title" = "Закрепить";
+"unPinAction.title" = "Открепить";
+"editAction.title" = "Редактировать";
+"deleteAction.title" = "Удалить";
+"allTrackers.filter" = "Все трекеры";
+"todayTrackers.filter" = "Трекеры на сегодня";
+"completedTrackers.filter" = "Завершенные";
+"uncompletedTrackers.filter" = "Не завершенные";
+"resetFilterButton.title" = "Сбросить";
+"statistics.title" = "Статистика";
+"stubTextTitleLabel.text" = "Анализировать пока нечего";
+"completedTrackerTitleLabel.title" = "Трекеров завершено";
+"bestPeriodLabel.title" = "Лучший период";
+"idealDaysLabel.title" = "Идеальные дни";
+"averageValueLabel.title" = "Среднее значение";
